@@ -1960,76 +1960,113 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
 
 
 
-
-
-
-
-
 <!-- Add this just before </body> -->
 
 <!-- Popup Overlay Background -->
-<div id="nebulai-popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;"></div>
+<div id="nebulai-popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; justify-content: center; align-items: center;"></div>
 
 <!-- Popup Content -->
-<div id="nebulai-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; width: 90%; max-width: 500px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow: hidden; font-family: Arial, sans-serif;">
+<div id="nebulai-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255, 255, 255, 0.1); overflow: hidden; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.2);">
     
     <!-- Popup Header -->
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px 20px; color: white; text-align: center;">
-        <h1 style="margin: 0; font-size: 2.2em; font-weight: bold;">NEBULAAI</h1>
-        <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 1.1em;">Type a message...</p>
+    <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%); padding: 30px 25px; color: white; text-align: center; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <h1 style="margin: 0; font-size: 2.5em; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">NEBULAAI</h1>
+        <p style="margin: 12px 0 0 0; opacity: 0.95; font-size: 1.1em; font-weight: 400; letter-spacing: 0.5px; text-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <span style="background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; backdrop-filter: blur(5px);">Type a message...</span>
+        </p>
     </div>
     
     <!-- Popup Body -->
-    <div style="padding: 20px; max-height: 60vh; overflow-y: auto;">
+    <div style="padding: 25px; max-height: 60vh; overflow-y: auto;">
         
         <!-- About Section -->
-        <div style="margin-bottom: 25px;">
-            <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; margin: 0 0 15px 0;">About Nebula AI</h2>
-            <div style="background: #f7f7f7; padding: 15px; border-radius: 8px;">
-                <h3 style="margin: 0; color: #333;">NEBULAAI</h3>
-                <p style="margin: 5px 0 0 0; color: #666;">V2.0 ARM</p>
+        <div style="margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="width: 4px; height: 24px; background: linear-gradient(to bottom, #667eea, #764ba2); border-radius: 2px;"></div>
+                <h2 style="margin: 0; color: white; font-size: 1.5em; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">About Nebula AI</h2>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 1.3em; font-weight: 600;">NEBULAAI V2.0 ARM</h3>
+                <p style="margin: 0; color: rgba(255, 255, 255, 0.8); font-size: 0.95em; line-height: 1.5;">Advanced AI Research Model</p>
             </div>
         </div>
         
         <!-- Academic Research Section -->
-        <div style="margin-bottom: 25px;">
-            <h2 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; margin: 0 0 15px 0;">Academic Research Model</h2>
-            <p style="color: #555; line-height: 1.6; margin: 0 0 20px 0;">
-                AI-powered assistant for students, researchers, and educators. Specialized in academic support, research assistance, and study guidance.
-            </p>
+        <div style="margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="width: 4px; height: 24px; background: linear-gradient(to bottom, #10b981, #059669); border-radius: 2px;"></div>
+                <h2 style="margin: 0; color: white; font-size: 1.5em; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">Academic Research Model</h2>
+            </div>
             
-            <div style="background: #f0f5ff; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
-                <h3 style="margin: 0 0 10px 0; color: #333;">Key Features</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #555;">
-                    <li style="margin-bottom: 8px;">Research Assistance</li>
-                    <li style="margin-bottom: 8px;">Study Help</li>
-                    <li style="margin-bottom: 8px;">Essay Writing</li>
-                    <li style="margin-bottom: 0;">Homework Support</li>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 22px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                <p style="color: rgba(255, 255, 255, 0.9); line-height: 1.7; margin: 0; font-size: 1.05em; font-weight: 400;">
+                    AI-powered assistant for students, researchers, and educators. Specialized in academic support, research assistance, and study guidance.
+                </p>
+            </div>
+            
+            <div style="background: rgba(102, 126, 234, 0.15); padding: 22px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(102, 126, 234, 0.2); border-left: 4px solid #667eea;">
+                <h3 style="margin: 0 0 18px 0; color: #fff; font-size: 1.3em; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-star" style="color: #fbbf24;"></i> Key Features
+                </h3>
+                <ul style="margin: 0; padding-left: 0; list-style: none;">
+                    <li style="margin-bottom: 14px; color: rgba(255, 255, 255, 0.9); display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 8px; height: 8px; background: #667eea; border-radius: 50%; flex-shrink: 0;"></div>
+                        <span>Research Assistance</span>
+                    </li>
+                    <li style="margin-bottom: 14px; color: rgba(255, 255, 255, 0.9); display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 8px; height: 8px; background: #8b5cf6; border-radius: 50%; flex-shrink: 0;"></div>
+                        <span>Study Help</span>
+                    </li>
+                    <li style="margin-bottom: 14px; color: rgba(255, 255, 255, 0.9); display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; flex-shrink: 0;"></div>
+                        <span>Essay Writing</span>
+                    </li>
+                    <li style="color: rgba(255, 255, 255, 0.9); display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; flex-shrink: 0;"></div>
+                        <span>Homework Support</span>
+                    </li>
                 </ul>
             </div>
         </div>
         
         <!-- Creator Section -->
-        <div style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%); padding: 20px; border-radius: 10px; border: 1px solid #e0e7ff;">
-            <h3 style="margin: 0 0 15px 0; color: #667eea;">Creator</h3>
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <div style="color: #10b981; font-size: 1.3em; margin-right: 10px;">✔️</div>
+        <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); padding: 25px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.15);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="width: 4px; height: 24px; background: linear-gradient(to bottom, #f59e0b, #d97706); border-radius: 2px;"></div>
+                <h3 style="margin: 0; color: white; font-size: 1.4em; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">Creator</h3>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px; padding: 18px; background: rgba(255, 255, 255, 0.05); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                    <i class="fas fa-check"></i>
+                </div>
                 <div>
-                    <p style="margin: 0; font-weight: bold; color: #333; font-size: 1.1em;">Mauluk Makwana</p>
-                    <p style="margin: 3px 0 0 0; color: #666;">Full Stack Developer</p>
+                    <p style="margin: 0; font-weight: 800; color: #fff; font-size: 1.2em; letter-spacing: -0.3px;">Mauluk Makwana</p>
+                    <p style="margin: 6px 0 0 0; color: rgba(255, 255, 255, 0.8); font-size: 0.95em; font-weight: 500;">Full Stack Developer</p>
                 </div>
             </div>
-            <div style="color: #555; margin-top: 15px;">
-                <p style="margin: 5px 0;">Powered by Giroa</p>
-                <p style="margin: 5px 0;">API Secured by Vercel</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="background: rgba(255, 255, 255, 0.07); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05);">
+                    <p style="margin: 0 0 6px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85em; font-weight: 500;">Powered by</p>
+                    <p style="margin: 0; color: #fff; font-weight: 700; font-size: 1.1em;">Giroa</p>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.07); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05);">
+                    <p style="margin: 0 0 6px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85em; font-weight: 500;">API Secured by</p>
+                    <p style="margin: 0; color: #fff; font-weight: 700; font-size: 1.1em;">Vercel</p>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Popup Footer -->
-    <div style="padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; display: flex; justify-content: space-between;">
-        <a href="#" style="padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s;">Portfolio</a>
-        <button id="close-popup-btn" style="padding: 10px 25px; background: #ef4444; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.3s;">Close</button>
+    <div style="padding: 25px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; gap: 15px; backdrop-filter: blur(10px);">
+        <a href="#" style="flex: 1; padding: 14px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.05em; text-align: center; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <i class="fas fa-external-link-alt"></i> Portfolio
+        </a>
+        <button id="close-popup-btn" style="flex: 1; padding: 14px 20px; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.05em; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2); display: flex; align-items: center; justify-content: center; gap: 10px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <i class="fas fa-times"></i> Close
+        </button>
     </div>
 </div>
 
@@ -2050,7 +2087,7 @@ function closeNebulaPopup() {
 
 // Set up event listeners when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Method 1: Connect to your specific About menu item with ID
+    // Connect to your specific About menu item
     const aboutBtn = document.getElementById('about-nebulai-btn');
     if (aboutBtn) {
         aboutBtn.addEventListener('click', function(e) {
@@ -2058,13 +2095,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Method 2: Also look for menu-item with "About" text (backup method)
+    // Also look for menu-item with "About" text
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
-        // Check if this menu item contains "About" text
         const span = item.querySelector('span');
         if (span && span.textContent.trim() === 'About') {
-            // Only add event listener if not already added (prevent duplicates)
             if (!item.hasAttribute('data-nebulai-bound')) {
                 item.setAttribute('data-nebulai-bound', 'true');
                 item.addEventListener('click', function(e) {
@@ -2102,7 +2137,7 @@ document.addEventListener('DOMContentLoaded', function() {
 window.openNebulaPopup = openNebulaPopup;
 window.closeNebulaPopup = closeNebulaPopup;
 
-// Also keep the showAbout() function for backward compatibility
+// For backward compatibility
 function showAbout() {
     openNebulaPopup();
 }
@@ -2111,34 +2146,66 @@ function showAbout() {
 <style>
 /* Animation for popup */
 #nebulai-popup {
-    animation: popupFadeIn 0.3s ease-out;
+    animation: popupFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popupFadeIn {
     from {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
+        transform: translate(-50%, -50%) scale(0.95);
+        backdrop-filter: blur(0px);
     }
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+        backdrop-filter: blur(20px) saturate(180%);
     }
 }
 
-/* Smooth transition for overlay */
+/* Smooth transitions */
 #nebulai-popup-overlay {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-/* Hover effects for buttons */
+/* Custom scrollbar for popup */
+#nebulai-popup > div:nth-child(2) {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+#nebulai-popup > div:nth-child(2)::-webkit-scrollbar {
+    width: 6px;
+}
+
+#nebulai-popup > div:nth-child(2)::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#nebulai-popup > div:nth-child(2)::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+/* Hover effects */
 #close-popup-btn:hover {
-    background: #dc2626;
+    background: rgba(220, 38, 38, 0.95) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
 }
 
 a:hover {
-    background: #5a67d8;
+    background: linear-gradient(135deg, #5a67d8, #6d28d9) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
 }
+
+/* Add Font Awesome for icons if not already included */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 </style>
+
+
+
+
 
 
 
