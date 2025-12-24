@@ -516,6 +516,246 @@
             .footer-info { font-size: 0.6rem; }
             main { padding: 15px; }
             header { padding: 0 15px; }
+
+
+
+
+
+
+
+
+/* About Modal Styles */
+.about-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 1005;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.about-content {
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: modalSlide 0.3s ease;
+}
+
+.about-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.about-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.close-about {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.close-about:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.about-body {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.about-logo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.about-logo .logo {
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.about-logo .version-badge {
+    font-size: 0.8rem;
+    background: rgba(0, 122, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    color: var(--accent-blue);
+}
+
+.about-section {
+    margin-bottom: 20px;
+}
+
+.about-section h4 {
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-blue);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.creator-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 122, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+}
+
+.creator-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.creator-title {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.about-tech {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.tech-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.about-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.about-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.about-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.about-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+}
+
+.about-btn.primary:hover {
+    background: rgba(0, 122, 255, 0.8);
+}
+
+/* Mobile fixes */
+@media (max-width: 480px) {
+    .about-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-tech {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             
             /* Mobile menu */
             .menu-container {
@@ -598,6 +838,18 @@
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </div>
+
+
+
+<!-- About -->
+<div class="menu-item" onclick="showAbout()">
+    <i class="fas fa-info-circle"></i>
+    <span>About</span>
+</div>
+
+
+
+
             
             <div class="menu-item" onclick="exportChat()">
                 <i class="fas fa-download"></i>
@@ -1631,6 +1883,168 @@ const rawText = data.choices[0].message.content;
                 }
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ==================== ABOUT FUNCTIONS ====================
+function showAbout() {
+    closeMenu(); // Close menu first
+    const aboutModal = document.getElementById('aboutModal');
+    aboutModal.classList.add('active');
+}
+
+function closeAbout() {
+    const aboutModal = document.getElementById('aboutModal');
+    aboutModal.classList.remove('active');
+}
+
+// Add to existing Escape key handler
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (settingsModal.classList.contains('active')) {
+            closeSettings();
+        }
+        if (menuContainer.classList.contains('active')) {
+            closeMenu();
+        }
+        if (document.getElementById('aboutModal').classList.contains('active')) {
+            closeAbout();
+        }
+    }
+});
+
+// Close about when clicking outside
+document.getElementById('aboutModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAbout();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- About Modal -->
+<div class="about-modal" id="aboutModal">
+    <div class="about-content">
+        <div class="about-header">
+            <div class="about-title">About Nebula AI</div>
+            <button class="close-about" onclick="closeAbout()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="about-body">
+            <div class="about-logo">
+                <div class="logo">NEBULA<span style="color: var(--accent-blue);">AI</span></div>
+                <div class="version-badge">V2.0 ARM</div>
+            </div>
+            
+            <div class="about-section">
+                <h4><i class="fas fa-rocket" style="color: var(--accent-blue); margin-right: 8px;"></i> Academic Research Model</h4>
+                <p>AI-powered assistant for students, researchers, and educators. Specialized in academic support, research assistance, and study guidance.</p>
+            </div>
+            
+            <div class="about-section">
+                <h4><i class="fas fa-star" style="color: var(--accent-blue); margin-right: 8px;"></i> Key Features</h4>
+                <div class="features-grid">
+                    <div class="feature-item">📚 Research Assistance</div>
+                    <div class="feature-item">🎓 Study Help</div>
+                    <div class="feature-item">📝 Essay Writing</div>
+                    <div class="feature-item">🔬 Homework Support</div>
+                </div>
+            </div>
+            
+            <div class="about-section">
+                <h4><i class="fas fa-user" style="color: var(--accent-blue); margin-right: 8px;"></i> Creator</h4>
+                <div class="creator-info">
+                    <div class="creator-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div>
+                        <div class="creator-name">Maulik Makwana</div>
+                        <div class="creator-title">Full Stack Developer</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-tech">
+                <div class="tech-item">
+                    <i class="fas fa-bolt" style="color: #00ff88;"></i>
+                    <span>Powered by Groq</span>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-shield-alt" style="color: #ffaa00;"></i>
+                    <span>API Secured by Vercel</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="about-actions">
+            <button class="about-btn" onclick="window.open('https://maulikmakwana.in', '_blank')">
+                <i class="fas fa-external-link-alt"></i> Portfolio
+            </button>
+            <button class="about-btn primary" onclick="closeAbout()">
+                <i class="fas fa-check"></i> Close
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+    
 </body>
 </html>
