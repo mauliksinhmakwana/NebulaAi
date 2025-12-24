@@ -1342,8 +1342,33 @@ You: [Creates history MCQs in same format]
                 }
 
                 const data = await response.json();
-                const rawText = data.choices[0]?.message?.content || "No response.";
+              //  <!---------------------------------------------------------------------------------------------rawtext------------------------
+               // const rawText = data.choices[0]?.message?.content || "No response.";
 
+
+
+// Add validation
+if (!data.choices || data.choices.length === 0) {
+    throw new Error('AI returned empty response. Please try again.');
+}
+
+if (!data.choices[0].message || !data.choices[0].message.content) {
+    console.error('Invalid response structure:', data);
+    throw new Error('Invalid response from AI server.');
+}
+
+const rawText = data.choices[0].message.content;
+
+
+
+
+
+
+
+
+
+
+                
                 // Add assistant message
                 conversation.messages.push({
                     role: 'assistant',
