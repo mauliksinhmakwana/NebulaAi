@@ -142,7 +142,6 @@
             background: white; color: black; border: none; width: 32px; height: 32px;
             border-radius: 50%; display: none; align-items: center; justify-content: center;
         }
-
         /* MOBILE FIXES */
         @media (max-width: 480px) {
             .bottom-section {
@@ -205,23 +204,24 @@
         </div>
     </div>
     <script>
-        // === IMPORTANT SECURITY FIX ===
-        // Your API key is no longer here!
-        // Create a free backend proxy at: https://vercel.com or https://netlify.com
-        // Example proxy URL (replace with your own):
-        const PROXY_URL = 'nebula-184bxgq1p-mauliksinhmakwanas-projects.vercel.app';
+        // === YOUR GROQ API KEY ADDED HERE ===
+        const GROQ_API_KEY = "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"; // ← Your key pasted here
         const MODEL_ID = 'llama-3.1-8b-instant';
+
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const scrollBtn = document.getElementById('scroll-down-btn');
+
         function autoExpand(el) {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
         }
+
         function getTime() {
             return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
+
         function formatAIResponse(text) {
             const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
             return text.replace(codeRegex, (match, lang, code) => {
@@ -236,21 +236,45 @@
                 </div>`;
             });
         }
+
         function copyCode(id) {
             const code = document.getElementById(id).innerText;
             navigator.clipboard.writeText(code);
-            alert('Code copied!');
+            const btn = event.target;
+            btn.textContent = 'COPIED';
+            setTimeout(() => { btn.textContent = 'COPY'; }, 2000);
         }
+
+        // Enhanced copy with "Copied" feedback
+        function copyFullResponse(btn) {
+            const msgElement = btn.closest('.msg');
+            // Get clean text: exclude buttons and timestamp
+            const fullText = msgElement.innerText;
+            const cleanText = fullText.replace(/Copy.*Regenerate.*|\d{1,2}:\d{2}\s*(AM|PM)?/g, '').trim();
+
+            navigator.clipboard.writeText(cleanText).then(() => {
+                btn.textContent = 'Copied ✓';
+                btn.style.opacity = '1';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.style.opacity = '0.7';
+                }, 2000);
+            });
+        }
+
         function scrollToBottom() {
             chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
         }
+
         chatContainer.onscroll = () => {
             const diff = chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight;
             scrollBtn.style.display = diff > 100 ? 'flex' : 'none';
         };
+
         function saveChat() {
             localStorage.setItem('nebula_chat_history', chatContainer.innerHTML);
         }
+
         function loadChat() {
             const saved = localStorage.getItem('nebula_chat_history');
             if (saved && saved.trim()) {
@@ -260,6 +284,7 @@
                 appendMessage('Hello! I am Nebula AI. How can I assist you today?', 'ai');
             }
         }
+
         function newChat() {
             if (confirm("Start a new conversation? Current chat will be saved.")) {
                 chatContainer.innerHTML = '';
@@ -267,36 +292,58 @@
                 saveChat();
             }
         }
+
         async function handleSend(lastUserMessage = null) {
             const query = lastUserMessage || userInput.value.trim();
             if (!query) return;
+
             if (!lastUserMessage) {
                 appendMessage(query, 'user');
                 userInput.value = '';
                 userInput.style.height = 'auto';
             }
+
             const loadingMsg = appendMessage(
                 '<div class="typing-dots"><span></span><span></span><span></span></div>', 'ai'
             );
+
             saveChat();
+
             try {
-                const response = await fetch(PROXY_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ model: MODEL_ID, message: query })
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: MODEL_ID,
+                        messages: [{ role: 'user', content: query }],
+                        temperature: 0.7
+                    })
                 });
+
                 if (!response.ok) throw new Error("API error");
+
                 const data = await response.json();
-                const rawText = data.content || "No response.";
-                loadingMsg.innerHTML = formatAIResponse(rawText) +
+                const rawText = data.choices[0]?.message?.content || "No response.";
+
+                const formatted = formatAIResponse(rawText);
+
+                loadingMsg.innerHTML = formatted +
                     `<div class="timestamp">${getTime()}</div>` +
-                    `<div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>`;
+                    `<div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                        <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                    </div>`;
+
                 saveChat();
                 scrollToBottom();
             } catch (err) {
-                loadingMsg.innerHTML = `Error: Could not connect. Check your proxy.`;
+                loadingMsg.innerHTML = `Error: ${err.message}. Check your API key or internet connection.`;
             }
         }
+
         function regenerate(btn) {
             const wrapper = btn.closest('.msg-wrapper');
             const userMsg = wrapper.previousElementSibling?.querySelector('.msg')?.innerText;
@@ -305,22 +352,36 @@
                 handleSend(userMsg);
             }
         }
+
         function appendMessage(text, type) {
             const wrapper = document.createElement('div');
             wrapper.className = `msg-wrapper ${type}-wrapper`;
             const msg = document.createElement('div');
             msg.className = `msg ${type}`;
+
             if (type === 'ai') {
-                msg.innerHTML = text + (type === 'ai' && !text.includes('typing-dots') ? `<div class="timestamp">${getTime()}</div>` : '');
+                if (text.includes('typing-dots')) {
+                    msg.innerHTML = text;
+                } else {
+                    const formatted = formatAIResponse(text);
+                    msg.innerHTML = formatted +
+                        `<div class="timestamp">${getTime()}</div>` +
+                        `<div style="display: flex; gap: 16px; margin-top: 8px;">
+                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                        </div>`;
+                }
             } else {
                 msg.innerText = text;
                 msg.innerHTML += `<div class="timestamp">${getTime()}</div>`;
             }
+
             wrapper.appendChild(msg);
             chatContainer.appendChild(wrapper);
             scrollToBottom();
             return msg;
         }
+
         function shareApp() {
             if (navigator.share) {
                 navigator.share({ title: 'Nebula AI', url: window.location.href });
@@ -329,6 +390,7 @@
                 alert("Link copied to clipboard!");
             }
         }
+
         // Event Listeners
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
