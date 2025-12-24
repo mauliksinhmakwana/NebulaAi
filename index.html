@@ -2206,7 +2206,283 @@ a:hover {
 
 
 
+<!-- About Modal -->
+<div id="about-modal" class="about-modal">
+    <div class="about-content">
+        <div class="about-header">
+            <div class="about-title">About Nebula AI</div>
+            <button class="close-about" id="close-about-btn">&times;</button>
+        </div>
+        
+        <div class="about-body">
+            <div class="about-logo">
+                <div class="logo" style="letter-spacing: 4px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+                    NEBULAAI
+                </div>
+                <div class="version-badge">V2.0 ARM</div>
+            </div>
+            
+            <div class="about-section">
+                <h4 style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-graduation-cap" style="color: var(--accent-blue);"></i>
+                    Academic Research Model
+                </h4>
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin: 0; font-size: 0.9rem;">
+                        AI-powered assistant for students, researchers, and educators. Specialized in academic support, research assistance, and study guidance.
+                    </p>
+                </div>
+                
+                <div style="background: rgba(0, 122, 255, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 122, 255, 0.2); border-left: 3px solid var(--accent-blue);">
+                    <h5 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 1rem; font-weight: 600;">
+                        <i class="fas fa-star" style="color: #fbbf24; margin-right: 8px;"></i>
+                        Key Features
+                    </h5>
+                    <ul style="margin: 0; padding-left: 0; list-style: none;">
+                        <li style="margin-bottom: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 12px; font-size: 0.9rem;">
+                            <div style="width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; flex-shrink: 0;"></div>
+                            <span>Research Assistance</span>
+                        </li>
+                        <li style="margin-bottom: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 12px; font-size: 0.9rem;">
+                            <div style="width: 6px; height: 6px; background: #8b5cf6; border-radius: 50%; flex-shrink: 0;"></div>
+                            <span>Study Help</span>
+                        </li>
+                        <li style="margin-bottom: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 12px; font-size: 0.9rem;">
+                            <div style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; flex-shrink: 0;"></div>
+                            <span>Essay Writing</span>
+                        </li>
+                        <li style="color: var(--text-secondary); display: flex; align-items: center; gap: 12px; font-size: 0.9rem;">
+                            <div style="width: 6px; height: 6px; background: #f59e0b; border-radius: 50%; flex-shrink: 0;"></div>
+                            <span>Homework Support</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="about-section">
+                <h4 style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-user" style="color: #f59e0b;"></i>
+                    Creator Information
+                </h4>
+                
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 18px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                        <i class="fas fa-check" style="font-size: 1.3rem;"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-primary); font-size: 1.1rem;">Mauluk Makwana</div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 4px;">Full Stack Developer</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                    <div style="background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.75rem; font-weight: 500; margin-bottom: 6px;">Powered by</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1rem;">Giroa</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border);">
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.75rem; font-weight: 500; margin-bottom: 6px;">API Secured by</div>
+                        <div style="color: var(--text-primary); font-weight: 700; font-size: 1rem;">Vercel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-actions">
+            <button class="settings-btn primary" onclick="window.open('#', '_blank')" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-external-link-alt"></i>
+                Portfolio
+            </button>
+            <button class="settings-btn" id="close-about-modal-btn">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 
+<script>
+// Function to open the About modal
+function openAboutModal() {
+    const modal = document.getElementById('about-modal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Function to close the About modal
+function closeAboutModal() {
+    const modal = document.getElementById('about-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Event listeners for About modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Find About button in menu
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        const span = item.querySelector('span');
+        if (span && span.textContent.trim() === 'About') {
+            item.addEventListener('click', openAboutModal);
+        }
+    });
+    
+    // Close buttons
+    const closeAboutBtn = document.getElementById('close-about-btn');
+    const closeAboutModalBtn = document.getElementById('close-about-modal-btn');
+    
+    if (closeAboutBtn) {
+        closeAboutBtn.addEventListener('click', closeAboutModal);
+    }
+    
+    if (closeAboutModalBtn) {
+        closeAboutModalBtn.addEventListener('click', closeAboutModal);
+    }
+    
+    // Close modal when clicking outside
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutModal) {
+        aboutModal.addEventListener('click', function(e) {
+            if (e.target === aboutModal) {
+                closeAboutModal();
+            }
+        });
+    }
+    
+    // Close with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAboutModal();
+        }
+    });
+});
+
+// Make function available globally
+window.openAboutModal = openAboutModal;
+</script>
+
+<style>
+/* About Modal Styles (add these to your existing CSS) */
+.about-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 1005;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.about-content {
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: modalSlide 0.3s ease;
+}
+
+.about-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.about-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.close-about {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+.close-about:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.about-body {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.about-logo {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.about-logo .version-badge {
+    font-size: 0.8rem;
+    background: rgba(0, 122, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    color: var(--accent-blue);
+    font-weight: 500;
+}
+
+.about-section {
+    margin-bottom: 25px;
+}
+
+.about-section h4 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.about-section h5 {
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .about-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .about-section {
+        margin-bottom: 20px;
+    }
+}
+</style>
 
 
 
