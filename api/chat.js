@@ -1,10 +1,10 @@
-// api/chat.js - UPDATED VERSION
+// api/chat.js - SIMPLE WORKING VERSION
 export default async function handler(req, res) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
   
   // Handle preflight
   if (req.method === 'OPTIONS') {
@@ -18,67 +18,73 @@ export default async function handler(req, res) {
   }
 
   try {
-    // DEBUG: Log incoming request
-    console.log('=== REQUEST RECEIVED ===');
-    console.log('Body:', JSON.stringify(req.body, null, 2));
-    console.log('Messages length:', req.body.messages?.length);
+    // Log request
+    console.log('Request received');
     
+    // Get API key
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
-    const { messages, model, temperature, max_tokens } = req.body;
-
-    // Validate messages
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    
+    // Check if API key exists
+    if (!GROQ_API_KEY) {
+      console.error('GROQ_API_KEY is missing in environment variables');
+      return res.status(500).json({ error: 'Server configuration error: API key missing' });
+    }
+    
+    // Parse request body
+    const body = req.body;
+    console.log('Request body:', JSON.stringify(body));
+    
+    const { messages, model, temperature, max_tokens } = body;
+    
+    // Validate required fields
+    if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ 
-        error: 'Messages array is empty or invalid',
-        received: req.body 
+        error: 'Messages must be an array',
+        example: '{"messages":[{"role":"user","content":"Hello"}]}' 
       });
     }
-
-    console.log('Calling Groq API...');
     
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    // Prepare request to Groq
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'User-Agent': 'Nebula-AI-Backend/1.0'
       },
       body: JSON.stringify({
         model: model || 'llama-3.1-8b-instant',
         messages: messages,
         temperature: temperature || 0.7,
-        max_tokens: max_tokens || 1024
+        max_tokens: max_tokens || 1024,
+        stream: false
       })
     });
-
-    console.log('Groq Response Status:', response.status);
     
-    const data = await response.json();
-    
-    // DEBUG: Log response
-    console.log('=== GROQ RESPONSE ===');
-    console.log('Has choices:', !!data.choices);
-    console.log('Choices length:', data.choices?.length);
-    console.log('First choice:', data.choices?.[0]);
-    
-    // Check if Groq returned valid response
-    if (!data.choices || data.choices.length === 0) {
-      console.error('Groq returned empty choices:', data);
-      return res.status(500).json({ 
-        error: 'AI returned empty response',
-        groqResponse: data 
+    // Check Groq response
+    if (!groqResponse.ok) {
+      const errorText = await groqResponse.text();
+      console.error('Groq API error:', groqResponse.status, errorText);
+      return res.status(groqResponse.status).json({ 
+        error: `Groq API error: ${groqResponse.status}`,
+        details: errorText.substring(0, 200) // First 200 chars
       });
     }
-
-    console.log('Sending response to frontend...');
+    
+    // Parse and return response
+    const data = await groqResponse.json();
+    console.log('Groq response success, choices:', data.choices?.length || 0);
+    
     res.status(200).json(data);
     
   } catch (error) {
-    console.error('=== ERROR ===');
-    console.error('Message:', error.message);
-    console.error('Stack:', error.stack);
+    console.error('Server error:', error.message);
+    console.error('Stack trace:', error.stack);
+    
     res.status(500).json({ 
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+      error: 'Internal server error',
+      message: error.message,
+      hint: 'Check Vercel logs for details'
     });
   }
 }
