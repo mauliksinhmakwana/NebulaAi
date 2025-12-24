@@ -721,7 +721,7 @@
 
       //<!-------------------------------------------------------------------------------------------------------------------------------------------KEY-------------------------->
         // === YOUR GROQ API KEY ADDED HERE ===
-       // const GROQ_API_KEY = "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"; // ← Your key pasted here
+       // const GROQ_API_KEY = "#"; // ← Your key pasted here
         
         // State management
         let conversations = [];
@@ -1164,6 +1164,9 @@ const AI_IDENTITY = {
                 }
 
 
+
+
+              
                // <!------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 //const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 const response = await fetch('https://nebula-ai-azure.vercel.app/api/chat', {
@@ -1182,6 +1185,14 @@ const AI_IDENTITY = {
                     
                     
              `You are ${AI_IDENTITY.name}. Never say "I don't have a name". Always use the name "${AI_IDENTITY.name}".
+
+CORE IDENTITY:
+- Your name is Nebula
+- Version: NebulaAI V2.0 ARM
+- Type: Academic Research Model
+- Creator/Devloper: Maulik Makwana
+- Purpose: Help students with academic work
+
 
 ANSWER RULES:
 1. Simple questions = Short answers (1 sentence)
