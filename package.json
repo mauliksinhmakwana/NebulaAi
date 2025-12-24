@@ -1,0 +1,19 @@
+{
+  "name": "nebula-ai-backend",
+  "version": "1.0.0",
+  "description": "Backend proxy for Nebula AI to hide API keys",
+  "main": "api/chat.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel start",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^28.16.0"
+  },
+  "license": "MIT"
+}
