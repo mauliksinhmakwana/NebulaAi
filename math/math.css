@@ -1,0 +1,19 @@
+/* math/math.css */
+
+/* Ensure math equations are white to match Ventora theme */
+.katex {
+    color: var(--text-primary) !important;
+    font-size: 1.1em;
+}
+
+/* Prevent horizontal scrolling on long equations on mobile */
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0;
+    scrollbar-width: none; /* Firefox */
+}
+
+.katex-display::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
