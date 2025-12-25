@@ -1331,7 +1331,7 @@ const AI_IDENTITY = {
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
-                        `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
+                       `<div class="timestamp">${new Date(msg.timestamp).toLocaleDateString([], {month: 'short', day: 'numeric'})} • ${formatTime(msg.timestamp)}</div>` +
                         `<div style="display: flex; gap: 16px; margin-top: 8px;">
                             <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
                             <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
@@ -1748,7 +1748,7 @@ const rawText = data.choices[0].message.content;
                 }
             } else {
                 msg.innerText = text;
-                msg.innerHTML += `<div class="timestamp">${getTime()}</div>`;
+                msg.innerHTML += `<div class="timestamp">${new Date().toLocaleDateString([], {month: 'short', day: 'numeric'})} • ${getTime()}</div>`;
             }
 
             wrapper.appendChild(msg);
