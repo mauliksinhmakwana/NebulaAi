@@ -813,6 +813,8 @@
 
     <link rel="stylesheet" href="math/math.css">
 <script src="math/math.js"></script>
+<link rel="stylesheet" href="goal/goal.css">
+<script src="goal/goal.js"></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -826,6 +828,41 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
+
+
+
+
+
+        
+        <div class="goals-sidebar-section">
+            <div class="menu-divider"></div>
+            <div class="goals-header">
+                <span>Study Goals</span>
+                <span id="goal-status">Saved</span>
+            </div>
+            <div class="goals-input-wrapper">
+                <textarea id="study-goals-area" 
+                    placeholder="• Read Chapter 2&#10;• Solve 5 Math problems&#10;• Email professor..."></textarea>
+            </div>
+        </div>
+    </div> ```
+
+### Why this is effective for students:
+* **Focus:** Keeps the primary academic objective in sight while interacting with the AI.
+* **Ease of Use:** No "Save" button required; it works like a digital sticky note.
+* **Clean UI:** The `margin-top: auto` in the CSS ensures that if the chat list is short, the goals widget stays neatly at the bottom of the sidebar.
+
+**Would you like me to add a "Clear All" button to the widget so students can reset their list for a new study session?**
+
+
+
+
+
+
+
+
+
+    
         
         <div class="menu-items" id="conversationsList">
             <!-- New Chat button -->
