@@ -2749,6 +2749,13 @@ window.closeAboutModal = closeAboutModal;
             </select>
         </div>
 
+        <div class="pers-group">
+            <label class="pers-label">Custom Instructions</label>
+            <textarea id="persCustom" class="pers-input" rows="4" 
+                placeholder="What would you like Nebula to know to provide better responses? (e.g. 'Use lots of analogies', 'Give answers in bullet points')" 
+                style="resize: none; font-family: inherit;"></textarea>
+        </div>
+
         <div class="pers-btns">
             <button class="pers-btn save" onclick="savePersonalization()">Save Changes</button>
             <button class="pers-btn cancel" onclick="closePersonalization()">Cancel</button>
