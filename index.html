@@ -813,8 +813,7 @@
 <link rel="stylesheet" href="goal/goal.css">
 <script src="goal/goal.js"></script>
 
-    <link rel="stylesheet" href="manu/manu.css">
-<script src="manu/manu.js"></script>
+   <link rel="stylesheet" href="menu/menu.css">
     
 </head>
 
@@ -871,54 +870,11 @@
             
 
 
-            <div class="menu-item" onclick="toggleGoalModal()">
-    <i class="fas fa-check-circle"></i>
-    <span>Study Goals</span>
-</div>
-
-<!-- Personalization -->
-            <div class="menu-item" onclick="openPersonalization()">
-    <i class="fas fa-user-circle"></i>
-    <span>Personalization</span>
-</div>
-            <!-- Settings and Export -->
-            <div class="menu-item" onclick="openSettings()">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
-
-
-
-<!-- About -->
-<!-- Update this in your menu -->
-<div class="menu-item" id="about-nebulai-btn">
-    <i class="fas fa-info-circle"></i>
-    <span>About</span>
-</div>
-
-
-
 
         
   </div>
 
 
- <div class="menu-bottom-wrapper">
-        <div class="menu-expanded-options" id="menuExpandedOptions">
-
-            
-            <div class="menu-item" onclick="handleMenuAction('exportChat')">
-                <i class="fas fa-download"></i>
-                <span>Export Chat</span>
-            </div>
-
-
-<div class="menu-trigger-btn" onclick="toggleBottomMenu()">
-            <div class="user-avatar-mini">M</div>
-            <div class="trigger-text">Maulik Makwana</div>
-            <i class="fas fa-chevron-up trigger-icon"></i>
-
-</div>
             </div>
 
 
@@ -2870,33 +2826,7 @@ window.closeAboutModal = closeAboutModal;
 
 
 
-
-
-<div class="goal-modal" id="goalModal">
-    <div class="goal-content">
-        <div class="goal-header">
-            <button onclick="toggleGoalModal()" class="close-menu" style="margin:0; font-size:1.2rem;">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h3>STUDY GOALS</h3>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="goal-body">
-            <div class="add-task-bar">
-                <input type="text" id="newTaskInput" placeholder="Add a new task...">
-                <button class="add-task-btn" onclick="addTask()">ADD</button>
-            </div>
-            <div id="taskList"></div>
-            
-            <div class="note-section">
-                <label>Study Notes (Auto-saves)</label>
-                <textarea id="study-notes-area" placeholder="Write down important things to remember..."></textarea>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+<script src="menu/menu.js"></script>
 
 
 
