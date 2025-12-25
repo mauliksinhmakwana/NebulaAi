@@ -23,7 +23,8 @@ function toggleSpeech(btn) {
     // 2. Get and Clean the Text
     const msgDiv = btn.closest('.msg');
     let text = msgDiv.innerText
-        .replace(/Read|Stop/g, '') // Remove UI text
+        .replace(/[A-Z][a-z]{2}\s\d{1,2}\s•\s\d{1,2}:\d{2}\s(AM|PM)/g, '')
+        .replace(/Copy|↻ Regenerate|Read|Stop/g, '') // Remove UI text
         .replace(/```[\s\S]*?```/g, ' [reading code skipped] ') // Skip large code blocks
         .replace(/\*\*/g, '') // Remove bold markdown
         .trim();
