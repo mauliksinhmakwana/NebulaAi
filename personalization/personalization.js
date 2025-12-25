@@ -3,7 +3,8 @@ window.personalization = JSON.parse(localStorage.getItem('nebula_pers')) || {
     userName: '',
     studyLevel: 'college',
     major: '',
-    responseStyle: 'balanced'
+    responseStyle: 'balanced',
+    customInstructions: '' // Added new field
 };
 
 // Open Popup
@@ -15,6 +16,7 @@ window.openPersonalization = function() {
     document.getElementById('persLevel').value = window.personalization.studyLevel || 'college';
     document.getElementById('persMajor').value = window.personalization.major || '';
     document.getElementById('persStyle').value = window.personalization.responseStyle || 'balanced';
+    document.getElementById('persCustom').value = window.personalization.customInstructions || ''; // Added loading logic
     
     document.getElementById('personalizationModal').classList.add('active');
 };
@@ -30,11 +32,12 @@ window.savePersonalization = function() {
         userName: document.getElementById('persName').value.trim(),
         studyLevel: document.getElementById('persLevel').value,
         major: document.getElementById('persMajor').value.trim(),
-        responseStyle: document.getElementById('persStyle').value
+        responseStyle: document.getElementById('persStyle').value,
+        customInstructions: document.getElementById('persCustom').value.trim() // Added saving logic
     };
     
     localStorage.setItem('nebula_pers', JSON.stringify(window.personalization));
     window.closePersonalization();
     
-    if(typeof showToast === "function") showToast("Updated!");
+    if(typeof showToast === "function") showToast("Identity Updated! ✨");
 };
