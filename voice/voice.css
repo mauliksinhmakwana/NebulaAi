@@ -1,0 +1,33 @@
+/* voice/voice.css */
+.voice-btn {
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--accent-blue);
+    margin-top: 8px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.voice-btn:hover {
+    opacity: 1;
+}
+
+/* Red pulse effect while speaking */
+.voice-btn.speaking {
+    color: #ff4757; 
+    font-weight: bold;
+    opacity: 1;
+}
+
+.voice-btn.speaking i {
+    animation: voicePulse 1.2s infinite ease-in-out;
+}
+
+@keyframes voicePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); opacity: 0.5; }
+    100% { transform: scale(1); }
+}
