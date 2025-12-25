@@ -807,6 +807,11 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="personalization/personalization.css">
+
+    <link rel="stylesheet" href="voice/voice.css">
+<script src="voice/voice.js"></script>
+
+    
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -1341,10 +1346,22 @@ const AI_IDENTITY = {
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
                         `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
+
+                        
                         `<div style="display: flex; gap: 16px; margin-top: 8px;">
                             <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                            
+                            <div class="voice-btn" onclick="toggleSpeech(this)">
+        <i class="fas fa-volume-up"></i> Read
+    </div>
+
                             <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+
+
+                            
                         </div>`;
+
+                    
                     wrapper.appendChild(msgDiv);
                     chatContainer.appendChild(wrapper);
                 }
