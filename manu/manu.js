@@ -1,20 +1,21 @@
 // manu/manu.js
+
 function toggleBottomMenu() {
     const options = document.getElementById('menuExpandedOptions');
     options.classList.toggle('active');
 }
 
-function handleMenuAction(actionFunction) {
-    // Close the slide-up menu
+// Automatically close the menu after clicking an option
+function handleMenuAction(functionName) {
     document.getElementById('menuExpandedOptions').classList.remove('active');
     
-    // Execute the requested function
-    if (typeof window[actionFunction] === 'function') {
-        window[actionFunction]();
+    // Check if the old function exists and run it
+    if (typeof window[functionName] === 'function') {
+        window[functionName]();
     }
 }
 
-// Close if user clicks elsewhere in the sidebar
+// Close menu if user clicks elsewhere
 document.addEventListener('click', (e) => {
     const wrapper = document.querySelector('.menu-bottom-wrapper');
     const options = document.getElementById('menuExpandedOptions');
