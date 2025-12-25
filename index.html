@@ -1948,17 +1948,7 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-<!-- About Modal - Final Refined Version -->
+<!-- About Modal - Fixed Layout -->
 <div id="about-modal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title" aria-hidden="true">
     <div class="about-content">
         <div class="about-header">
@@ -1974,11 +1964,6 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
         <div class="about-body">
             <!-- Version Info -->
             <div class="version-section">
-                <div class="app-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                </div>
                 <div class="app-name">Nebula AI</div>
                 <div class="version-info">
                     <span class="version">Version 2.0</span>
@@ -1993,22 +1978,12 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
                 </p>
             </div>
             
-            <!-- Features -->
+            <!-- Features Grid -->
             <div class="features-section">
-                <h3 class="section-heading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                    Key Features
-                </h3>
-                <div class="features-grid">
+                <h3 class="section-heading">Key Features</h3>
+                <div class="features-list">
                     <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                            </svg>
-                        </div>
+                        <div class="feature-bullet">•</div>
                         <div class="feature-content">
                             <div class="feature-title">Research Assistance</div>
                             <div class="feature-desc">Academic research support</div>
@@ -2016,12 +1991,7 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
                     </div>
                     
                     <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 20h9"/>
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                            </svg>
-                        </div>
+                        <div class="feature-bullet">•</div>
                         <div class="feature-content">
                             <div class="feature-title">Study Help</div>
                             <div class="feature-desc">Learning support</div>
@@ -2029,25 +1999,15 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
                     </div>
                     
                     <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                            </svg>
-                        </div>
+                        <div class="feature-bullet">•</div>
                         <div class="feature-content">
                             <div class="feature-title">Essay Writing</div>
-                            <div class="feature-desc">Writing assistance</div>
+                            <div class="feature-desc">Writing assistance</div> <!-- Fixed text -->
                         </div>
                     </div>
                     
                     <div class="feature-item">
-                        <div class="feature-icon">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <path d="M22 4L12 14.01l-3-3"/>
-                            </svg>
-                        </div>
+                        <div class="feature-bullet">•</div>
                         <div class="feature-content">
                             <div class="feature-title">Homework Support</div>
                             <div class="feature-desc">Assignment help</div>
@@ -2056,69 +2016,35 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
                 </div>
             </div>
             
-            <!-- Creator -->
+            <!-- Creator Info -->
             <div class="creator-section">
-                <h3 class="section-heading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Creator
-                </h3>
-                <div class="creator-card">
+                <h3 class="section-heading">Creator</h3>
+                <div class="creator-info">
                     <div class="creator-avatar">
                         <div class="avatar-initial">M</div>
                     </div>
                     <div class="creator-details">
-                        <div class="creator-name">Maulik Makwana</div>
-                        <div class="creator-role">Developer</div>
-                        <div class="creator-email">@maulik_makwana</div>
+                        <div class="creator-name">Mauluk Makwana</div>
+                        <div class="creator-role">Full Stack Developer</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Tech -->
+            <!-- Tech Stack -->
             <div class="tech-section">
-                <h3 class="section-heading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                    </svg>
-                    Technology
-                </h3>
-                <div class="tech-grid">
-                    <div class="tech-item">
-                        <div class="tech-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                            </svg>
-                        </div>
-                        <div class="tech-content">
-                            <div class="tech-label">Powered by</div>
-                            <div class="tech-value">Open Nebula</div>
-                        </div>
-                    </div>
-                    <div class="tech-item">
-                        <div class="tech-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            </svg>
-                        </div>
-                        <div class="tech-content">
-                            <div class="tech-label">Secured by</div>
-                            <div class="tech-value">Open Nebula</div>
-                        </div>
-                    </div>
+                <div class="tech-item">
+                    <div class="tech-label">Powered by</div>
+                    <div class="tech-value">Giroa</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-label">API Secured by</div>
+                    <div class="tech-value">Vercel</div>
                 </div>
             </div>
             
             <!-- External Link -->
             <div class="external-link">
-                <a href="https://mauliksinhmakwana.github.io/Mauliksinh-Makwana/" target="_blank" class="link-button" onclick="window.open('https://mauliksinhmakwana.github.io/Mauliksinh-Makwana/', '_blank')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                        <path d="M15 3h6v6"/>
-                        <path d="M10 14L21 3"/>
-                    </svg>
+                <a href="#" target="_blank" class="link-button" onclick="window.open('#', '_blank')">
                     <span>Visit Portfolio</span>
                 </a>
             </div>
@@ -2133,7 +2059,6 @@ function openAboutModal() {
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
     
     // Set focus to the close button
     setTimeout(() => {
@@ -2147,8 +2072,7 @@ function closeAboutModal() {
     const modal = document.getElementById('about-modal');
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
+    document.body.style.overflow = 'auto';
     
     // Return focus to the button that opened the modal
     if (window.lastFocusedElement) {
@@ -2199,48 +2123,6 @@ document.addEventListener('DOMContentLoaded', function() {
             closeAboutModal();
         }
     });
-    
-    // Enhanced touch scrolling with passive listeners
-    let startY = 0;
-    let startScrollTop = 0;
-    let isDragging = false;
-    
-    aboutModal.addEventListener('touchstart', function(e) {
-        const aboutBody = this.querySelector('.about-body');
-        if (aboutBody && aboutBody.contains(e.target)) {
-            startY = e.touches[0].clientY;
-            startScrollTop = aboutBody.scrollTop;
-            isDragging = true;
-        }
-    }, { passive: true });
-    
-    aboutModal.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
-        
-        const aboutBody = this.querySelector('.about-body');
-        if (!aboutBody) return;
-        
-        const currentY = e.touches[0].clientY;
-        const deltaY = currentY - startY;
-        
-        // Check if we're at boundaries
-        const isAtTop = aboutBody.scrollTop === 0;
-        const isAtBottom = aboutBody.scrollTop + aboutBody.clientHeight >= aboutBody.scrollHeight;
-        
-        // Prevent pull-to-refresh when at top and pulling down
-        if (isAtTop && deltaY > 0) {
-            e.preventDefault();
-        }
-        
-        // Prevent overscroll when at bottom and pulling up
-        if (isAtBottom && deltaY < 0) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-    
-    aboutModal.addEventListener('touchend', function() {
-        isDragging = false;
-    }, { passive: true });
 });
 
 // Make function available globally
@@ -2249,7 +2131,7 @@ window.closeAboutModal = closeAboutModal;
 </script>
 
 <style>
-/* About Modal - Final Refined CSS */
+/* About Modal - Fixed CSS */
 .about-modal {
     position: fixed;
     top: 0;
@@ -2257,8 +2139,8 @@ window.closeAboutModal = closeAboutModal;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 1005;
     display: none;
     align-items: center;
@@ -2267,7 +2149,6 @@ window.closeAboutModal = closeAboutModal;
     transition: opacity 0.2s ease;
     padding: 16px;
     pointer-events: none;
-    overflow: hidden;
 }
 
 .about-modal.active {
@@ -2276,19 +2157,18 @@ window.closeAboutModal = closeAboutModal;
     pointer-events: auto;
 }
 
-/* Desktop Size - Center Modal */
 .about-content {
-    background: rgba(28, 28, 28, 0.98);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    background: rgba(30, 30, 30, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
     padding: 0;
     width: 100%;
-    max-width: 440px; /* Desktop width */
-    max-height: 80vh; /* Desktop height */
+    max-width: 400px;
+    max-height: 85vh;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: modalSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -2298,22 +2178,22 @@ window.closeAboutModal = closeAboutModal;
 @keyframes modalSlideUp {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.98);
+        transform: translateY(16px);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
-/* Header */
+/* Header - Fixed for mobile */
 .about-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 24px;
+    padding: 20px 24px 16px 24px; /* Increased top padding */
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(28, 28, 28, 0.98);
+    background: rgba(30, 30, 30, 0.98);
     backdrop-filter: blur(20px);
     position: sticky;
     top: 0;
@@ -2328,31 +2208,31 @@ window.closeAboutModal = closeAboutModal;
     margin: 0;
     text-align: center;
     flex: 1;
-    letter-spacing: -0.3px;
+    line-height: 1.2; /* Better line height */
 }
 
 .close-about {
-    background: rgba(255, 255, 255, 0.08);
+    background: none;
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 8px;
+    padding: 10px; /* Larger padding */
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     flex-shrink: 0;
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 44px; /* Minimum touch target */
+    min-height: 44px;
+    margin-top: -4px; /* Adjust vertical alignment */
 }
 
 .close-about:hover,
 .close-about:focus {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
     outline: none;
-    transform: scale(1.05);
 }
 
 .close-about svg {
@@ -2360,23 +2240,20 @@ window.closeAboutModal = closeAboutModal;
 }
 
 .header-spacer {
-    width: 40px;
+    width: 44px;
     visibility: hidden;
 }
 
-/* Body with FIXED Touch Scrolling */
+/* Body */
 .about-body {
     flex: 1;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
     padding: 24px;
     color: var(--text-secondary);
     font-size: 0.9375rem;
     line-height: 1.5;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-    overscroll-behavior: contain; /* Prevent pull-to-refresh */
-    touch-action: pan-y; /* Better touch control */
 }
 
 .about-body::-webkit-scrollbar {
@@ -2385,36 +2262,19 @@ window.closeAboutModal = closeAboutModal;
 
 .about-body::-webkit-scrollbar-track {
     background: transparent;
-    margin: 4px 0;
 }
 
 .about-body::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
     border-radius: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.about-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
 }
 
 /* Version Section */
 .version-section {
     text-align: center;
-    margin-bottom: 28px;
-    padding-bottom: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.app-icon {
-    color: var(--accent-blue);
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: center;
-}
-
-.app-icon svg {
-    display: block;
 }
 
 .app-name {
@@ -2422,7 +2282,7 @@ window.closeAboutModal = closeAboutModal;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 .version-info {
@@ -2435,7 +2295,6 @@ window.closeAboutModal = closeAboutModal;
     font-size: 0.9375rem;
     color: var(--accent-blue);
     font-weight: 500;
-    letter-spacing: 0.5px;
 }
 
 .model-type {
@@ -2446,12 +2305,7 @@ window.closeAboutModal = closeAboutModal;
 
 /* Description */
 .description-section {
-    margin-bottom: 28px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
+    margin-bottom: 24px;
 }
 
 .description {
@@ -2462,76 +2316,48 @@ window.closeAboutModal = closeAboutModal;
     text-align: center;
 }
 
-/* Features */
+/* Features - Fixed bullet points */
 .features-section {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
 .section-heading {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0 0 18px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.features-list {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    letter-spacing: -0.3px;
-}
-
-.section-heading svg {
-    color: var(--accent-blue);
-    flex-shrink: 0;
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .feature-item {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    cursor: default;
-    -webkit-tap-highlight-color: transparent;
 }
 
-.feature-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    transform: translateY(-1px);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.feature-icon {
+.feature-bullet {
     color: var(--accent-blue);
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-top: -2px;
     flex-shrink: 0;
-    padding: 4px;
-    background: rgba(0, 122, 255, 0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-}
-
-.feature-icon svg {
-    display: block;
+    width: 20px;
+    text-align: center;
 }
 
 .feature-content {
     flex: 1;
-    min-width: 0;
 }
 
 .feature-title {
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-primary);
     margin-bottom: 4px;
@@ -2539,33 +2365,34 @@ window.closeAboutModal = closeAboutModal;
 }
 
 .feature-desc {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
     opacity: 0.8;
     line-height: 1.4;
 }
 
-/* Creator */
+/* Creator Section */
 .creator-section {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.creator-card {
+.creator-info {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 18px;
+    padding: 16px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    backdrop-filter: blur(10px);
 }
 
 .creator-avatar {
     width: 56px;
     height: 56px;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2582,11 +2409,10 @@ window.closeAboutModal = closeAboutModal;
 
 .creator-details {
     flex: 1;
-    min-width: 0;
 }
 
 .creator-name {
-    font-size: 1.0625rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 4px;
@@ -2596,105 +2422,58 @@ window.closeAboutModal = closeAboutModal;
 .creator-role {
     font-size: 0.875rem;
     color: var(--text-secondary);
-    margin-bottom: 2px;
     line-height: 1.4;
 }
 
-.creator-email {
-    font-size: 0.8125rem;
-    color: var(--text-secondary);
-    opacity: 0.7;
-    line-height: 1.4;
-}
-
-/* Tech */
+/* Tech Section */
 .tech-section {
-    margin-bottom: 28px;
-}
-
-.tech-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .tech-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     padding: 16px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.tech-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    transform: translateY(-1px);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-.tech-icon {
-    color: var(--accent-blue);
-    flex-shrink: 0;
-    padding: 4px;
-    background: rgba(0, 122, 255, 0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-}
-
-.tech-icon svg {
-    display: block;
-}
-
-.tech-content {
-    flex: 1;
-    min-width: 0;
+    text-align: center;
 }
 
 .tech-label {
     font-size: 0.8125rem;
     color: var(--text-secondary);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     opacity: 0.8;
-    line-height: 1.3;
 }
 
 .tech-value {
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
-    line-height: 1.3;
 }
 
 /* External Link */
 .external-link {
     text-align: center;
-    margin-top: 8px;
 }
 
 .link-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     color: var(--accent-blue);
     text-decoration: none;
     font-size: 0.9375rem;
     font-weight: 500;
     padding: 12px 24px;
     border-radius: 10px;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     background: rgba(0, 122, 255, 0.1);
     border: 1px solid rgba(0, 122, 255, 0.2);
     min-height: 44px;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .link-button:hover,
@@ -2703,32 +2482,23 @@ window.closeAboutModal = closeAboutModal;
     color: var(--accent-blue);
     outline: none;
     text-decoration: none;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
 }
 
-.link-button svg {
-    display: block;
-    flex-shrink: 0;
-}
-
-/* ===== MOBILE SPECIFIC STYLES (Different Size & Layout) ===== */
+/* ===== MOBILE FIXES ===== */
 @media (max-width: 768px) {
     .about-modal {
         padding: 0;
         align-items: flex-end;
     }
     
-    /* Mobile Size - Bottom Sheet */
     .about-content {
         max-width: 100%;
-        max-height: 90vh; /* Taller on mobile */
+        max-height: 90vh;
         border-radius: 20px 20px 0 0;
-        animation: mobileSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        margin: 0;
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    @keyframes mobileSlideUp {
+    @keyframes slideUp {
         from {
             opacity: 0;
             transform: translateY(100%);
@@ -2739,53 +2509,37 @@ window.closeAboutModal = closeAboutModal;
         }
     }
     
+    /* FIX FOR HEADER BEING CUT OFF */
     .about-header {
-        padding: 16px 20px;
+        padding-top: max(24px, env(safe-area-inset-top, 24px)) !important;
+        padding-left: max(20px, env(safe-area-inset-left, 20px)) !important;
+        padding-right: max(20px, env(safe-area-inset-right, 20px)) !important;
+        padding-bottom: 16px;
     }
     
     .about-body {
         padding: 20px;
-        padding-bottom: max(20px, env(safe-area-inset-bottom));
+        padding-left: max(20px, env(safe-area-inset-left, 20px)) !important;
+        padding-right: max(20px, env(safe-area-inset-right, 20px)) !important;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
+    }
+    
+    .close-about {
+        min-width: 44px;
+        min-height: 44px;
+        margin-top: 0; /* Reset margin */
+    }
+    
+    .tech-section {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
     
     .app-name {
         font-size: 1.6rem;
     }
-    
-    .features-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    .tech-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-    
-    /* Improved touch targets for mobile */
-    .close-about,
-    .link-button {
-        min-height: 48px;
-        min-width: 48px;
-    }
-    
-    .feature-item,
-    .creator-card,
-    .tech-item {
-        padding: 16px;
-        min-height: 56px;
-    }
-    
-    /* Bottom padding for safe area */
-    .about-content::after {
-        content: '';
-        display: block;
-        height: env(safe-area-inset-bottom);
-        background: transparent;
-    }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
     .about-content {
         max-height: 95vh;
@@ -2800,28 +2554,16 @@ window.closeAboutModal = closeAboutModal;
         font-size: 1.5rem;
     }
     
-    .version {
-        font-size: 0.9375rem;
-    }
-    
-    .model-type {
-        font-size: 0.875rem;
-    }
-    
     .section-heading {
-        font-size: 0.9375rem;
+        font-size: 1rem;
         margin-bottom: 16px;
     }
     
-    .feature-title,
-    .tech-value {
+    .feature-title {
         font-size: 0.9375rem;
     }
     
-    .feature-desc,
-    .tech-label,
-    .creator-role,
-    .creator-email {
+    .feature-desc {
         font-size: 0.8125rem;
     }
     
@@ -2834,147 +2576,36 @@ window.closeAboutModal = closeAboutModal;
         height: 52px;
         font-size: 1.3rem;
     }
-    
-    .link-button {
-        padding: 14px 20px;
-        font-size: 0.9375rem;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 360px) {
-    .about-body {
-        padding: 16px;
-    }
-    
-    .app-name {
-        font-size: 1.4rem;
-    }
-    
-    .description-section {
-        padding: 16px;
-    }
-    
-    .feature-item,
-    .creator-card,
-    .tech-item {
-        padding: 14px;
-    }
-    
-    .link-button {
-        padding: 12px 18px;
-    }
-}
-
-/* Landscape mode optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .about-modal {
-        align-items: flex-start;
-        padding-top: 16px;
-    }
-    
-    .about-content {
-        max-height: 85vh;
-        max-width: 400px;
-        margin: 0 auto;
-        border-radius: 16px;
-    }
-    
-    .about-body {
-        max-height: 65vh;
-    }
-}
-
-/* Tablet optimization */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .about-content {
-        max-width: 500px;
-        max-height: 85vh;
-    }
-    
-    .about-body {
-        padding: 28px;
-    }
-    
-    .app-name {
-        font-size: 2rem;
-    }
-}
-
-/* Large desktop screens */
-@media (min-width: 1200px) {
-    .about-content {
-        max-width: 480px;
-        max-height: 80vh;
-    }
-    
-    .about-body {
-        padding: 28px;
-    }
 }
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-    .close-about:active,
-    .link-button:active,
-    .feature-item:active,
-    .tech-item:active {
-        transform: scale(0.98);
-        transition: transform 0.1s ease;
+    .close-about {
+        min-height: 48px;
+        min-width: 48px;
     }
     
-    .feature-item:hover,
-    .tech-item:hover,
-    .link-button:hover {
-        transform: none;
-    }
-    
-    .close-about:hover,
-    .link-button:hover {
-        background: rgba(255, 255, 255, 0.08);
-    }
-    
-    .feature-item:hover,
-    .tech-item:hover {
-        background: rgba(255, 255, 255, 0.04);
+    .link-button {
+        min-height: 48px;
+        padding: 14px 20px;
     }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .about-modal,
-    .about-content,
-    .close-about,
-    .feature-item,
-    .tech-item,
-    .link-button {
+    .about-content {
         transition: none;
         animation: none;
     }
     
     .about-content {
-        animation: fadeIn 0.2s ease;
+        animation: fadeIn 0.15s ease;
     }
     
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .about-content {
-        border: 2px solid var(--text-primary);
-        background: var(--bg);
-    }
-    
-    .feature-item,
-    .creator-card,
-    .tech-item,
-    .description-section {
-        border: 1px solid var(--text-primary);
-        background: var(--surface);
     }
 }
 </style>
