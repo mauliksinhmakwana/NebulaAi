@@ -1,51 +1,368 @@
-/* Optimized Popup Style */
+/* ==================== OPTIMIZED PERSONALIZATION MODAL ==================== */
 .personalization-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
-    z-index: 2005; display: none; align-items: center; justify-content: center;
-    opacity: 0; transition: all 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1006;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 16px;
+    box-sizing: border-box;
+    pointer-events: none;
 }
 
-.personalization-modal.active { display: flex; opacity: 1; }
+.personalization-modal.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
 
 .personalization-content {
-    background: #111; border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px; padding: 24px; width: 95%; max-width: 400px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-    transform: translateY(30px); transition: transform 0.4s cubic-bezier(0.17, 0.84, 0.44, 1);
+    background: rgba(18, 18, 18, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    transform: translateY(20px) scale(0.98);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
-.personalization-modal.active .personalization-content { transform: translateY(0); }
+.personalization-modal.active .personalization-content {
+    transform: translateY(0) scale(1);
+}
 
-.pers-header { margin-bottom: 25px; text-align: left; }
-.pers-title { font-size: 1.4rem; font-weight: 700; color: #fff; margin: 0; }
-.pers-subtitle { font-size: 0.85rem; color: #666; margin-top: 4px; }
+/* Header */
+.pers-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
 
-.pers-group { margin-bottom: 18px; }
-.pers-label { display: block; font-size: 0.75rem; font-weight: 700; color: #007aff; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+.pers-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
 
+.pers-subtitle {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+/* Form Groups */
+.pers-group {
+    margin-bottom: 20px;
+}
+
+.pers-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #007aff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.label-optional {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: none;
+    font-weight: 400;
+}
+
+/* Input Fields */
 .pers-input, .pers-select {
-    width: 100%; padding: 14px; background: #1a1a1a; 
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px;
-    color: #fff; font-size: 1rem; outline: none; transition: border 0.2s;
-    appearance: none; -webkit-appearance: none;
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-/* Fix White Dropdown Arrow */
+.pers-input:focus, .pers-select:focus {
+    border-color: #007aff;
+    background: rgba(0, 122, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.pers-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Select Dropdown */
 .pers-select {
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat; background-position: right 15px center; background-size: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 14px;
+    padding-right: 44px;
+    cursor: pointer;
 }
 
-.pers-select option { background: #1a1a1a; color: #fff; }
+.pers-select option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 12px;
+    font-size: 0.9375rem;
+}
 
-.pers-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
-.pers-btn { padding: 15px; border-radius: 16px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-.pers-btn.save { background: #fff; color: #000; }
-.pers-btn.cancel { background: transparent; color: #555; }
+/* Buttons */
+.pers-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
 
-/* Mobile Optimization: Slide up from bottom */
+.pers-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    text-align: center;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pers-btn.save {
+    background: linear-gradient(135deg, #007aff, #0056cc);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+}
+
+.pers-btn.save:hover {
+    background: linear-gradient(135deg, #0056cc, #0047a3);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.3);
+}
+
+.pers-btn.save:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+}
+
+.pers-btn.cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pers-btn.cancel:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.pers-btn.cancel:active {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Scrollbar Styling */
+.personalization-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.personalization-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.personalization-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.personalization-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==================== MOBILE OPTIMIZATION ==================== */
+@media (max-width: 768px) {
+    .personalization-modal {
+        padding: 0;
+        align-items: flex-end;
+        justify-content: flex-end;
+        flex-direction: column;
+    }
+    
+    .personalization-content {
+        border-radius: 24px 24px 0 0;
+        max-width: 100%;
+        max-height: 85vh;
+        margin: 0;
+        transform: translateY(100%);
+        padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+        box-shadow: 
+            0 -20px 40px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+        animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    
+    .pers-header {
+        padding-top: max(16px, env(safe-area-inset-top, 16px));
+        margin-bottom: 20px;
+    }
+    
+    .pers-title {
+        font-size: 1.2rem;
+    }
+    
+    .pers-group {
+        margin-bottom: 18px;
+    }
+    
+    .pers-input, .pers-select {
+        padding: 16px;
+        font-size: 1rem; /* Prevents iOS zoom */
+    }
+    
+    .pers-select {
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+    
+    .pers-btns {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 24px;
+    }
+    
+    .pers-btn {
+        min-height: 52px;
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 480px) {
-    .personalization-modal { align-items: flex-end; }
-    .personalization-content { border-radius: 30px 30px 0 0; width: 100%; padding-bottom: 40px; }
+    .personalization-content {
+        padding: 20px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    }
+    
+    .pers-title {
+        font-size: 1.15rem;
+    }
+    
+    .pers-subtitle {
+        font-size: 0.8125rem;
+    }
+    
+    .pers-label {
+        font-size: 0.75rem;
+    }
+    
+    .pers-input, .pers-select {
+        padding: 14px;
+    }
+}
+
+/* ==================== DESKTOP ENHANCEMENTS ==================== */
+@media (min-width: 769px) {
+    .personalization-content {
+        max-height: 80vh;
+    }
+    
+    /* Add a subtle scale effect on hover for desktop */
+    .pers-btn.save:hover {
+        transform: translateY(-2px);
+    }
+    
+    .pers-btn.cancel:hover {
+        transform: translateY(-1px);
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .personalization-modal,
+    .personalization-content,
+    .pers-btn {
+        transition: none;
+        animation: none;
+    }
+    
+    .personalization-modal.active .personalization-content {
+        transform: none;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+.pers-input:focus-visible,
+.pers-select:focus-visible,
+.pers-btn:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .personalization-content {
+        background: rgba(15, 15, 15, 0.95);
+    }
+    
+    .pers-input, .pers-select {
+        background: rgba(255, 255, 255, 0.04);
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .personalization-content {
+        border: 2px solid #ffffff;
+    }
+    
+    .pers-input, .pers-select {
+        border: 2px solid #ffffff;
+    }
+    
+    .pers-btn.save {
+        border: 2px solid #ffffff;
+    }
 }
