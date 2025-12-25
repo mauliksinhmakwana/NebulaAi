@@ -1444,17 +1444,47 @@ const AI_IDENTITY = {
                 content: 
                          
            content: 
-                content: `You are ${AI_IDENTITY.name}.
-    User Identity: ${window.personalization.userName || 'Student'}
-    Academic Level: ${window.personalization.studyLevel}
-    Primary Major/Focus: ${window.personalization.major || 'General Studies'}
-    Response Tone: ${window.personalization.responseStyle}
+                content: 
 
-    RULES:
-    1. Always address the user as ${window.personalization.userName || 'Student'}.
-    2. If a Major is provided (${window.personalization.major}), use relevant examples from that field.
-    3. Adopt a ${window.personalization.responseStyle} tone.
-    4. Match your explanation complexity to the ${window.personalization.studyLevel} level.`
+
+
+
+`You are ${AI_IDENTITY.name}. 
+
+### USER PERSONALIZATION ###
+- User Name: ${window.personalization.userName || 'Student'}
+- Study Level: ${window.personalization.studyLevel || 'College'}
+- Response Style: ${window.personalization.responseStyle || 'Friendly'}
+- Instruction: Always address the user as ${window.personalization.userName || 'Student'} and adjust complexity to a ${window.personalization.studyLevel} level.
+
+### CORE IDENTITY ###
+- Your name is Nebula
+- Version: NebulaAI V2.0 ARM
+- Type: Academic Research Model
+- Creator/Developer: Maulik Makwana
+- Purpose: Help students with academic work
+
+FORMATTING: Use **bold text** for headings, important terms, and key points.
+
+ANSWER RULES:
+1. Simple questions = Short answers (1 sentence)
+2. If user says = Give long answer with details
+3. Be friendly and helpful for students
+4. Use emojis sometimes 🎓✨
+
+##imp: use this formats when needs and user wants. other wise not.
+FORMATS:
+1. REGULAR MODE: Short answers for simple Qs, detailed for "Explain".
+2. QUIZ/EXAM MODE: Use A) B) C) D) format for MCQs.
+3. TRUE/FALSE, FILL BLANKS, MATCHING: Use standard academic layouts.
+4. ESSAY QUESTIONS: Provide structure (Intro, Points, Conclusion).
+
+WHEN TO USE FORMATS:
+- Use for "give mcq", "quiz me", "test me", "practice questions".`
+
+
+
+
                 
             },
             ...apiMessages
@@ -2606,53 +2636,35 @@ window.closeAboutModal = closeAboutModal;
 
 
 
-
 <div class="personalization-modal" id="personalizationModal">
     <div class="personalization-content">
-        <div class="pers-header">
-            <div class="pers-title">Custom Instructions</div>
-            <div class="pers-subtitle">Help Nebula understand you better</div>
-        </div>
-
+        <div class="pers-title">Personalize Nebula</div>
         <div class="pers-group">
-            <label class="pers-label">Preferred Name</label>
-            <input type="text" id="persName" class="pers-input" placeholder="e.g. Maulik">
+            <label class="pers-label">Your Name</label>
+            <input type="text" id="persName" class="pers-input" placeholder="Enter your name...">
         </div>
-
         <div class="pers-group">
             <label class="pers-label">Study Level</label>
             <select id="persLevel" class="pers-select">
-                <option value="school">School / Beginner</option>
-                <option value="highschool">High School</option>
-                <option value="college">Undergraduate / College</option>
-                <option value="researcher">Graduate / Researcher</option>
+                <option value="school">School Student</option>
+                <option value="college">College / University</option>
+                <option value="researcher">Researcher / Professional</option>
             </select>
         </div>
-
         <div class="pers-group">
-            <label class="pers-label">Major or Interest</label>
-            <input type="text" id="persMajor" class="pers-input" placeholder="e.g. Computer Science, History">
-        </div>
-
-        <div class="pers-group">
-            <label class="pers-label">Nebula's Personality</label>
+            <label class="pers-label">Response Style</label>
             <select id="persStyle" class="pers-select">
-                <option value="encouraging">Encouraging Tutor</option>
-                <option value="technical">Strict Scientist</option>
-                <option value="balanced">Balanced Assistant</option>
-                <option value="concise">Fast & Brief</option>
+                <option value="friendly">Friendly & Encouraging</option>
+                <option value="technical">Direct & Technical</option>
+                <option value="concise">Short & Concise</option>
             </select>
         </div>
-
         <div class="pers-btns">
-            <button class="pers-btn save" onclick="savePersonalization()">Save Instructions</button>
-            <button class="pers-btn cancel" onclick="closePersonalization()">Maybe later</button>
+            <button class="pers-btn cancel" onclick="closePersonalization()">Cancel</button>
+            <button class="pers-btn save" onclick="savePersonalization()">Save</button>
         </div>
     </div>
 </div>
-
-    
-
 <script src="personalization/personalization.js"></script>
 
 
