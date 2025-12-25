@@ -835,19 +835,30 @@
 
     
     <!-- Menu Container -->
-   <div class="menu-container" id="menuContainer">
-    <div class="menu-header">
-        <div class="menu-title">Ventora Ai</div>
-        <button class="close-menu" onclick="closeMenu()"><i class="fas fa-times"></i></button>
-    </div>
+   <!-- Menu Container -->
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-header">
+            <div class="menu-title">Ventora Ai</div>
+            <button class="close-menu" onclick="closeMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
     
-    <div class="menu-items" id="conversationsList">
-        <div class="menu-item" onclick="createNewConversation()">
-            <i class="fas fa-plus"></i>
-            <span>New Chat</span>
-        </div>
-        <div class="menu-divider"></div>
-        </div>
+   
+       
+       <div class="menu-item" onclick="createNewConversation()">
+                <i class="fas fa-plus"></i>
+                <span>New Chat</span>
+            </div>
+            
+            <div class="menu-divider"></div>
+            
+            <!-- Conversation history will be loaded here -->
+            
+            <div class="menu-divider"></div>
+
+       
 
     <div class="menu-bottom-wrapper">
         <div class="menu-expanded-options" id="menuExpandedOptions">
@@ -863,6 +874,11 @@
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </div>
+
+            <div class="menu-item" onclick="exportChat()">
+                <i class="fas fa-download"></i>
+                <span>Export Chat</span>
+            </div>
         </div>
 
         <div class="menu-trigger-btn" onclick="toggleBottomMenu()">
@@ -873,7 +889,7 @@
     </div>
 </div>
         
-            
+</div>     
             
         
     
