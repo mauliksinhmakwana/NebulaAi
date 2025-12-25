@@ -52,7 +52,7 @@
 @media (max-width: 480px) {
     .personalization-content {
         padding: 20px;
-        max-height: 90vh; /* Allow more height on small screens */
+        max-height: 100vh; /* Allow more height on small screens */
     }
     
     .pers-btns {
