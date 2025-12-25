@@ -833,53 +833,70 @@
 
 
 
-    <div class="menu-container" id="menuContainer">
-    <div class="menu-header">
-        <div class="menu-title">Ventora Ai</div>
-        <button class="close-menu" onclick="closeMenu()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
     
-    <div class="menu-items" id="conversationsList">
-        <div class="menu-item" onclick="createNewConversation()">
-            <i class="fas fa-plus"></i>
-            <span>New Chat</span>
+    <!-- Menu Container -->
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-header">
+            <div class="menu-title">Ventora Ai</div>
+            <button class="close-menu" onclick="closeMenu()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="menu-divider"></div>
-        </div>
+        
+        <div class="menu-items" id="conversationsList">
+            <!-- New Chat button -->
+            <div class="menu-item" onclick="createNewConversation()">
+                <i class="fas fa-plus"></i>
+                <span>New Chat</span>
+            </div>
+            
+            <div class="menu-divider"></div>
+            
+            <!-- Conversation history will be loaded here -->
+            
+            <div class="menu-divider"></div>
 
-    <div class="menu-bottom-wrapper">
-        <div class="menu-expanded-options" id="menuExpandedOptions">
-            <div class="menu-item" onclick="handleMenuAction('toggleGoalModal')">
-                <i class="fas fa-check-circle"></i>
-                <span>Study Goals</span>
-            </div>
-            <div class="menu-item" onclick="handleMenuAction('openPersonalization')">
-                <i class="fas fa-user-circle"></i>
-                <span>Personalization</span>
-            </div>
-            <div class="menu-item" onclick="handleMenuAction('openSettings')">
+
+
+
+            <div class="menu-item" onclick="toggleGoalModal()">
+    <i class="fas fa-check-circle"></i>
+    <span>Study Goals</span>
+</div>
+
+<!-- Personalization -->
+            <div class="menu-item" onclick="openPersonalization()">
+    <i class="fas fa-user-circle"></i>
+    <span>Personalization</span>
+</div>
+            <!-- Settings and Export -->
+            <div class="menu-item" onclick="openSettings()">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </div>
-            <div class="menu-item" id="about-nebulai-btn" onclick="handleMenuAction('openAboutModal')">
-                <i class="fas fa-info-circle"></i>
-                <span>About</span>
-            </div>
-            <div class="menu-item" onclick="handleMenuAction('exportChat')">
+
+
+
+<!-- About -->
+<!-- Update this in your menu -->
+<div class="menu-item" id="about-nebulai-btn">
+    <i class="fas fa-info-circle"></i>
+    <span>About</span>
+</div>
+
+
+
+
+            
+            <div class="menu-item" onclick="exportChat()">
                 <i class="fas fa-download"></i>
                 <span>Export Chat</span>
             </div>
         </div>
-
-        <div class="menu-trigger-btn" onclick="toggleBottomMenu()">
-            <div class="user-avatar-mini">M</div>
-            <div class="trigger-text">Maulik Makwana</div>
-            <i class="fas fa-chevron-up trigger-icon"></i>
-        </div>
     </div>
-</div>
+
+
+
         
     
 
