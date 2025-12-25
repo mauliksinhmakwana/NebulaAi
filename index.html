@@ -1046,18 +1046,20 @@ const AI_IDENTITY = {
         const toast = document.getElementById('toast');
 
         // ==================== INITIALIZATION ====================
-        function initApp() {
-            loadSettings();
-            loadConversations();
-            
-            if (conversations.length === 0) {
-                createNewConversation();
-            } else {
-                switchConversation(conversations[0].id);
-            }
-            
-            userInput.focus();
-        }
+      function initApp() {
+    loadSettings();
+    loadConversations();
+    
+    if (conversations.length === 0) {
+        createNewConversation();
+    } else {
+        // Find the last used conversation or the first one in the list
+        currentConversationId = conversations[0].id;
+        switchConversation(currentConversationId);
+    }
+    
+    userInput.focus();
+}
 
         // ==================== CONVERSATION MANAGEMENT ====================
         function createNewConversation() {
@@ -1088,29 +1090,31 @@ const AI_IDENTITY = {
             saveConversations();
         }
 
-        function switchConversation(id) {
-            currentConversationId = id;
-            const conversation = getConversationById(id);
-            
-            if (!conversation) return;
-            
-            // Render messages
-            renderMessages(conversation.messages);
-            
-            // Update conversation title if needed
-            if (conversation.messages.length > 0 && conversation.title === "New Chat") {
-                updateConversationTitle(id, conversation.messages[0].content);
-            }
-            
-            // Update UI
-            renderConversationsList();
-            
-            // Close menu on mobile
-            if (window.innerWidth <= 768) {
-                closeMenu();
-            }
-        }
-
+       function switchConversation(id) {
+    currentConversationId = id;
+    const conversation = getConversationById(id);
+    
+    if (!conversation) return;
+    
+    // CRITICAL FIX: Clear the screen and show ONLY this chat's messages
+    chatContainer.innerHTML = '';
+    
+    if (conversation.messages.length === 0) {
+        // If it's a brand new empty chat, show welcome
+        appendMessage(`Hi there! ${AI_IDENTITY.name} here.✨ Ready to explore the universe of your curriculum today? 🚀`, 'ai');
+    } else {
+        // If it has history, render it
+        renderMessages(conversation.messages);
+    }
+    
+    // Update UI active state in sidebar
+    renderConversationsList();
+    
+    // Close menu on mobile
+    if (window.innerWidth <= 768) {
+        closeMenu();
+    }
+}
         function getCurrentConversation() {
             return getConversationById(currentConversationId);
         }
@@ -1387,11 +1391,12 @@ const AI_IDENTITY = {
             }
 
             // Add user message to conversation
-            const userMessageObj = {
-                role: 'user',
-                content: query,
-                timestamp: new Date().toISOString()
-            };
+            conversation.messages.push({
+    role: 'assistant',
+    content: rawText,
+    timestamp: new Date().toISOString()
+});
+saveConversations();
             
             conversation.messages.push(userMessageObj);
             
