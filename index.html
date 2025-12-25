@@ -806,6 +806,7 @@
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="personalization/personalization.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -832,7 +833,13 @@
             <!-- Conversation history will be loaded here -->
             
             <div class="menu-divider"></div>
-            
+
+
+<!-- Personalization -->
+            <div class="menu-item" onclick="openPersonalization()">
+    <i class="fas fa-user-circle"></i>
+    <span>Personalization</span>
+</div>
             <!-- Settings and Export -->
             <div class="menu-item" onclick="openSettings()">
                 <i class="fas fa-cog"></i>
@@ -1436,6 +1443,18 @@ const AI_IDENTITY = {
                 content: 
                          
            `You are ${AI_IDENTITY.name}. Never say "I don't have a name". Always use the name "${AI_IDENTITY.name}".
+
+You are ${AI_IDENTITY.name}. 
+User Name: ${window.personalization.userName || 'Student'}
+Academic Level: ${window.personalization.studyLevel}
+Major/Focus: ${window.personalization.major || 'General'}
+Tone: ${window.personalization.responseStyle}
+
+RULES:
+1. Always address the user by their name (${window.personalization.userName || 'Student'}).
+2. Match explanation complexity to a ${window.personalization.studyLevel} level.
+3. Use examples from ${window.personalization.major || 'various fields'}.
+
 
 CORE IDENTITY:
 - Your name is Nebula
@@ -2693,7 +2712,51 @@ window.closeAboutModal = closeAboutModal;
 
 
 
+<div class="personalization-modal" id="personalizationModal">
+    <div class="personalization-content">
+        <div class="pers-header">
+            <h2 class="pers-title">Custom Instructions</h2>
+            <p class="pers-subtitle">Personalize how Nebula responds to you.</p>
+        </div>
 
+        <div class="pers-group">
+            <label class="pers-label">Preferred Name</label>
+            <input type="text" id="persName" class="pers-input" placeholder="What should I call you?">
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Study Level</label>
+            <select id="persLevel" class="pers-select">
+                <option value="school">School / Beginner</option>
+                <option value="highschool">High School</option>
+                <option value="college">Undergraduate / College</option>
+                <option value="researcher">Researcher / Professional</option>
+            </select>
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Major / Interest</label>
+            <input type="text" id="persMajor" class="pers-input" placeholder="e.g. Computer Science, Physics">
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Nebula Style</label>
+            <select id="persStyle" class="pers-select">
+                <option value="balanced">Balanced Assistant</option>
+                <option value="technical">Strict Scientist</option>
+                <option value="encouraging">Encouraging Tutor</option>
+                <option value="concise">Fast & Concise</option>
+            </select>
+        </div>
+
+        <div class="pers-btns">
+            <button class="pers-btn save" onclick="savePersonalization()">Save Changes</button>
+            <button class="pers-btn cancel" onclick="closePersonalization()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="personalization/personalization.js"></script>
 
 
 
