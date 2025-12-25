@@ -1,11 +1,10 @@
 // manu/manu.js
-
 function toggleBottomMenu() {
     const options = document.getElementById('menuExpandedOptions');
     options.classList.toggle('active');
 }
 
-// Close the menu if user clicks anywhere else in the sidebar
+// Close menu if user clicks outside of it
 document.addEventListener('click', (e) => {
     const wrapper = document.querySelector('.menu-bottom-wrapper');
     const options = document.getElementById('menuExpandedOptions');
@@ -14,12 +13,9 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Helper to handle navigation and auto-close
 function handleMenuAction(actionFunction) {
     const options = document.getElementById('menuExpandedOptions');
-    options.classList.remove('active');
-    
-    // Call the original function (openSettings, openPersonalization, etc.)
+    options.classList.remove('active'); // Close after click
     if (typeof window[actionFunction] === 'function') {
         window[actionFunction]();
     }
