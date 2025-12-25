@@ -1,22 +1,24 @@
 // math/math.js
 
-// 1. Load KaTeX styles and scripts dynamically
-const link = document.createElement('link');
-link.rel = 'stylesheet';
-link.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
-document.head.appendChild(link);
+// 1. Auto-load the KaTeX engine from CDN
+const katexCSS = document.createElement('link');
+katexCSS.rel = 'stylesheet';
+katexCSS.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css';
+document.head.appendChild(katexCSS);
 
-const script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
-document.head.appendChild(script);
+const katexJS = document.createElement('script');
+katexJS.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js';
+document.head.appendChild(katexJS);
 
-const autoRenderScript = document.createElement('script');
-autoRenderScript.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js';
-document.head.appendChild(autoRenderScript);
+const autoRenderJS = document.createElement('script');
+autoRenderJS.src = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js';
+document.head.appendChild(autoRenderJS);
 
-// 2. Function to render math in a specific element
-function renderMath(element) {
-    if (typeof renderMathInElement === 'function') {
+/**
+ * Automatically scans an element for $ or $$ and turns them into math
+ */
+function autoRenderMath(element) {
+    if (window.renderMathInElement) {
         renderMathInElement(element, {
             delimiters: [
                 {left: '$$', right: '$$', display: true},
@@ -27,7 +29,7 @@ function renderMath(element) {
             throwOnError: false
         });
     } else {
-        // If script hasn't loaded yet, try again in 100ms
-        setTimeout(() => renderMath(element), 100);
+        // If the library is still loading, wait 100ms and try again
+        setTimeout(() => autoRenderMath(element), 100);
     }
 }
