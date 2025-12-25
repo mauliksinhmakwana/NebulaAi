@@ -109,3 +109,24 @@ if (document.readyState === 'loading') {
 } else {
     initMenuSystem();
 }
+
+
+
+// Add these functions if they don't exist
+function toggleGoalModal() {
+    // Your study goals modal function
+    console.log('Open Study Goals');
+}
+
+function openAboutModal() {
+    // Your about modal function
+    console.log('Open About Modal');
+}
+
+// Make sure these functions are globally accessible
+window.toggleGoalModal = toggleGoalModal;
+window.openPersonalization = openPersonalization;
+window.openSettings = openSettings;
+window.openAboutModal = openAboutModal;
+window.exportChat = exportChat;
+window.clearAllData = clearAllData;
