@@ -2717,7 +2717,15 @@ window.closeAboutModal = closeAboutModal;
 
 
 
-<div class="personalization-modal" id="personalizationModal">
+
+
+
+
+
+
+
+
+    <div class="personalization-modal" id="personalizationModal" style="display: none;">
     <div class="personalization-content">
         <div class="pers-header">
             <h2 class="pers-title">Custom Instructions</h2>
@@ -2755,9 +2763,9 @@ window.closeAboutModal = closeAboutModal;
         </div>
 
         <div class="pers-group">
-            <label class="pers-label">Custom Instructions</label>
+            <label class="pers-label">Specific Instructions</label>
             <textarea id="persCustom" class="pers-input" rows="4" 
-                placeholder="What would you like Nebula to know to provide better responses? (e.g. 'Use lots of analogies', 'Give answers in bullet points')" 
+                placeholder="What would you like Nebula to know? (e.g. 'Use lots of analogies')" 
                 style="resize: none; font-family: inherit;"></textarea>
         </div>
 
@@ -2768,10 +2776,11 @@ window.closeAboutModal = closeAboutModal;
     </div>
 </div>
 
+<button class="icon-btn" onclick="shareApp()" title="Share" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; z-index: 1000;">
+    <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
+</button>
+
 <script src="personalization/personalization.js"></script>
-
-
-
 
 </body>
 </html>
