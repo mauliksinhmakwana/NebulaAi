@@ -1330,12 +1330,12 @@ const AI_IDENTITY = {
                     wrapper.className = 'msg-wrapper ai-wrapper';
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'msg ai';
-                    msgDiv.innerHTML = formatted +
-                       `<div class="timestamp">${new Date(msg.timestamp).toLocaleDateString([], {month: 'short', day: 'numeric'})} • ${formatTime(msg.timestamp)}</div>` +
-                        `<div style="display: flex; gap: 16px; margin-top: 8px;">
-                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-                        </div>`;
+                   msgDiv.innerHTML = formatted +
+    `<div class="timestamp">${showDateTime(msg.timestamp)}</div>` +
+    `<div style="display: flex; gap: 16px; margin-top: 8px;">
+        <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+        <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+    </div>`;
                     wrapper.appendChild(msgDiv);
                     chatContainer.appendChild(wrapper);
                 }
@@ -1377,12 +1377,19 @@ const AI_IDENTITY = {
                 userInput.style.height = 'auto';
             }
 
-            // Add user message to conversation
-            const userMessageObj = {
+           //<- // Add user message to conversation
+          /*  const userMessageObj = {
                 role: 'user',
                 content: query,
                 timestamp: new Date().toISOString()
-            };
+            };*/
+
+            // Add assistant message
+conversation.messages.push({
+    role: 'assistant',
+    content: rawText,
+    timestamp: new Date().toISOString()  // Make sure this line is here
+});
             
             conversation.messages.push(userMessageObj);
             
@@ -1632,7 +1639,7 @@ const rawText = data.choices[0].message.content;
                 // Update the loading message with actual response
                 const formatted = formatAIResponse(rawText);
                 loadingMsg.innerHTML = formatted +
-                    `<div class="timestamp">${getTime()}</div>` +
+                   `<div class="timestamp">${showDateTime()}</div>` +
                     `<div style="display: flex; gap: 16px; margin-top: 8px;">
                         <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
                         <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
@@ -1782,16 +1789,16 @@ function appendMessage(text, type) {
             msg.innerHTML = text;
         } else {
             const formatted = formatAIResponse(text);
-            msg.innerHTML = formatted +
-                `<div class="timestamp">${datetime}</div>` +
-                `<div style="display: flex; gap: 16px; margin-top: 8px;">
-                    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-                    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-                </div>`;
+           msg.innerHTML = formatted +
+    `<div class="timestamp">${showDateTime()}</div>` +
+    `<div style="display: flex; gap: 16px; margin-top: 8px;">
+        <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+        <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+    </div>`;
         }
     } else {
         msg.innerText = text;
-        msg.innerHTML += `<div class="timestamp">${datetime}</div>`;
+        msg.innerHTML += `<div class="timestamp">${showDateTime()}</div>`;
     }
 
     wrapper.appendChild(msg);
@@ -2151,6 +2158,17 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
 
 
 <script>
+
+
+    // Add this RIGHT AFTER <script> at line 650
+function showDateTime(timestamp = null) {
+    const dateObj = timestamp ? new Date(timestamp) : new Date();
+    const date = dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date} • ${time}`;
+}
+
+    
 // Function to open the About modal
 function openAboutModal() {
     const modal = document.getElementById('about-modal');
