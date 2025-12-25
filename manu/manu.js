@@ -4,7 +4,17 @@ function toggleBottomMenu() {
     options.classList.toggle('active');
 }
 
-// Close menu if user clicks outside of it
+function handleMenuAction(actionFunction) {
+    // Close the slide-up menu
+    document.getElementById('menuExpandedOptions').classList.remove('active');
+    
+    // Execute the requested function
+    if (typeof window[actionFunction] === 'function') {
+        window[actionFunction]();
+    }
+}
+
+// Close if user clicks elsewhere in the sidebar
 document.addEventListener('click', (e) => {
     const wrapper = document.querySelector('.menu-bottom-wrapper');
     const options = document.getElementById('menuExpandedOptions');
@@ -12,11 +22,3 @@ document.addEventListener('click', (e) => {
         options.classList.remove('active');
     }
 });
-
-function handleMenuAction(actionFunction) {
-    const options = document.getElementById('menuExpandedOptions');
-    options.classList.remove('active'); // Close after click
-    if (typeof window[actionFunction] === 'function') {
-        window[actionFunction]();
-    }
-}
