@@ -1,56 +1,70 @@
 /* manu/manu.css */
-
-/* Force sidebar to be a flex column */
 .menu-container {
     display: flex;
     flex-direction: column;
     height: 100%;
+    background: #0f0f0f;
 }
 
-/* Ensure the chat list takes all available space and is scrollable */
+/* Allow history to fill the middle and scroll */
 #conversationsList {
-    flex: 1; 
+    flex: 1;
     overflow-y: auto;
-    padding-bottom: 20px;
+    scrollbar-width: thin;
 }
 
-/* Bottom section forced to bottom */
 .menu-bottom-wrapper {
-    margin-top: auto; /* Pushes everything to bottom */
+    margin-top: auto; /* Pushes to absolute bottom */
     background: #0a0a0a;
     border-top: 1px solid var(--border);
 }
 
-/* Expansion Logic - Sliding UP */
 .menu-expanded-options {
     max-height: 0;
     overflow: hidden;
+    transition: max-height 0.3s ease-out;
     background: #0f0f0f;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    flex-direction: column;
 }
 
 .menu-expanded-options.active {
-    max-height: 250px; /* Adjust based on content height */
+    max-height: 350px; /* Room for all 5 buttons */
     border-bottom: 1px solid var(--border);
 }
 
-/* Trigger Button Styling */
 .menu-trigger-btn {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 20px;
+    padding: 15px 20px;
     cursor: pointer;
     background: #0a0a0a;
 }
 
-.menu-trigger-btn:hover { background: rgba(255, 255, 255, 0.05); }
+.user-avatar-mini {
+    width: 28px;
+    height: 28px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+}
 
-/* Rotate icon when active */
+.trigger-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.trigger-icon {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
 .menu-expanded-options.active ~ .menu-trigger-btn .trigger-icon {
     transform: rotate(180deg);
 }
-
-.trigger-icon { transition: transform 0.3s; }
