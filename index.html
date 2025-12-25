@@ -1728,6 +1728,12 @@ const rawText = data.choices[0].message.content;
             scrollBtn.style.display = diff > 100 ? 'flex' : 'none';
         };
 
+
+
+
+
+        
+/*
         function appendMessage(text, type) {
             const wrapper = document.createElement('div');
             wrapper.className = `msg-wrapper ${type}-wrapper`;
@@ -1756,7 +1762,47 @@ const rawText = data.choices[0].message.content;
             scrollToBottom();
             return msg;
         }
+*/
 
+        
+function appendMessage(text, type) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `msg-wrapper ${type}-wrapper`;
+    const msg = document.createElement('div');
+    msg.className = `msg ${type}`;
+
+    // Get current date + time
+    const now = new Date();
+    const date = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const datetime = `${date} • ${time}`;
+
+    if (type === 'ai') {
+        if (text.includes('typing-dots')) {
+            msg.innerHTML = text;
+        } else {
+            const formatted = formatAIResponse(text);
+            msg.innerHTML = formatted +
+                `<div class="timestamp">${datetime}</div>` +
+                `<div style="display: flex; gap: 16px; margin-top: 8px;">
+                    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                </div>`;
+        }
+    } else {
+        msg.innerText = text;
+        msg.innerHTML += `<div class="timestamp">${datetime}</div>`;
+    }
+
+    wrapper.appendChild(msg);
+    chatContainer.appendChild(wrapper);
+    scrollToBottom();
+    return msg;
+}
+
+
+
+        
         function regenerate(btn) {
             const conversation = getCurrentConversation();
             if (!conversation) return;
