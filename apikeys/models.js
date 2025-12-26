@@ -5,18 +5,23 @@ export const MODELS = [
     maxTokens: 8192
   },
   {
-    id: "google:gemini-1.5-flash",
+    id: "groq:llama-3.1-70b-versatile",
     label: "VEA – Research Pro",
+    maxTokens: 8192
+  },
+  {
+    id: "google:gemini-1.5-flash",
+    label: "VEA – Reasoning",
     maxTokens: 16384
   },
   {
-    id: "openrouter:mistralai/mixtral-8x7b",
-    label: "VEA – Creative",
+    id: "google:gemini-1.5-pro",
+    label: "VEA – Gemini",
     maxTokens: 32768
   },
   {
-    id: "together:mistralai/Mixtral-8x7B-Instruct-v0.1",
-    label: "VEA – Deep Study",
-    maxTokens: 32768
+    id: "openai:gpt-4o-mini",
+    label: "VEA – Advanced Reasoning",
+    maxTokens: 16384
   }
 ];
