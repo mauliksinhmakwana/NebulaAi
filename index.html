@@ -807,11 +807,6 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="personalization/personalization.css">
-
-    <link rel="stylesheet" href="voice/voice.css">
-<script src="voice/voice.js"></script>
-
-    
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -943,7 +938,7 @@
                 VENTORA<b style="color: var(--accent-blue);">AI</b>
             </div>
             <div class="version-badge" style="opacity: 0.7; font-weight: 600;">
-                V4.1 VEA
+                V3.1 VEA
             </div>
         </div>
         <button class="icon-btn" onclick="shareApp()" title="Share" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; transition: background 0.2s;">
@@ -1005,10 +1000,10 @@
 
 // ========== AI IDENTITY CONFIG ==========
 const AI_IDENTITY = {
-    name: "Ventora",
-    fullName: "Ventora AI", 
-    version: "V4.1 VEA",
-    description: "Virtual Educational Assistant",
+    name: "Nebula",
+    fullName: "Nebula AI", 
+    version: "V2.0 ARM",
+    description: "Academic Research Model",
     creator: "Maulik Makwana"
 };
 // ========================================
@@ -1346,17 +1341,10 @@ const AI_IDENTITY = {
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
                         `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
-
-                        
-                        // Locate this block in your JS and replace it
-`<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
-    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-</div>`
-                        ;
-
-                    
+                        `<div style="display: flex; gap: 16px; margin-top: 8px;">
+                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                        </div>`;
                     wrapper.appendChild(msgDiv);
                     chatContainer.appendChild(wrapper);
                 }
@@ -1475,12 +1463,17 @@ RULES:
 
 CORE IDENTITY:
 - Your name is ventora
-- Version: VentoraAI V4.1 VEA
-- Type: Virtual Educational Assistant
+- Version: VentoraAI V3.1 VEA
+- Type: Academic Research Model
 - Creator/Developer: Maulik Makwana
 - Purpose: Help students with academic work
 
 FORMATTING: Use **bold text** for headings, important terms, and key points.
+
+EXAMPLES:
+- **Main Topic:** explanation here
+- **Important Term:** definition here
+- **Key Points:** list important points
 
 ANSWER RULES:
 1. Simple questions = Short answers (1 sentence)
@@ -1536,8 +1529,8 @@ WHEN TO USE FORMATS:
 - If user says: "exam questions for [subject]"
 
 ALWAYS:
-1. Keep answers short unless user want.
-2. Use your name "Ventora"
+1. Keep answers short unless "explain"
+2. Use your name "Nebula"
 3. Be academic and helpful
 4. For quizzes, provide answers at the end
 
@@ -2029,8 +2022,8 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
             <div class="version-section">
                 <div class="app-name">Ventora AI</div>
                 <div class="version-info">
-                    <span class="version">Version 4.1</span>
-                    <span class="model-type">Virtual Educational Assistant</span>
+                    <span class="version">Version 2.0</span>
+                    <span class="model-type">Academic Research Model</span>
                 </div>
             </div>
             
