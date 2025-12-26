@@ -2,6 +2,39 @@
 
 
 
+
+
+
+
+
+
+
+
+
+function addReadButton(messageElement) {
+    if (messageElement.querySelector('.read-btn')) return; // Don't add if it exists
+
+    const readBtn = document.createElement('button');
+    readBtn.className = 'read-btn';
+    readBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    readBtn.onclick = () => {
+        const text = messageElement.querySelector('.message-content').innerText;
+        speak(text);
+    };
+    messageElement.appendChild(readBtn);
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Stop any current speaking
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+
+/*
 // voice/voice.js
 
 function toggleSpeech(btn) {
@@ -28,7 +61,7 @@ function toggleSpeech(btn) {
         .replace(/```[\s\S]*?```/g, ' [reading code skipped] ') // Skip large code blocks
         .replace(/\*\*/g, '') // Remove bold markdown
         .trim();
-
+/*
     // 3. Create Utterance
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0; 
@@ -53,3 +86,6 @@ function resetVoiceUI() {
         b.innerHTML = 'Read';
     });
 }
+
+
+*/
