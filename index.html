@@ -812,7 +812,9 @@
 <script src="voice/voice.js"></script>
 <link rel="stylesheet" href="goal/goal.css">
 <script src="goal/goal.js"></script>
-    
+    <link rel="stylesheet" href="menu/menu.css">
+<script src="menu/menu.js" defer></script>
+
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -840,45 +842,59 @@
             
             <div class="menu-divider"></div>
 
-
-
-
-        
         </div>
 
+<!-- ===== SIDEBAR PROFILE (COMPLETE) ===== -->
+<div class="sidebar-profile-wrapper">
 
-        <div class="menu-item" onclick="toggleGoalModal()">
-    <i class="fas fa-check-circle"></i>
-    <span>Study Goals</span>
+    <div class="sidebar-profile-row">
+        <div class="profile-avatar" id="profileAvatar">M</div>
+
+        <div class="profile-text" onclick="toggleProfileMenu()">
+            <div class="profile-name" id="profileName">Maulik</div>
+            <div class="profile-role" id="profileRole">Student</div>
+        </div>
+
+        <div class="profile-edit-btn"
+             onclick="event.stopPropagation(); openEditProfile();">
+            <i class="fas fa-pen"></i>
+        </div>
+
+        <div class="profile-arrow" onclick="toggleProfileMenu()">
+            <i class="fas fa-chevron-up"></i>
+        </div>
+    </div>
+
+    <div class="profile-menu" id="profileMenu">
+
+        <div class="profile-menu-item" onclick="toggleGoalModal()">
+            <i class="fas fa-check-circle"></i>
+            <span>Study Goals</span>
+        </div>
+
+        <div class="profile-menu-item" onclick="openPersonalization()">
+            <i class="fas fa-user-circle"></i>
+            <span>Personalization</span>
+        </div>
+
+        <div class="profile-menu-item" onclick="openSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+
+        <div class="profile-menu-item" onclick="openAboutModal()">
+            <i class="fas fa-info-circle"></i>
+            <span>About</span>
+        </div>
+
+        <div class="profile-menu-item" onclick="exportChat()">
+            <i class="fas fa-download"></i>
+            <span>Export Chat</span>
+        </div>
+
+    </div>
 </div>
-        <!-- Personalization -->
-            <div class="menu-item" onclick="openPersonalization()">
-    <i class="fas fa-user-circle"></i>
-    <span>Personalization</span>
-</div>
-            <!-- Settings and Export -->
-            <div class="menu-item" onclick="openSettings()">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
 
-
-
-<!-- About -->
-<!-- Update this in your menu -->
-<div class="menu-item" id="about-nebulai-btn">
-    <i class="fas fa-info-circle"></i>
-    <span>About</span>
-</div>
-
-
-
-
-            
-            <div class="menu-item" onclick="exportChat()">
-                <i class="fas fa-download"></i>
-                <span>Export Chat</span>
-            </div>
     </div>
 
 
