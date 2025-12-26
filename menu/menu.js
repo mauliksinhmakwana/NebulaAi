@@ -83,27 +83,18 @@ function saveProfile() {
     closeEditProfile();
 }
 
+/* Load profile on startup */
+document.addEventListener('DOMContentLoaded', () => {
+    const name = localStorage.getItem('profile_name');
+    const role = localStorage.getItem('profile_role');
 
+    if (name) {
+        document.getElementById('profileName').textContent = name;
+        document.getElementById('profileAvatar').textContent =
+            name.charAt(0).toUpperCase();
+    }
 
-
-
-function saveProfile() {
-    const name = document.getElementById('epName').value.trim();
-    const role = document.getElementById('epRole').value.trim() || 'Student';
-
-    if (!name) return;
-
-    localStorage.setItem('profile_name', name);
-    localStorage.setItem('profile_role', role);
-
-    document.getElementById('profileName').textContent = name;
-    document.getElementById('profileRole').textContent = role;
-
-    // 🔥 FIX: update avatar letter dynamically
-    document.getElementById('profileAvatar').textContent =
-        name.charAt(0).toUpperCase();
-
-    closeEditProfile();
-}
-
+    if (role) {
+        document.getElementById('profileRole').textContent = role;
+    }
 });
