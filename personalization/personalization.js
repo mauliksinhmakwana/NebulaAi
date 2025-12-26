@@ -44,5 +44,5 @@ window.savePersonalization = function() {
     localStorage.setItem('nebula_pers', JSON.stringify(window.personalization));
     window.closePersonalization();
     
-    if(typeof showToast === "function") showToast("Identity Updated! ✨");
+    if(typeof showToast === "function") showToast("Updated!");
 };
