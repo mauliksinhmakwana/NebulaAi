@@ -817,7 +817,7 @@
     <!-- Menu Overlay (click to close) -->
     <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
     
-    <!-- Menu Container -->
+    <!-- Menu Container -----------------------------------------------------------------------------------------------------------------  MANU ------------------------------------------->
     <div class="menu-container" id="menuContainer">
         <div class="menu-header">
             <div class="menu-title">Ventora Ai</div>
@@ -840,7 +840,11 @@
             <div class="menu-divider"></div>
 
 
-<!-- Personalization -->
+
+
+        
+        </div>
+        <!-- Personalization -->
             <div class="menu-item" onclick="openPersonalization()">
     <i class="fas fa-user-circle"></i>
     <span>Personalization</span>
@@ -868,8 +872,10 @@
                 <i class="fas fa-download"></i>
                 <span>Export Chat</span>
             </div>
-        </div>
     </div>
+
+
+
     
     <!-- Settings Modal -->
     <div class="settings-modal" id="settingsModal">
@@ -1459,16 +1465,16 @@ const AI_IDENTITY = {
            `You are ${AI_IDENTITY.name}. Never say "I don't have a name". Always use the name "${AI_IDENTITY.name}".
 
 You are ${AI_IDENTITY.name}. 
-User Name: ${window.personalization.userName || 'Student'}
+User Name: ${window.personalization.userName ||''}
 Academic Level: ${window.personalization.studyLevel}
-Major/Focus: ${window.personalization.major || 'General'}
+Major/Focus: ${window.personalization.major || ''}
 Tone: ${window.personalization.responseStyle}
 
 ### CUSTOM USER INSTRUCTIONS ###
 ${window.personalization.customInstructions}
 
 RULES:
-1. Always address the user by their name (${window.personalization.userName || 'Student'}).
+1. Always address the user by their name (${window.personalization.userName || ''}).
 2. Match explanation complexity to a ${window.personalization.studyLevel} level.
 3. Use examples from ${window.personalization.major || 'various fields'}.
 
