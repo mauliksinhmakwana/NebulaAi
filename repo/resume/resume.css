@@ -1,424 +1,433 @@
-/* Resume Generator Popup Styles */
+/* Resume Generator Popup Styles - Compatible with ChatGPT-like theme */
 .resume-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
 }
 
 .resume-popup-overlay.active {
-  display: flex;
+    display: flex;
 }
 
 .resume-popup {
-  background-color: var(--bg-primary);
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color);
+    background-color: #343541;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #565869;
 }
 
 .resume-popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #565869;
+    background-color: #40414f;
 }
 
 .resume-popup-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resume-popup-header h2 i {
+    color: #10a37f;
 }
 
 .resume-popup-close {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+    background: none;
+    border: none;
+    color: #c5c5d2;
+    cursor: pointer;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
 .resume-popup-close:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
+    background-color: #2d2d39;
+    color: #ffffff;
 }
 
 .resume-popup-content {
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
 }
 
 /* Form Styles */
 .resume-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .form-section {
-  background-color: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 20px;
-  border: 1px solid var(--border-color);
+    background-color: #40414f;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #565869;
 }
 
 .form-section h3 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .form-section h3 i {
-  color: var(--accent-color);
+    color: #10a37f;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .form-group label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #c5c5d2;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
-  padding: 10px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
+    padding: 10px 12px;
+    border: 1px solid #565869;
+    border-radius: 6px;
+    background-color: #343541;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.1);
+    outline: none;
+    border-color: #10a37f;
+    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
 }
 
 .form-group textarea {
-  min-height: 100px;
-  resize: vertical;
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
 }
 
 .form-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .form-row .form-group {
-  flex: 1;
-  min-width: 200px;
+    flex: 1;
+    min-width: 200px;
 }
 
 /* Dynamic List Items */
 .dynamic-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .list-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
 }
 
 .list-item-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .list-item-actions {
-  display: flex;
-  gap: 8px;
+    display: flex;
+    gap: 8px;
 }
 
 .btn-icon {
-  padding: 6px;
-  background: none;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s;
+    padding: 6px;
+    background: none;
+    border: 1px solid #565869;
+    border-radius: 4px;
+    color: #c5c5d2;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .btn-icon:hover {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
+    background-color: #2d2d39;
+    color: #ffffff;
 }
 
 .btn-add {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #10a37f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    align-self: flex-start;
 }
 
 .btn-add:hover {
-  background-color: var(--accent-hover);
+    background-color: #0d8c6d;
 }
 
 /* Action Buttons */
 .resume-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  padding: 20px 24px;
-  border-top: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px 24px;
+    border-top: 1px solid #565869;
+    background-color: #40414f;
 }
 
 .btn-primary {
-  padding: 10px 24px;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+    padding: 10px 24px;
+    background-color: #10a37f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
+    background-color: #0d8c6d;
 }
 
 .btn-secondary {
-  padding: 10px 24px;
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
+    padding: 10px 24px;
+    background-color: #2d2d39;
+    color: #ffffff;
+    border: 1px solid #565869;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-  background-color: var(--bg-secondary);
+    background-color: #40414f;
 }
 
 /* Dark mode dropdown styles */
-.dark-select {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+select.dark-select {
+    background-color: #343541;
+    color: #ffffff;
+    border: 1px solid #565869;
 }
 
-.dark-select option {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+select.dark-select option {
+    background-color: #40414f;
+    color: #ffffff;
 }
 
 /* Resume Preview Modal */
 .resume-preview-modal {
-  max-width: 900px;
-  width: 95%;
+    max-width: 900px;
+    width: 95%;
 }
 
 .resume-preview-content {
-  padding: 0;
-}
-
-.resume-preview {
-  background: white;
-  color: #000;
-  font-family: 'Calibri', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  min-height: 500px;
+    padding: 0;
 }
 
 #resumePreview {
-  width: 100%;
-  height: 70vh;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .resume-popup {
-    width: 95%;
-    max-height: 95vh;
-  }
-  
-  .resume-popup-header {
-    padding: 16px 20px;
-  }
-  
-  .resume-popup-content {
-    padding: 16px;
-  }
-  
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .form-row .form-group {
-    min-width: 100%;
-  }
-  
-  .resume-actions {
-    flex-direction: column;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
     width: 100%;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .list-item {
-    flex-direction: column;
-  }
-  
-  .list-item-actions {
-    align-self: flex-end;
-  }
+    height: 70vh;
+    border: 1px solid #565869;
+    border-radius: 4px;
+    background: white;
 }
 
 /* Loading State */
 .loading {
-  display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
 
 .loading.active {
-  display: flex;
+    display: flex;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #565869;
+    border-top-color: #10a37f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Toast Notification */
 .toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transform: translateY(100px);
-  opacity: 0;
-  transition: all 0.3s;
-  z-index: 10000;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #343541;
+    border: 1px solid #565869;
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 10000;
 }
 
 .toast.show {
-  transform: translateY(0);
-  opacity: 1;
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .toast.success {
-  border-left: 4px solid #10b981;
+    border-left: 4px solid #10b981;
 }
 
 .toast.error {
-  border-left: 4px solid #ef4444;
+    border-left: 4px solid #ef4444;
 }
 
 .toast-icon {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
 }
 
 .toast.success .toast-icon {
-  color: #10b981;
+    color: #10b981;
 }
 
 .toast.error .toast-icon {
-  color: #ef4444;
+    color: #ef4444;
 }
 
 .toast-content h4 {
-  margin: 0 0 4px 0;
-  font-size: 0.95rem;
-  font-weight: 600;
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
 }
 
 .toast-content p {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.875rem;
+    color: #c5c5d2;
+}
+
+/* Small text helper */
+.form-text {
+    font-size: 0.75rem;
+    color: #8e8ea0;
+    margin-top: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .resume-popup {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .resume-popup-header {
+        padding: 16px 20px;
+    }
+    
+    .resume-popup-content {
+        padding: 16px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-row .form-group {
+        min-width: 100%;
+    }
+    
+    .resume-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .list-item {
+        flex-direction: column;
+    }
+    
+    .list-item-actions {
+        align-self: flex-end;
+    }
 }
