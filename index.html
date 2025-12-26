@@ -977,31 +977,56 @@
     justify-content: center;
     text-align: center;
     pointer-events: none;
+    position: relative;
+    overflow: hidden;
 ">
-    <div>
+   
+    <div style="position: relative; z-index: 1;">
+
+        <!-- MAIN TEXT -->
         <div style="
             font-size: clamp(2.8rem, 6vw, 3.6rem);
             font-weight: 700;
-            color: var(--accent-blue);
-            margin-bottom: 14px;
-            letter-spacing: -0.5px;
+            background: linear-gradient(120deg, #6a8cff, #9b6cff, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: textGradientMove 6s ease infinite;
+            margin-bottom: 16px;
+            letter-spacing: -0.6px;
         ">
             Hello, again
         </div>
 
+        <!-- SUB TEXT -->
         <div style="
             font-size: 1.15rem;
             color: var(--text-secondary);
-            max-width: 480px;
+            max-width: 520px;
             line-height: 1.6;
             margin: 0 auto;
         ">
             How can I help you sharpen your ideas today?
         </div>
+
     </div>
 </div>
 
-    
+<style>
+@keyframes heroGlow {
+    0%   { transform: translate(-80px, -60px) scale(1); opacity: 0.6; }
+    100% { transform: translate(80px, 60px) scale(1.15); opacity: 0.9; }
+}
+
+@keyframes textGradientMove {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+</style>
+
+
+
     <div class="bottom-section">
         <div class="input-section">
           <!--  <div class="clear-bar">
