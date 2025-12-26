@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Nebula AI</title>
+    <title>Ventora AI</title>
     <style>        
         :root {
             --bg: #000000;
@@ -807,6 +807,11 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="personalization/personalization.css">
+
+    <link rel="stylesheet" href="voice/voice.css">
+<script src="voice/voice.js"></script>
+
+    
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -815,7 +820,7 @@
     <!-- Menu Container -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-header">
-            <div class="menu-title">Nebula Ai</div>
+            <div class="menu-title">Ventora Ai</div>
             <button class="close-menu" onclick="closeMenu()">
                 <i class="fas fa-times"></i>
             </button>
@@ -879,12 +884,12 @@
             <div class="settings-group">
                 <label class="settings-label">Model</label>
                 <select class="settings-select" id="modelSelect">
-                   <option value="llama-3.1-8b-instant">ARM -General (Recommended)</option>
-<option value="llama-3.1-70b-versatile">ARM - Research Pro</option>
-<option value="mixtral-8x7b-32768">ARM - Thesis Expert</option>
-<option value="gemma-7b-it">ARM - Study Partner</option>
-<option value="llama-3.2-1b-preview">ARM - Quick Q&A</option>
-<option value="llama-3.2-3b-preview">ARM - Student Helper</option>
+                   <option value="llama-3.1-8b-instant">VEA -General (Recommended)</option>
+<option value="llama-3.1-70b-versatile">VEA - Research Pro</option>
+<option value="mixtral-8x7b-32768">VEA - Thesis Expert</option>
+<option value="gemma-7b-it">VEA - Study Partner</option>
+<option value="llama-3.2-1b-preview">VEA - Quick Q&A</option>
+<option value="llama-3.2-3b-preview">VEA - Student Helper</option>
                 </select>
             </div>
             
@@ -935,16 +940,18 @@
         
         <div class="logo-area" style="display: flex; align-items: baseline; gap: 12px;">
             <div class="logo" style="font-size: 1.1rem; letter-spacing: 4px; color: var(--text-primary);">
-                NEBULA<b style="color: var(--accent-blue);">AI</b>
+                VENTORA<b style="color: var(--accent-blue);">AI</b>
             </div>
             <div class="version-badge" style="opacity: 0.7; font-weight: 600;">
-                V2.0 ARM
+                V4.1 VEA
             </div>
         </div>
-        
-        <button class="icon-btn" onclick="shareApp()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 16px; border-radius: 12px; font-weight: 700; font-size: 0.6rem; letter-spacing: 1px; backdrop-filter: blur(10px); color: white; cursor: pointer;">
+        <button class="icon-btn" onclick="shareApp()" title="Share" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; transition: background 0.2s;">
+    <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
+</button>
+       <!-- <button class="icon-btn" onclick="shareApp()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 16px; border-radius: 12px; font-weight: 700; font-size: 0.6rem; letter-spacing: 1px; backdrop-filter: blur(10px); color: white; cursor: pointer;">
             SHARE
-        </button>
+        </button> -->
     </header>
     
     <main id="chat-container"></main>
@@ -964,7 +971,7 @@
                 </button>
             </div>
             <div class="footer-info">
-                Created by <b>Maulik Makwana</b> • Nebula AI can make mistakes.
+                Ventora AI can make mistakes. • Created by <b>Maulik Makwana</b>
             </div>
         </div>
     </div>
@@ -998,10 +1005,10 @@
 
 // ========== AI IDENTITY CONFIG ==========
 const AI_IDENTITY = {
-    name: "Nebula",
-    fullName: "Nebula AI", 
-    version: "V2.0 ARM",
-    description: "Academic Research Model",
+    name: "Ventora",
+    fullName: "Ventora AI", 
+    version: "V4.1 VEA",
+    description: "Virtual Educational Assistant",
     creator: "Maulik Makwana"
 };
 // ========================================
@@ -1324,7 +1331,7 @@ const AI_IDENTITY = {
             chatContainer.innerHTML = '';
             
             if (messages.length === 0) {
-                appendMessage('Hello! I am Nebula AI. How can I assist you today?', 'ai');
+                appendMessage('Hello! I am Ventora AI. How can I assist you today?', 'ai');
                 return;
             }
             
@@ -1339,10 +1346,17 @@ const AI_IDENTITY = {
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
                         `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
-                        `<div style="display: flex; gap: 16px; margin-top: 8px;">
-                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-                        </div>`;
+
+                        
+                        // Locate this block in your JS and replace it
+`<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+</div>`
+                        ;
+
+                    
                     wrapper.appendChild(msgDiv);
                     chatContainer.appendChild(wrapper);
                 }
@@ -1429,7 +1443,7 @@ const AI_IDENTITY = {
               
                // <!------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 //const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                const response = await fetch('https://nebula-ai-azure.vercel.app/api/chat', {
+                const response = await fetch('https://ventora-ai.vercel.app/api/chat', {
     method: 'POST',
     headers: {
        // 'Authorization': `Bearer ${GROQ_API_KEY}`,
@@ -1450,6 +1464,9 @@ Academic Level: ${window.personalization.studyLevel}
 Major/Focus: ${window.personalization.major || 'General'}
 Tone: ${window.personalization.responseStyle}
 
+### CUSTOM USER INSTRUCTIONS ###
+${window.personalization.customInstructions}
+
 RULES:
 1. Always address the user by their name (${window.personalization.userName || 'Student'}).
 2. Match explanation complexity to a ${window.personalization.studyLevel} level.
@@ -1457,26 +1474,21 @@ RULES:
 
 
 CORE IDENTITY:
-- Your name is Nebula
-- Version: NebulaAI V2.0 ARM
-- Type: Academic Research Model
+- Your name is ventora
+- Version: VentoraAI V4.1 VEA
+- Type: Virtual Educational Assistant
 - Creator/Developer: Maulik Makwana
 - Purpose: Help students with academic work
 
 FORMATTING: Use **bold text** for headings, important terms, and key points.
 
-EXAMPLES:
-- **Main Topic:** explanation here
-- **Important Term:** definition here
-- **Key Points:** list important points
-
 ANSWER RULES:
 1. Simple questions = Short answers (1 sentence)
    Example: "What is science?" → "Science studies how things work."
 
-2. If user says = Give long answer with details
+2. give ans in formats and also ans matches with thair book (if possible)
 
-3. Be friendly and helpful for students
+3. Be helpful for students...
 
 4. Use emojis sometimes 🎓✨
 
@@ -1488,8 +1500,8 @@ That's it. You are ${AI_IDENTITY.name}, a student helper.
 
 1. REGULAR MODE:
    - Simple Q = Short A (1 sentence)
-   - "Explain" = Detailed answer
-
+   - Sametime use the quitions ans is long in that cast you give...
+   
 2. QUIZ/EXAM MODE (when user asks for quiz/mcqs/test):
    Format multiple choice questions like:
    A) Option 1
@@ -1524,8 +1536,8 @@ WHEN TO USE FORMATS:
 - If user says: "exam questions for [subject]"
 
 ALWAYS:
-1. Keep answers short unless "explain"
-2. Use your name "Nebula"
+1. Keep answers short unless user want.
+2. Use your name "Ventora"
 3. Be academic and helpful
 4. For quizzes, provide answers at the end
 
@@ -2015,23 +2027,23 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
         <div class="about-body">
             <!-- Version Info -->
             <div class="version-section">
-                <div class="app-name">Nebula AI</div>
+                <div class="app-name">Ventora AI</div>
                 <div class="version-info">
-                    <span class="version">Version 2.0</span>
-                    <span class="model-type">Academic Research Model</span>
+                    <span class="version">Version 4.1</span>
+                    <span class="model-type">Virtual Educational Assistant</span>
                 </div>
             </div>
             
             <!-- Description -->
             <div class="description-section">
                 <p class="description">
-                 <p>Nebula AI is an advanced artificial intelligence assistant designed specifically for academic excellence and research support. Built with cutting-edge language models, it serves as your intelligent companion for learning, studying, and academic work.</p>
-                 <p>Specializing in comprehensive academic assistance, Nebula AI provides expert support for research methodology, study planning, essay writing, and assignment completion. Whether you need help with literature reviews, concept explanations, or homework solutions, it adapts to your specific academic requirements.</p>
-                 <p>Powered by sophisticated AI technology, Nebula AI offers personalized guidance while maintaining the highest standards of academic integrity. It emphasizes critical thinking, proper citation practices, and ethical research methods to ensure quality learning outcomes.
+                 <p>Ventora AI is an advanced artificial intelligence assistant designed specifically for academic excellence and research support. Built with cutting-edge language models, it serves as your intelligent companion for learning, studying, and academic work.</p>
+                 <p>Specializing in comprehensive academic assistance, Ventora AI provides expert support for research methodology, study planning, essay writing, and assignment completion. Whether you need help with literature reviews, concept explanations, or homework solutions, it adapts to your specific academic requirements.</p>
+                 <p>Powered by sophisticated AI technology, Ventora AI offers personalized guidance while maintaining the highest standards of academic integrity. It emphasizes critical thinking, proper citation practices, and ethical research methods to ensure quality learning outcomes.
 
 Developed with a focus on educational impact, this tool supports students, researchers, and educators in achieving their academic goals. Its intuitive interface and responsive design make advanced academic assistance accessible to everyone.</p>
                  <p><b>Privacy & Data:</b> Your conversations remain private and secure. All data is processed locally in your browser with no storage on external servers. We use industry-standard encryption to protect your information while maintaining full transparency about our data practices.</p>
-                 <p>Nebula AI continues to evolve with regular updates and improvements, ensuring it remains at the forefront of educational technology. Your reliable partner for smarter learning and more efficient research.</p>
+                 <p>Ventora AI continues to evolve with regular updates and improvements, ensuring it remains at the forefront of educational technology. Your reliable partner for smarter learning and more efficient research.</p>
 
 
 
@@ -2137,11 +2149,11 @@ Developed with a focus on educational impact, this tool supports students, resea
             <div class="tech-section">
                 <div class="tech-item">
                     <div class="tech-label">Powered by</div>
-                    <div class="tech-value">Open Nebula</div>
+                    <div class="tech-value">Ventora AI</div>
                 </div>
                 <div class="tech-item">
                     <div class="tech-label">Secured by</div>
-                    <div class="tech-value">Open Nebula</div>
+                    <div class="tech-value">Ventora AI</div>
                 </div>
             </div>
             
@@ -2712,11 +2724,19 @@ window.closeAboutModal = closeAboutModal;
 
 
 
-<div class="personalization-modal" id="personalizationModal">
+
+
+
+
+
+
+
+
+    <div class="personalization-modal" id="personalizationModal" style="display: none;">
     <div class="personalization-content">
         <div class="pers-header">
-            <h2 class="pers-title">Custom Instructions</h2>
-            <p class="pers-subtitle">Personalize how Nebula responds to you.</p>
+            <h2 class="pers-title">Instructions</h2>
+            <p class="pers-subtitle">Personalize how Ventora responds to you.</p>
         </div>
 
         <div class="pers-group">
@@ -2725,28 +2745,35 @@ window.closeAboutModal = closeAboutModal;
         </div>
 
         <div class="pers-group">
-            <label class="pers-label">Study Level</label>
+            <label class="pers-label">Proficiency Level</label>
             <select id="persLevel" class="pers-select">
-                <option value="school">School / Beginner</option>
-                <option value="highschool">High School</option>
-                <option value="college">Undergraduate / College</option>
-                <option value="researcher">Researcher / Professional</option>
+               <option value="school">Foundation</option>
+        <option value="highschool">Intermediate</option>
+        <option value="college">Advanced Academic</option>
+        <option value="researcher">Expert / Scholar</option>
             </select>
         </div>
 
         <div class="pers-group">
-            <label class="pers-label">Major / Interest</label>
+            <label class="pers-label">Interest</label>
             <input type="text" id="persMajor" class="pers-input" placeholder="e.g. Computer Science, Physics">
         </div>
 
         <div class="pers-group">
-            <label class="pers-label">Nebula Style</label>
+            <label class="pers-label">Ventora Style</label>
             <select id="persStyle" class="pers-select">
-                <option value="balanced">Balanced Assistant</option>
-                <option value="technical">Strict Scientist</option>
-                <option value="encouraging">Encouraging Tutor</option>
-                <option value="concise">Fast & Concise</option>
+                <option value="balanced">Standard (Optimal)</option>
+        <option value="technical">Technical & Analytical</option>
+        <option value="encouraging">Socratic Tutor</option>
+        <option value="concise">Direct & Precise</option>
             </select>
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Your Instructions</label>
+            <textarea id="persCustom" class="pers-input" rows="4" 
+                placeholder="What would you like Ventora to know?" 
+                style="resize: none; font-family: inherit;"></textarea>
         </div>
 
         <div class="pers-btns">
@@ -2756,10 +2783,11 @@ window.closeAboutModal = closeAboutModal;
     </div>
 </div>
 
+<button class="icon-btn" onclick="shareApp()" title="Share" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; z-index: 1000;">
+    <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
+</button>
+
 <script src="personalization/personalization.js"></script>
-
-
-
 
 </body>
 </html>
