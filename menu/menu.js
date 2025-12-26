@@ -43,12 +43,13 @@ function openEditProfile() {
             <input id="epName"
                 value="${name}"
                 placeholder="Name"
+                class="settings-select"
                 style="margin-bottom:10px;">
 
             <input id="epRole"
                 value="${role}"
                 placeholder="Role"
-               
+                class="settings-select">
 
             <div style="display:flex; gap:10px; margin-top:16px;">
                 <button class="settings-btn"
