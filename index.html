@@ -140,6 +140,33 @@
             font-size: 0.95rem;
             font-weight: 500;
         }
+
+
+/* Custom scrollbar for the conversation list */
+#conversationsList {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* For Firefox */
+}
+
+/* For Chrome, Edge, and Safari */
+#conversationsList::-webkit-scrollbar {
+    width: 6px; /* Makes it thin and sleek */
+}
+
+#conversationsList::-webkit-scrollbar-track {
+    background: transparent; /* Makes the track invisible */
+}
+
+#conversationsList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15); /* Subtle white tint */
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+#conversationsList::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3); /* Brightens slightly on hover */
+}
+
         
         /* Conversation History Items */
         .conversation-item {
