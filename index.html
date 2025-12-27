@@ -1838,6 +1838,11 @@ await typeText(aiTextEl, formatted, 25);
             }
         }
 
+
+
+
+
+        
         // ==================== UTILITY FUNCTIONS ====================
         function autoExpand(el) {
             el.style.height = 'auto';
@@ -2304,6 +2309,32 @@ Developed with a focus on educational impact, this tool supports students, resea
 </div>
 
 <script>
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function typeText(element, html, speed = 25) {
+    element.innerHTML = ""; 
+    
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const nodes = Array.from(temp.childNodes);
+    
+    for (const node of nodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent;
+            for (let i = 0; i < text.length; i++) {
+                element.innerHTML += text[i];
+                // This is where the error was happening
+                await sleep(speed); 
+            }
+        } else {
+            element.appendChild(node.cloneNode(true));
+            await sleep(speed); 
+        }
+        if (typeof scrollToBottom === "function") scrollToBottom();
+    }
+}
 // Function to open the About modal
 function openAboutModal() {
     const modal = document.getElementById('about-modal');
