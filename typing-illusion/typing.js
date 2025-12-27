@@ -22,8 +22,12 @@ async function typeWriterInto(element, text, speed = 45) {
 }
 
 async function renderAIResponse(targetElement, text) {
-  await sleep(500);              // thinking pause
+  await sleep(500);
   await typeWriterInto(targetElement, text, 45);
+
+  // ✅ Force layout recalculation (fixes spacing mismatch)
+  targetElement.closest(".msg-wrapper")?.offsetHeight;
 }
+
 
 window.renderAIResponse = renderAIResponse;
