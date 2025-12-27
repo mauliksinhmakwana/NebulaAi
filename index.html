@@ -357,13 +357,16 @@
         }
         
         .settings-btn.primary {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
-        }
+    background: #ffffff; /* Sets background to white */
+    border-color: #ffffff; /* Matches border to white */
+    color: #000000; /* Sets text color to black for readability on white */
+}
         
         .settings-btn.primary:hover {
-            background: rgba(0, 122, 255, 0.8);
-        }
+    background: rgba(255, 255, 255, 0.85); /* Slightly dims on hover for feedback */
+    border-color: rgba(255, 255, 255, 0.85);
+    color: #000000;
+}
         
         /* --- HEADER --- */
         header {
