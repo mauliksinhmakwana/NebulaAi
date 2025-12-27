@@ -1770,7 +1770,7 @@ const rawText = data.choices[0].message.content;
 
                 // Update the loading message with actual response         //------------------------------------------------------READ 2--------------------------------------------------//
                // Inside handleSend, when the AI finishes:
-            await pause(4000);
+            await pause(3000);
 const formatted = formatAIResponse(rawText);
 loadingMsg.innerHTML = formatted +
     `<div class="timestamp">${getTime()}</div>` +
