@@ -10,4 +10,5 @@ async function typeText(element, text, speed = 25) {
   }
 }
 
+/* 🔴 CRITICAL: expose globally */
 window.typeText = typeText;
