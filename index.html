@@ -814,8 +814,6 @@
 <script src="goal/goal.js"></script>
     <link rel="stylesheet" href="menu/menu.css">
 <script src="menu/menu.js" defer></script>
-<link rel="stylesheet" href="./typing-illusion/typing.css">
-    <script src="./typing-illusion/typing.js"></script>
 
 </head>
 <body onload="initApp()">
@@ -1077,8 +1075,6 @@
 
     
     <script>
-
-        
 function hideHeroWelcome() {
     const hero = document.getElementById('hero-welcome');
     if (hero) hero.style.display = 'none';
@@ -1769,23 +1765,15 @@ const rawText = data.choices[0].message.content;
 
                 // Update the loading message with actual response         //------------------------------------------------------READ 2--------------------------------------------------//
                // Inside handleSend, when the AI finishes:
+const formatted = formatAIResponse(rawText);
+loadingMsg.innerHTML = formatted +
+    `<div class="timestamp">${getTime()}</div>` +
+    `<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+        <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+        <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+        <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+    </div>`;
 
-       // Prepare empty container but KEEP existing UI
-loadingMsg.innerHTML = `
-  <span class="ai-text"></span>
-  <div class="timestamp">${getTime()}</div>
-  <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-      <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-      <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
-      <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-  </div>
-`;
-
-const aiTextEl = loadingMsg.querySelector(".ai-text");
-await renderAIResponse(aiTextEl, formatAIResponse(rawText));
-
-
-                        
                 // Save updated conversation
                 conversation.updatedAt = new Date().toISOString();
                 saveConversations();
