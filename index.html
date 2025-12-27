@@ -1770,18 +1770,17 @@ const rawText = data.choices[0].message.content;
                 // Update the loading message with actual response         //------------------------------------------------------READ 2--------------------------------------------------//
                // Inside handleSend, when the AI finishes:
 
-         loadingMsg.innerHTML = `
-  <div class="msg ai" id="ai-typing-target"></div>
-  <div class="timestamp">${getTime()}</div>
-  <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+       // Prepare empty container but KEEP existing UI
+loadingMsg.innerHTML =
+  `<div class="timestamp">${getTime()}</div>` +
+  `<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
       <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
       <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
       <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-  </div>
-`;
+  </div>`;
 
-const typingTarget = loadingMsg.querySelector("#ai-typing-target");
-await renderAIResponse(typingTarget, formatAIResponse(rawText));
+// Typing illusion directly into loadingMsg
+await renderAIResponse(loadingMsg, formatAIResponse(rawText));
 
                         
                 // Save updated conversation
