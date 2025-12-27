@@ -1,1 +1,41 @@
 
+/* ===== FIX AI MESSAGE DOUBLE LINE + SPACING ===== */
+
+/* Keep ONLY one left guide line */
+.msg-wrapper.ai-wrapper {
+    border-left: none !important;
+    margin: 8px 0 !important;
+    padding: 0 !important;
+}
+
+/* AI message block */
+.msg.ai {
+    border-left: 1px solid var(--border); /* single clean line */
+    padding-left: 14px !important;
+    margin: 0 !important;
+    max-width: 70%;
+    line-height: 1.55;
+}
+
+/* Remove any inner borders */
+.msg.ai * {
+    border-left: none !important;
+}
+
+/* Remove extra vertical gaps */
+.msg.ai p,
+.msg.ai div {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Timestamp tighter */
+.msg.ai .timestamp {
+    margin-top: 4px !important;
+}
+
+/* Action buttons spacing fix */
+.msg.ai + div,
+.msg.ai .regenerate-btn {
+    margin-top: 6px !important;
+}
