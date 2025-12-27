@@ -15,6 +15,11 @@ function initFileUpload() {
     const fileStatus = document.getElementById("file-status");
     const fileClearSection = document.getElementById("file-clear-section");
     
+    if (!fileBtn || !filePopup) {
+        console.error("File upload elements not found!");
+        return;
+    }
+    
     // Toggle popup on button click
     fileBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -35,7 +40,7 @@ function initFileUpload() {
         
         fileStatus.textContent = "Reading file...";
         fileStatus.className = "file-status";
-        fileClearSection.style.display = "none";
+        if (fileClearSection) fileClearSection.style.display = "none";
         
         const ext = file.name.split(".").pop().toLowerCase();
         
@@ -86,7 +91,7 @@ function initFileUpload() {
             // Update UI
             fileStatus.textContent = "File uploaded successfully ✓";
             fileStatus.className = "file-status success";
-            fileClearSection.style.display = "block";
+            if (fileClearSection) fileClearSection.style.display = "block";
             
             // Show attached indicator
             showFileAttachedIndicator();
@@ -105,7 +110,7 @@ function initFileUpload() {
             // Show error message
             fileStatus.textContent = typeof err === "string" ? err : "Failed to read file";
             fileStatus.className = "file-status error";
-            fileClearSection.style.display = "none";
+            if (fileClearSection) fileClearSection.style.display = "none";
             
             // Hide attached indicator
             hideFileAttachedIndicator();
@@ -135,7 +140,7 @@ async function extractPdfText(file) {
         const decoder = new TextDecoder('utf-8');
         const text = decoder.decode(arrayBuffer);
         
-        // Look for text streams in PDF (simplified extraction)
+        // Look for text streams in PDF
         const textMatches = text.match(/\((.*?)\)/g);
         if (textMatches) {
             const extracted = textMatches.map(match => 
@@ -144,19 +149,17 @@ async function extractPdfText(file) {
             if (extracted.trim().length > 50) return extracted;
         }
         
-        // Alternative: look for text between parentheses
-        const altMatches = text.match(/<</g);
-        if (altMatches) {
-            // This is a complex PDF, return placeholder
-            return "[PDF content extracted - some formatting may be lost]";
-        }
+        // Alternative extraction for PDFs
+        const lines = text.split('\n');
+        const readableLines = lines.filter(line => 
+            line.trim().length > 10 && 
+            !line.includes('%PDF') && 
+            !line.includes('stream') &&
+            !line.includes('endstream')
+        );
         
-        // Last resort: extract any readable ASCII text
-        const asciiText = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ');
-        const cleanAscii = asciiText.replace(/\s+/g, ' ').trim();
-        
-        if (cleanAscii.length > 100) {
-            return cleanAscii.substring(0, 5000);
+        if (readableLines.length > 0) {
+            return readableLines.slice(0, 100).join(' ');
         }
         
         throw "Could not extract text from PDF";
@@ -170,24 +173,22 @@ async function extractPdfText(file) {
 // Extract text from DOCX
 async function extractDocxText(file) {
     try {
-        const arrayBuffer = await file.arrayBuffer();
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(arrayBuffer);
+        // For DOCX, we'll read it as text and filter
+        const text = await file.text();
         
-        // Basic DOCX text extraction
+        // Look for readable content
         const lines = text.split('\n').filter(line => 
             line.trim().length > 0 && 
-            !line.includes('<?xml') && 
-            !line.includes('<w:') &&
+            line.length > 10 &&
             !line.includes('PK') &&
-            line.length > 10
+            !line.includes('<?xml')
         );
         
         if (lines.length > 0) {
             return lines.slice(0, 100).join(' ');
         }
         
-        // Fallback: extract readable ASCII text
+        // Fallback: extract ASCII characters
         const asciiText = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ');
         const cleanAscii = asciiText.replace(/\s+/g, ' ').trim();
         
@@ -215,6 +216,7 @@ function formatFileSize(bytes) {
 // Show file attached indicator
 function showFileAttachedIndicator() {
     const fileBtn = document.getElementById("file-btn");
+    if (!fileBtn) return;
     
     // Remove existing indicator
     const existingIndicator = fileBtn.querySelector(".file-attached-indicator");
@@ -233,6 +235,8 @@ function showFileAttachedIndicator() {
 // Hide file attached indicator
 function hideFileAttachedIndicator() {
     const fileBtn = document.getElementById("file-btn");
+    if (!fileBtn) return;
+    
     const indicator = fileBtn.querySelector(".file-attached-indicator");
     if (indicator) indicator.remove();
     
@@ -246,14 +250,19 @@ function clearAttachedFile() {
     hideFileAttachedIndicator();
     
     // Clear file input
-    document.getElementById("file-input").value = "";
+    const fileInput = document.getElementById("file-input");
+    if (fileInput) fileInput.value = "";
     
     // Hide clear section
-    document.getElementById("file-clear-section").style.display = "none";
+    const fileClearSection = document.getElementById("file-clear-section");
+    if (fileClearSection) fileClearSection.style.display = "none";
     
     // Clear status
-    document.getElementById("file-status").textContent = "";
-    document.getElementById("file-status").className = "file-status";
+    const fileStatus = document.getElementById("file-status");
+    if (fileStatus) {
+        fileStatus.textContent = "";
+        fileStatus.className = "file-status";
+    }
     
     // Show toast
     if (typeof showToast === "function") {
@@ -262,7 +271,10 @@ function clearAttachedFile() {
 }
 
 // Initialize when DOM is loaded
-document.addEventListener("DOMContentLoaded", initFileUpload);
+document.addEventListener("DOMContentLoaded", function() {
+    // Wait a bit for other scripts to load
+    setTimeout(initFileUpload, 500);
+});
 
 // Export for use in main script
 window.initFileUpload = initFileUpload;
