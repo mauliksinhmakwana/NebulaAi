@@ -548,22 +548,30 @@
         }
         
         /* MOBILE FIXES */
-        @media (max-width: 480px) {
-            .bottom-section {
-                padding-bottom: max(20px, env(safe-area-inset-bottom)); /* Extra safe space */
-            }
-            .input-bar {
-                padding: 10px 8px 10px 14px;
-            }
-            #send-btn {
-                width: 34px; height: 34px; margin-left: 8px;
-            }
-            textarea {
-                font-size: 0.95rem; /* Prevents iOS zoom */
-            }
-            .footer-info { font-size: 0.6rem; }
-            main { padding: 15px; }
-            header { padding: 0 15px; }
+       /* MOBILE FIXES */
+@media (max-width: 480px) {
+    .bottom-section {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+    .input-bar {
+        padding: 10px 6px 10px 12px;
+    }
+    #send-btn {
+        width: 34px; height: 34px; margin-left: 6px;
+    }
+    .file-btn {
+        width: 32px; height: 32px; padding: 6px;
+    }
+    .file-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    textarea {
+        font-size: 0.95rem;
+    }
+    .footer-info { font-size: 0.6rem; }
+    main { padding: 15px; }
+    header { padding: 0 15px; }
 
 
 
@@ -1259,7 +1267,7 @@ const AI_IDENTITY = {
 
         // ==================== INITIALIZATION ====================
         // ==================== INITIALIZATION ====================
-        function initApp() {
+               function initApp() {
             loadSettings();
             loadConversations();
             
@@ -1669,24 +1677,22 @@ if (hero) {
        // 'Authorization': `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-        model: settings.model,
-        messages: [
-            {
-                role: "system",
-                content: 
-                         
-           `You are ${AI_IDENTITY.name}. Never say "I don't have a name". Always use the name "${AI_IDENTITY.name}".
+                    body: JSON.stringify({
+                    model: settings.model,
+                    messages: [
+                        {
+                            role: "system",
+                            content: 
+                            `You are ${AI_IDENTITY.name}. Never say "I don't have a name". Always use the name "${AI_IDENTITY.name}".
 
 You are ${AI_IDENTITY.name}. 
-User Name: ${window.personalization?.userName ||''}
-Academic Level: ${window.personalization?.studyLevel}
+User Name: ${window.personalization?.userName || ''}
+Academic Level: ${window.personalization?.studyLevel || ''}
 Major/Focus: ${window.personalization?.major || ''}
-Tone: ${window.personalization?.responseStyle}
-
+Tone: ${window.personalization?.responseStyle || ''}
 
 ### CUSTOM USER INSTRUCTIONS ###
-${window.personalization?.customInstructions}
+${window.personalization?.customInstructions || ''}
 
 ${window.fileContext?.text
     ? `
@@ -1698,18 +1704,17 @@ Extracted content:
 ${window.fileContext.text}
 """
 `
-    : ""
+    : ''
 }
 
-
 RULES:
-1. Always address the user by their name (${window.personalization.userName || ''}).
-2. Match explanation complexity to a ${window.personalization.studyLevel} level.
-3. Use examples from ${window.personalization.major || 'various fields'}.
-
+1. Always address the user by their name (${window.personalization?.userName || ''}).
+2. Match explanation complexity to their academic level.
+3. When referencing the attached file, mention it naturally.
+4. Use the file content to provide more accurate answers.
 
 CORE IDENTITY:
-- Your name is ventora
+- Your name is Ventora
 - Version: VentoraAI V4.1 VEA
 - Type: Virtual Educational Assistant
 - Creator/Developer: Maulik Makwana
@@ -1810,16 +1815,12 @@ You: "False. The sun is a star, not a planet."
 
 User: "Quiz me on Indian history"
 You: [Creates history MCQs in same format]`
-                
-            },
-            ...apiMessages
-        ],
-        temperature: settings.temperature,
-        max_tokens: settings.maxTokens
-    })
-});
-
-
+                        },
+                        ...apiMessages
+                    ],
+                    temperature: settings.temperature,
+                    max_tokens: settings.maxTokens
+                })
 
 
 
@@ -2174,13 +2175,16 @@ await typeText(aiTextEl, formatted, 25);
         
         // ==================== EVENT LISTENERS ====================
                // ==================== EVENT LISTENERS ====================
+                // ==================== EVENT LISTENERS ====================
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 // Clear file after sending
                 if (window.fileContext?.text) {
                     setTimeout(() => {
-                        clearAttachedFile();
+                        if (typeof clearAttachedFile === 'function') {
+                            clearAttachedFile();
+                        }
                     }, 100);
                 }
                 setTimeout(() => handleSend(), 50);
@@ -2194,21 +2198,13 @@ await typeText(aiTextEl, formatted, 25);
             // Clear file after sending
             if (window.fileContext?.text) {
                 setTimeout(() => {
-                    clearAttachedFile();
+                    if (typeof clearAttachedFile === 'function') {
+                        clearAttachedFile();
+                    }
                 }, 100);
             }
             handleSend();
         });
-
-
-
-
-
-
-
-
-
-
 
 
 
