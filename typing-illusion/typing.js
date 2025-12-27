@@ -1,33 +1,13 @@
-async function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function typeWriterInto(element, text, speed = 45) {
-  element.innerHTML = "";
-  const words = text.split(" ");
-  let i = 0;
-
-  return new Promise(resolve => {
-    const timer = setInterval(() => {
-      if (i >= words.length) {
-        clearInterval(timer);
-        resolve();
-        return;
-      }
-      element.innerHTML += words[i] + (i < words.length - 1 ? " " : "");
-      i++;
-      if (typeof scrollToBottom === "function") scrollToBottom();
-    }, speed);
-  });
+async function typeText(element, text, speed = 25) {
+  element.textContent = "";
+  for (let i = 0; i < text.length; i++) {
+    element.textContent += text[i];
+    await sleep(speed);
+  }
 }
 
-async function renderAIResponse(targetElement, text) {
-  await sleep(500);
-  await typeWriterInto(targetElement, text, 45);
-
-  // ✅ Force layout recalculation (fixes spacing mismatch)
-  targetElement.closest(".msg-wrapper")?.offsetHeight;
-}
-
-
-window.renderAIResponse = renderAIResponse;
+window.typeText = typeText;
