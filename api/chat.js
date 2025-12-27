@@ -4,121 +4,64 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
-
-  const { model, messages, temperature, max_tokens } = req.body;
-
-  if (!model || !messages) {
-    return res.status(400).json({ error: "Model or messages missing" });
-  }
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    // ================= GROQ =================
+    const { messages, model, temperature = 0.7, max_tokens = 1024 } = req.body;
+
+    if (!messages || !Array.isArray(messages))
+      return res.status(400).json({ error: "Invalid messages" });
+
+    // --- ROUTING ---
+    let endpoint = "";
+    let apiKey = "";
+    let finalModel = model;
+
     if (model.startsWith("groq:")) {
-      const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: model.replace("groq:", ""),
-          messages,
-          temperature,
-          max_tokens
-        })
-      });
-
-      return res.status(resp.status).json(await resp.json());
+      endpoint = "https://api.groq.com/openai/v1/chat/completions";
+      apiKey = process.env.GROQ_API_KEY;
+      finalModel = model.replace("groq:", "");
+    } 
+    else if (model.startsWith("aiml:")) {
+      endpoint = "https://api.aimlapi.com/v1/chat/completions";
+      apiKey = process.env.AIML_API_KEY;
+      finalModel = model.replace("aiml:", "");
+    } 
+    else {
+      return res.status(400).json({ error: "Unknown model provider" });
     }
 
+    if (!apiKey)
+      return res.status(500).json({ error: "API key missing on server" });
 
-
-
-
-
-    
-    // ================= GEMINI =================
-   
-if (model.startsWith("google:")) {
-  const geminiModel = model.replace("google:", "");
-
-  const lastUserMessage = String(
-    [...messages].reverse().find(m => m.role === "user")?.content || ""
-  ).trim();
-
-  if (!lastUserMessage) {
-    return res.status(200).json({
-      choices: [{
-        message: {
-          role: "assistant",
-          content: "Please enter a message."
-        }
-      }]
-    });
-  }
-
-  const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
+    const response = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: lastUserMessage }]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1024
-        }
+        model: finalModel,
+        messages,
+        temperature,
+        max_tokens
       })
-    }
-  );
+    });
 
-  const data = await resp.json();
+    const data = await response.json();
 
-  return res.status(200).json({
-    choices: [
-      {
-        message: {
-          role: "assistant",
-          content:
-            data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "Gemini returned no text."
-        }
-      }
-    ]
-  });
-}
-
-
-
-
-    
-    // ================= OPENAI =================
-    if (model.startsWith("openai:")) {
-      const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: model.replace("openai:", ""),
-          messages,
-          temperature,
-          max_tokens
-        })
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: "API error",
+        details: data
       });
-
-      return res.status(resp.status).json(await resp.json());
     }
 
-    return res.status(400).json({ error: "Unknown model provider" });
+    res.status(200).json(data);
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error("Server error:", err);
+    res.status(500).json({ error: err.message });
   }
 }
