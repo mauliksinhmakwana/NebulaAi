@@ -1,4 +1,1 @@
-process.env.GROQ_API_KEY_MAIN
-process.env.GROQ_API_KEY_RESEARCH
-process.env.GROQ_API_KEY_STUDY
-process.env.GROQ_API_KEY_BACKUP
+
