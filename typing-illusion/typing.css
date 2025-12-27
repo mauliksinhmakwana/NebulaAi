@@ -1,18 +1,28 @@
-/* ===== Ventora Typing Illusion ===== */
+/* ===== Fix AI message spacing & width ===== */
 
-.ai-typing {
-  white-space: pre-wrap;
-  word-break: break-word;
+.msg-wrapper.ai-wrapper {
+    margin-bottom: 12px !important;
 }
 
-.typing-cursor::after {
-  content: "▍";
-  animation: blink 1s infinite;
-  margin-left: 2px;
+.msg.ai {
+    max-width: 75%;
+    padding: 0 0 0 14px;
+    margin: 0;
+    line-height: 1.55;
 }
 
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+.msg.ai #ai-typing-target {
+    margin: 0;
+    padding: 0;
+}
+
+/* Remove extra top/bottom gaps */
+.msg.ai br {
+    display: none;
+}
+
+/* Action buttons tighter */
+.msg.ai + div,
+.msg.ai .timestamp {
+    margin-top: 6px !important;
 }
