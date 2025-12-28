@@ -1,7 +1,10 @@
-// Main Menu Popup - DeepSeek Style - UPDATED
+// Main Menu Popup - DeepSeek Style - FINAL
 
 // Global state
 let currentSection = null;
+let selectedExportOption = 'all';
+
+// Sections definition
 let sections = {
     'goals': {
         title: 'Your Goals',
@@ -17,6 +20,11 @@ let sections = {
         title: 'Settings',
         icon: 'fas fa-cog',
         render: renderSettingsSection
+    },
+    'about': {
+        title: 'About Ventora',
+        icon: 'fas fa-info-circle',
+        render: renderAboutSection
     },
     'export': {
         title: 'Export Chat',
@@ -116,7 +124,6 @@ function renderMenu() {
     const menuContainer = document.querySelector('.sidebar-menu');
     if (!menuContainer) return;
     
-    // Menu HTML
     menuContainer.innerHTML = `
         <div class="menu-section">
             <h4 class="section-title">Preferences</h4>
@@ -136,6 +143,7 @@ function renderMenu() {
         
         <div class="menu-section">
             <h4 class="section-title">About</h4>
+            ${renderMenuItem('about', 'About Ventora', 'fas fa-info-circle')}
             ${renderMenuItem('privacy', 'Privacy & Security', 'fas fa-shield-alt')}
         </div>
     `;
@@ -359,11 +367,55 @@ function renderGoalsSection(container) {
     }
 }
 
+// About Section
+function renderAboutSection(container) {
+    container.innerHTML = `
+        <div class="about-logo">VENTORA<span>AI</span></div>
+        <div class="about-tagline">Medical Information Assistant</div>
+        
+        <div class="about-description">
+            Ventora AI helps people understand medicines, diseases, nutrition, 
+            and health concepts from a pharmaceutical science perspective — 
+            for education and awareness, not medical instruction.
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Version</label>
+            <div class="form-input" style="background: rgba(0,122,255,0.1); border-color: rgba(0,122,255,0.3); font-weight: 500;">
+                <strong>V5.4 MIA</strong> (Medical Information Assistant)
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Developer</label>
+            <div class="form-input" style="font-weight: 500;">
+                Created by <strong>Maulik Makwana</strong>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="social-link" target="_blank" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-link" target="_blank" aria-label="X">
+                <i class="fab fa-x-twitter"></i>
+            </a>
+        </div>
+        
+        <div class="form-info" style="margin-top: 20px; text-align: center;">
+            <i class="fas fa-heart"></i> Made with care for better health education
+        </div>
+    `;
+}
+
 // Privacy & Security Section
 function renderPrivacySection(container) {
     container.innerHTML = `
         <div class="about-logo">VENTORA<span>AI</span></div>
-        <div class="about-tagline">Medical Information Assistant</div>
+        <div class="about-tagline">Privacy & Security</div>
         
         <div class="about-description">
             Your privacy and security are our top priority. Ventora AI is designed with
@@ -408,7 +460,7 @@ function renderPrivacySection(container) {
     `;
 }
 
-// Export Section - UPDATED with conversation selection
+// Export Section
 function renderExportSection(container) {
     const conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
     const currentConversationId = localStorage.getItem('current_conversation_id') || (conversations[0]?.id || '');
@@ -422,7 +474,7 @@ function renderExportSection(container) {
         // Option to export all conversations
         exportAllOption = `
             <div class="conversation-option" onclick="selectExportOption('all')">
-                <input type="radio" name="export-option" id="export-all" ${currentConversationId === 'all' ? 'checked' : ''}>
+                <input type="radio" name="export-option" id="export-all" ${selectedExportOption === 'all' ? 'checked' : ''}>
                 <div class="conversation-info">
                     <div class="conversation-title">Export All Conversations</div>
                     <div class="conversation-date">${conversations.length} conversations • All data</div>
@@ -435,11 +487,10 @@ function renderExportSection(container) {
             const date = new Date(conv.updatedAt);
             const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
             const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const isCurrent = conv.id === currentConversationId;
             
             conversationOptions += `
                 <div class="conversation-option" onclick="selectExportOption('${conv.id}')">
-                    <input type="radio" name="export-option" id="export-${conv.id}" ${isCurrent ? 'checked' : ''}>
+                    <input type="radio" name="export-option" id="export-${conv.id}" ${selectedExportOption === conv.id ? 'checked' : ''}>
                     <div class="conversation-info">
                         <div class="conversation-title">${conv.title}</div>
                         <div class="conversation-date">${dateStr} • ${timeStr} • ${conv.messages?.length || 0} messages</div>
@@ -465,9 +516,7 @@ function renderExportSection(container) {
                 <option value="json">JSON (.json)</option>
                 <option value="html">HTML (.html)</option>
                 <option value="markdown">Markdown (.md)</option>
-                <option value="pdf">PDF (.pdf)</option>
             </select>
-            <div class="form-info">PDF export may take longer to generate</div>
         </div>
         
         <div class="form-group">
@@ -480,10 +529,6 @@ function renderExportSection(container) {
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="menu-include-metadata" checked>
                     <span>Metadata (titles, dates)</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="menu-include-formatting" checked>
-                    <span>Formatting (bold, code blocks)</span>
                 </label>
             </div>
         </div>
@@ -499,18 +544,14 @@ function renderExportSection(container) {
     `;
     
     // Initialize export selection
-    if (currentConversationId) {
-        selectExportOption(currentConversationId);
-    } else if (conversations.length > 0) {
-        selectExportOption('all');
+    if (selectedExportOption && document.getElementById(`export-${selectedExportOption}`)) {
+        document.getElementById(`export-${selectedExportOption}`).checked = true;
     }
 }
 
 // ===== DATA MANAGEMENT FUNCTIONS =====
 
 // Export selection
-let selectedExportOption = 'all';
-
 function selectExportOption(optionId) {
     selectedExportOption = optionId;
     
@@ -608,32 +649,24 @@ function deleteMenuTask(index) {
     }
 }
 
-// Export chat - UPDATED with PDF support
+// Export chat
 function exportMenuChat() {
     const format = document.getElementById('menu-export-format')?.value || 'txt';
     const includeTimestamps = document.getElementById('menu-include-timestamps')?.checked !== false;
     const includeMetadata = document.getElementById('menu-include-metadata')?.checked !== false;
-    const includeFormatting = document.getElementById('menu-include-formatting')?.checked !== false;
     
     if (selectedExportOption === 'all') {
-        // Export all conversations
-        exportAllConversations(format, includeTimestamps, includeMetadata, includeFormatting);
+        exportAllConversations(format, includeTimestamps, includeMetadata);
     } else {
-        // Export single conversation
-        exportSingleConversation(selectedExportOption, format, includeTimestamps, includeMetadata, includeFormatting);
+        exportSingleConversation(selectedExportOption, format, includeTimestamps, includeMetadata);
     }
 }
 
-function exportAllConversations(format, includeTimestamps, includeMetadata, includeFormatting) {
+function exportAllConversations(format, includeTimestamps, includeMetadata) {
     const conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
     
     if (conversations.length === 0) {
         showMenuToast('No conversations to export');
-        return;
-    }
-    
-    if (format === 'pdf') {
-        showMenuToast('PDF export for multiple conversations coming soon!');
         return;
     }
     
@@ -677,7 +710,6 @@ function exportAllConversations(format, includeTimestamps, includeMetadata, incl
             mimeType = 'application/json';
             break;
         case 'html':
-            // Simple HTML export for all conversations
             content = generateAllConversationsHTML(conversations, includeTimestamps, includeMetadata);
             filename += '.html';
             mimeType = 'text/html';
@@ -691,7 +723,7 @@ function exportAllConversations(format, includeTimestamps, includeMetadata, incl
     showMenuToast(`Exported ${conversations.length} conversations!`);
 }
 
-function exportSingleConversation(conversationId, format, includeTimestamps, includeMetadata, includeFormatting) {
+function exportSingleConversation(conversationId, format, includeTimestamps, includeMetadata) {
     const conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
     const conversation = conversations.find(c => c.id === conversationId);
     
@@ -704,14 +736,9 @@ function exportSingleConversation(conversationId, format, includeTimestamps, inc
     let filename = `ventora-chat-${conversation.id}`;
     let mimeType = 'text/plain';
     
-    if (format === 'pdf') {
-        generatePDF(conversation, includeTimestamps, includeMetadata, includeFormatting);
-        return;
-    }
-    
     switch(format) {
         case 'txt':
-            content = exportConversationAsText(conversation, includeTimestamps, includeMetadata, includeFormatting);
+            content = exportConversationAsText(conversation, includeTimestamps, includeMetadata);
             filename += '.txt';
             break;
         case 'json':
@@ -720,12 +747,12 @@ function exportSingleConversation(conversationId, format, includeTimestamps, inc
             mimeType = 'application/json';
             break;
         case 'html':
-            content = exportConversationAsHTML(conversation, includeTimestamps, includeMetadata, includeFormatting);
+            content = exportConversationAsHTML(conversation, includeTimestamps, includeMetadata);
             filename += '.html';
             mimeType = 'text/html';
             break;
         case 'markdown':
-            content = exportConversationAsMarkdown(conversation, includeTimestamps, includeMetadata, includeFormatting);
+            content = exportConversationAsMarkdown(conversation, includeTimestamps, includeMetadata);
             filename += '.md';
             break;
     }
@@ -735,7 +762,7 @@ function exportSingleConversation(conversationId, format, includeTimestamps, inc
 }
 
 // Export helper functions
-function exportConversationAsText(conversation, includeTimestamps, includeMetadata, includeFormatting) {
+function exportConversationAsText(conversation, includeTimestamps, includeMetadata) {
     let text = '';
     
     if (includeMetadata) {
@@ -772,11 +799,11 @@ function exportConversationAsJSON(conversation) {
     return JSON.stringify(exportData, null, 2);
 }
 
-function exportConversationAsHTML(conversation, includeTimestamps, includeMetadata, includeFormatting) {
+function exportConversationAsHTML(conversation, includeTimestamps, includeMetadata) {
     let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${conversation.title}</title>
     <style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:20px;line-height:1.6}
     .message{margin-bottom:20px;padding:15px;border-radius:8px}.user{background:#f0f7ff}
-    .ai{background:#f8f9fa}.timestamp{font-size:0.8rem;color:#666}pre{background:#1a1a1a;color:#fff;padding:10px;border-radius:5px}</style></head><body>`;
+    .ai{background:#f8f9fa}.timestamp{font-size:0.8rem;color:#666}</style></head><body>`;
     
     if (includeMetadata) {
         html += `<h1>${conversation.title}</h1><p><small>${new Date(conversation.updatedAt).toLocaleString()}</small></p><hr>`;
@@ -796,7 +823,7 @@ function exportConversationAsHTML(conversation, includeTimestamps, includeMetada
     return html;
 }
 
-function exportConversationAsMarkdown(conversation, includeTimestamps, includeMetadata, includeFormatting) {
+function exportConversationAsMarkdown(conversation, includeTimestamps, includeMetadata) {
     let md = '';
     
     if (includeMetadata) {
@@ -843,82 +870,189 @@ function generateAllConversationsHTML(conversations, includeTimestamps, includeM
     return html;
 }
 
-// PDF generation using jsPDF
-function generatePDF(conversation, includeTimestamps, includeMetadata, includeFormatting) {
-    // Check if jsPDF is available
-    if (typeof jspdf === 'undefined') {
-        showMenuToast('PDF export requires jsPDF library. Using HTML export instead.');
-        exportSingleConversation(conversation.id, 'html', includeTimestamps, includeMetadata, includeFormatting);
-        return;
+// Preview function - FIXED
+function previewMenuExport() {
+    const conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
+    
+    if (selectedExportOption === 'all') {
+        if (conversations.length === 0) {
+            showMenuToast('No conversations to preview');
+            return;
+        }
+        showPreviewForAll(conversations);
+    } else {
+        const conversation = conversations.find(c => c.id === selectedExportOption);
+        if (!conversation || !conversation.messages) {
+            showMenuToast('No conversation to preview');
+            return;
+        }
+        showPreviewForConversation(conversation);
+    }
+}
+
+function showPreviewForConversation(conversation) {
+    const includeTimestamps = document.getElementById('menu-include-timestamps')?.checked !== false;
+    const includeMetadata = document.getElementById('menu-include-metadata')?.checked !== false;
+    
+    let previewHTML = `
+        <div style="background: var(--menu-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--menu-border);">
+            <h4 style="margin-top: 0; color: var(--menu-accent);">Preview: ${conversation.title}</h4>
+            <div style="max-height: 300px; overflow-y: auto; font-size: 0.9rem; line-height: 1.4;">
+    `;
+    
+    if (includeMetadata) {
+        previewHTML += `<p><small>Exported: ${new Date().toLocaleString()}</small></p>`;
     }
     
-    try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+    // Show first 3 messages as preview
+    const previewMessages = conversation.messages.slice(0, 3);
+    previewMessages.forEach(msg => {
+        const role = msg.role === 'user' ? 'You' : 'Ventora AI';
+        const time = includeTimestamps ? `[${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` : '';
+        const contentPreview = msg.content.length > 100 ? msg.content.substring(0, 100) + '...' : msg.content;
         
-        let y = 20;
-        const lineHeight = 7;
-        const margin = 20;
-        const pageWidth = doc.internal.pageSize.width;
-        const maxWidth = pageWidth - 2 * margin;
-        
-        // Add title
-        doc.setFontSize(16);
-        doc.text(conversation.title, margin, y);
-        y += 15;
-        
-        // Add metadata
-        if (includeMetadata) {
-            doc.setFontSize(10);
-            doc.text(`Date: ${new Date(conversation.updatedAt).toLocaleString()}`, margin, y);
-            y += 10;
-        }
-        
-        // Add messages
-        doc.setFontSize(12);
-        
-        conversation.messages.forEach(msg => {
-            const role = msg.role === 'user' ? 'You' : 'Ventora AI';
-            
-            // Check if we need a new page
-            if (y > 280) {
-                doc.addPage();
-                y = 20;
-            }
-            
-            // Add role
-            doc.setFont('helvetica', 'bold');
-            let text = role;
-            if (includeTimestamps) {
-                text += ` [${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}]`;
-            }
-            doc.text(text, margin, y);
-            y += lineHeight;
-            
-            // Add message content
-            doc.setFont('helvetica', 'normal');
-            const lines = doc.splitTextToSize(msg.content, maxWidth);
-            lines.forEach(line => {
-                if (y > 280) {
-                    doc.addPage();
-                    y = 20;
-                }
-                doc.text(line, margin, y);
-                y += lineHeight;
-            });
-            
-            y += lineHeight; // Space between messages
-        });
-        
-        // Save PDF
-        doc.save(`ventora-chat-${conversation.id}.pdf`);
-        showMenuToast('PDF exported!');
-        
-    } catch (error) {
-        console.error('PDF export error:', error);
-        showMenuToast('PDF export failed. Using HTML instead.');
-        exportSingleConversation(conversation.id, 'html', includeTimestamps, includeMetadata, includeFormatting);
+        previewHTML += `
+            <div style="margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <strong>${time}${role}:</strong><br>
+                ${contentPreview.replace(/\n/g, '<br>')}
+            </div>
+        `;
+    });
+    
+    if (conversation.messages.length > 3) {
+        previewHTML += `<p style="color: var(--menu-text-secondary); text-align: center;">... and ${conversation.messages.length - 3} more messages</p>`;
     }
+    
+    previewHTML += `
+            </div>
+            <p style="font-size: 0.8rem; color: var(--menu-text-secondary); margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> This is a preview. The exported file will contain all ${conversation.messages.length} messages.
+            </p>
+        </div>
+    `;
+    
+    // Create preview modal
+    const previewModal = document.createElement('div');
+    previewModal.className = 'preview-modal-overlay';
+    previewModal.innerHTML = `
+        <div class="preview-modal-content">
+            <div class="preview-modal-header">
+                <h3 class="preview-modal-title">Export Preview</h3>
+                <button class="preview-modal-close" onclick="this.closest('.preview-modal-overlay').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            ${previewHTML}
+            <div class="preview-actions">
+                <button class="preview-action-btn primary" onclick="exportMenuChat(); this.closest('.preview-modal-overlay').remove()">
+                    Export Now
+                </button>
+                <button class="preview-action-btn secondary" onclick="this.closest('.preview-modal-overlay').remove()">
+                    Close Preview
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(previewModal);
+    
+    // Close on background click
+    previewModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.remove();
+        }
+    });
+    
+    // Close on Escape key
+    const closeOnEscape = function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.querySelector('.preview-modal-overlay');
+            if (modal) modal.remove();
+            document.removeEventListener('keydown', closeOnEscape);
+        }
+    };
+    document.addEventListener('keydown', closeOnEscape);
+}
+
+function showPreviewForAll(conversations) {
+    let previewHTML = `
+        <div style="background: var(--menu-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--menu-border);">
+            <h4 style="margin-top: 0; color: var(--menu-accent);">Preview: All Conversations</h4>
+            <div style="max-height: 300px; overflow-y: auto; font-size: 0.9rem;">
+                <p><strong>Total Conversations:</strong> ${conversations.length}</p>
+                <p><strong>Total Messages:</strong> ${conversations.reduce((total, conv) => total + (conv.messages?.length || 0), 0)}</p>
+                
+                <div style="margin-top: 15px;">
+                    <strong>Conversation List:</strong>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+    `;
+    
+    // Show first 5 conversations
+    const previewConversations = conversations.slice(0, 5);
+    previewConversations.forEach((conv, index) => {
+        previewHTML += `
+            <li style="margin-bottom: 8px;">
+                <strong>${index + 1}. ${conv.title}</strong><br>
+                <small>${new Date(conv.updatedAt).toLocaleDateString()} • ${conv.messages?.length || 0} messages</small>
+            </li>
+        `;
+    });
+    
+    if (conversations.length > 5) {
+        previewHTML += `<li style="color: var(--menu-text-secondary);">... and ${conversations.length - 5} more conversations</li>`;
+    }
+    
+    previewHTML += `
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--menu-text-secondary); margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> Exporting all conversations as a single file.
+            </p>
+        </div>
+    `;
+    
+    // Create preview modal
+    const previewModal = document.createElement('div');
+    previewModal.className = 'preview-modal-overlay';
+    previewModal.innerHTML = `
+        <div class="preview-modal-content">
+            <div class="preview-modal-header">
+                <h3 class="preview-modal-title">Export Preview</h3>
+                <button class="preview-modal-close" onclick="this.closest('.preview-modal-overlay').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            ${previewHTML}
+            <div class="preview-actions">
+                <button class="preview-action-btn primary" onclick="exportMenuChat(); this.closest('.preview-modal-overlay').remove()">
+                    Export Now
+                </button>
+                <button class="preview-action-btn secondary" onclick="this.closest('.preview-modal-overlay').remove()">
+                    Close Preview
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(previewModal);
+    
+    // Close on background click
+    previewModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.remove();
+        }
+    });
+    
+    // Close on Escape key
+    const closeOnEscape = function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.querySelector('.preview-modal-overlay');
+            if (modal) modal.remove();
+            document.removeEventListener('keydown', closeOnEscape);
+        }
+    };
+    document.addEventListener('keydown', closeOnEscape);
 }
 
 // Download helper
@@ -1009,247 +1143,24 @@ function showMenuToast(message) {
     }, 3000);
 }
 
-// Preview export
-// Replace this function:
-// WITH THIS:
-function previewMenuExport() {
-    const conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
-    
-    if (selectedExportOption === 'all') {
-        if (conversations.length === 0) {
-            showMenuToast('No conversations to preview');
-            return;
-        }
-        // Show preview for all conversations
-        showPreviewForAll(conversations);
-    } else {
-        const conversation = conversations.find(c => c.id === selectedExportOption);
-        if (!conversation || !conversation.messages) {
-            showMenuToast('No conversation to preview');
-            return;
-        }
-        // Show preview for single conversation
-        showPreviewForConversation(conversation);
-    }
-}
-
-function showPreviewForConversation(conversation) {
-    const includeTimestamps = document.getElementById('menu-include-timestamps')?.checked !== false;
-    const includeMetadata = document.getElementById('menu-include-metadata')?.checked !== false;
-    
-    let previewHTML = `
-        <div style="background: var(--menu-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--menu-border);">
-            <h4 style="margin-top: 0; color: var(--menu-accent);">Preview: ${conversation.title}</h4>
-            <div style="max-height: 300px; overflow-y: auto; font-size: 0.9rem; line-height: 1.4;">
-    `;
-    
-    if (includeMetadata) {
-        previewHTML += `<p><small>Exported: ${new Date().toLocaleString()}</small></p>`;
-    }
-    
-    // Show first 3 messages as preview
-    const previewMessages = conversation.messages.slice(0, 3);
-    previewMessages.forEach(msg => {
-        const role = msg.role === 'user' ? 'You' : 'Ventora AI';
-        const time = includeTimestamps ? `[${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` : '';
-        const contentPreview = msg.content.length > 100 ? msg.content.substring(0, 100) + '...' : msg.content;
-        
-        previewHTML += `
-            <div style="margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                <strong>${time}${role}:</strong><br>
-                ${contentPreview.replace(/\n/g, '<br>')}
-            </div>
-        `;
-    });
-    
-    if (conversation.messages.length > 3) {
-        previewHTML += `<p style="color: var(--menu-text-secondary); text-align: center;">... and ${conversation.messages.length - 3} more messages</p>`;
-    }
-    
-    previewHTML += `
-            </div>
-            <p style="font-size: 0.8rem; color: var(--menu-text-secondary); margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> This is a preview. The exported file will contain all ${conversation.messages.length} messages.
-            </p>
-        </div>
-    `;
-    
-    // Create and show preview modal
-    const previewModal = document.createElement('div');
-    previewModal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        padding: 20px;
-        box-sizing: border-box;
-    `;
-    
-    previewModal.innerHTML = `
-        <div style="background: var(--menu-surface-secondary); border: 1px solid var(--menu-border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: var(--menu-text);">Export Preview</h3>
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--menu-text-secondary); font-size: 1.5rem; cursor: pointer; padding: 5px; border-radius: 6px;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            ${previewHTML}
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-                <button onclick="exportMenuChat(); this.parentElement.parentElement.parentElement.remove()" style="flex: 1; padding: 12px; background: var(--menu-accent); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 500;">
-                    Export Now
-                </button>
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); color: var(--menu-text); border: none; border-radius: 10px; cursor: pointer;">
-                    Close Preview
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(previewModal);
-    
-    // Close on background click
-    previewModal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.remove();
-        }
-    });
-    
-    // Close on Escape key
-    const closeOnEscape = function(e) {
-        if (e.key === 'Escape') {
-            previewModal.remove();
-            document.removeEventListener('keydown', closeOnEscape);
-        }
-    };
-    document.addEventListener('keydown', closeOnEscape);
-}
-
-function showPreviewForAll(conversations) {
-    let previewHTML = `
-        <div style="background: var(--menu-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--menu-border);">
-            <h4 style="margin-top: 0; color: var(--menu-accent);">Preview: All Conversations</h4>
-            <div style="max-height: 300px; overflow-y: auto; font-size: 0.9rem;">
-                <p><strong>Total Conversations:</strong> ${conversations.length}</p>
-                <p><strong>Total Messages:</strong> ${conversations.reduce((total, conv) => total + (conv.messages?.length || 0), 0)}</p>
-                
-                <div style="margin-top: 15px;">
-                    <strong>Conversation List:</strong>
-                    <ul style="padding-left: 20px; margin-top: 10px;">
-    `;
-    
-    // Show first 5 conversations
-    const previewConversations = conversations.slice(0, 5);
-    previewConversations.forEach((conv, index) => {
-        previewHTML += `
-            <li style="margin-bottom: 8px;">
-                <strong>${index + 1}. ${conv.title}</strong><br>
-                <small>${new Date(conv.updatedAt).toLocaleDateString()} • ${conv.messages?.length || 0} messages</small>
-            </li>
-        `;
-    });
-    
-    if (conversations.length > 5) {
-        previewHTML += `<li style="color: var(--menu-text-secondary);">... and ${conversations.length - 5} more conversations</li>`;
-    }
-    
-    previewHTML += `
-                    </ul>
-                </div>
-            </div>
-            <p style="font-size: 0.8rem; color: var(--menu-text-secondary); margin-top: 15px;">
-                <i class="fas fa-info-circle"></i> Exporting all conversations as a single file.
-            </p>
-        </div>
-    `;
-    
-    // Create and show preview modal (same as above function)
-    const previewModal = document.createElement('div');
-    previewModal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        padding: 20px;
-        box-sizing: border-box;
-    `;
-    
-    previewModal.innerHTML = `
-        <div style="background: var(--menu-surface-secondary); border: 1px solid var(--menu-border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: var(--menu-text);">Export Preview</h3>
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--menu-text-secondary); font-size: 1.5rem; cursor: pointer; padding: 5px; border-radius: 6px;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            ${previewHTML}
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-                <button onclick="exportMenuChat(); this.parentElement.parentElement.parentElement.remove()" style="flex: 1; padding: 12px; background: var(--menu-accent); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 500;">
-                    Export Now
-                </button>
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); color: var(--menu-text); border: none; border-radius: 10px; cursor: pointer;">
-                    Close Preview
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(previewModal);
-    
-    // Close on background click
-    previewModal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.remove();
-        }
-    });
-    
-    // Close on Escape key
-    const closeOnEscape = function(e) {
-        if (e.key === 'Escape') {
-            previewModal.remove();
-            document.removeEventListener('keydown', closeOnEscape);
-        }
-    };
-    document.addEventListener('keydown', closeOnEscape);
-}
-
 // Setup event listeners
 function setupEventListeners() {
     // Close button
     const closeBtn = document.querySelector('.content-close');
     if (closeBtn) {
         closeBtn.addEventListener('click', closeMainMenuPopup);
-        // Add touch support
-        closeBtn.addEventListener('touchstart', function(e) {
-            this.style.transform = 'scale(0.95)';
-        });
-        closeBtn.addEventListener('touchend', function(e) {
-            this.style.transform = '';
-        });
     }
     
     // Back button for mobile
     const backBtn = document.querySelector('.content-back');
     if (backBtn) {
         backBtn.addEventListener('click', goBackToMenu);
-        // Add touch support
-        backBtn.addEventListener('touchstart', function(e) {
-            this.style.transform = 'scale(0.95)';
-        });
-        backBtn.addEventListener('touchend', function(e) {
-            this.style.transform = '';
-        });
+    }
+    
+    // Mobile close button
+    const mobileCloseBtn = document.querySelector('.sidebar-close');
+    if (mobileCloseBtn) {
+        mobileCloseBtn.addEventListener('click', closeMainMenuPopup);
     }
     
     // Close on background click
@@ -1272,13 +1183,9 @@ function setupEventListeners() {
     // Handle window resize
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768 && currentSection) {
-            // On desktop, just update the menu highlights
             renderMenu();
         }
     });
-    
-    // Better touch support for menu items
-    document.addEventListener('touchstart', function() {}, { passive: true });
 }
 
 // Initialize when DOM is loaded
