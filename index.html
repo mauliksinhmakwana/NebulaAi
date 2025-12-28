@@ -581,6 +581,225 @@
 
 
 
+/* About Modal Styles */
+.about-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 1005;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.about-content {
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: modalSlide 0.3s ease;
+}
+
+.about-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.about-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.close-about {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.close-about:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.about-body {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.about-logo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.about-logo .logo {
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.about-logo .version-badge {
+    font-size: 0.8rem;
+    background: rgba(0, 122, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    color: var(--accent-blue);
+}
+
+.about-section {
+    margin-bottom: 20px;
+}
+
+.about-section h4 {
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-blue);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.creator-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 122, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+}
+
+.creator-name {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.creator-title {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.about-tech {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.tech-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.about-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.about-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.about-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.about-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+}
+
+.about-btn.primary:hover {
+    background: rgba(0, 122, 255, 0.8);
+}
+
+/* Mobile fixes */
+@media (max-width: 480px) {
+    .about-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-tech {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
+
 
 
 
@@ -644,19 +863,17 @@
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-   
+    <link rel="stylesheet" href="personalization/personalization.css">
 
     <link rel="stylesheet" href="voice/voice.css">
 <script src="voice/voice.js"></script>
-
-   
+<link rel="stylesheet" href="goal/goal.css">
+<script src="goal/goal.js"></script>
+    <link rel="stylesheet" href="menu/menu.css">
+<script src="menu/menu.js" defer></script>
 <script src="./typing-illusion/typing.js"></script>
 <link rel="stylesheet" href="fileupload/fileupload.css">
 <script src="fileupload/fileupload.js" defer></script>
-   
-<!-- Main Menu Popup (ChatGPT-style) -->
-<link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
-<script src="mainmenupopup/mainmenupopup.js" defer></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -713,10 +930,6 @@
             <i class="fas fa-check-circle"></i>
             <span>Your Goals</span>
         </div>
-<div class="profile-menu-item" onclick="openMainMenuPopup()">
-    <i class="fas fa-cog"></i>
-    <span>Settings</span>
-</div>
 
         <div class="profile-menu-item" onclick="openPersonalization()">
             <i class="fas fa-user-circle"></i>
@@ -745,7 +958,61 @@
 
 
 
-  
+    
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <div class="settings-title">Settings</div>
+                <button class="close-settings" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="settings-group">
+                <label class="settings-label">Model</label>
+                <select class="settings-select" id="modelSelect">
+
+                    
+              <option value="groq:general">MIA – General</option>
+<option value="groq:research">MIA – Research & Analysis</option>
+<option value="groq:study">MIA – Clinical Reasoning</option>
+
+
+
+
+                    
+                </select>
+            </div>
+            
+            <div class="settings-group">
+                <label class="settings-label">Temperature</label>
+                <input type="range" class="settings-range" id="tempRange" min="0" max="1" step="0.1" value="0.7">
+                <div class="range-value">
+                    <span>Precise</span>
+                    <span id="tempValue">0.7</span>
+                    <span>Creative</span>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <label class="settings-label">Max Tokens</label>
+                <select class="settings-select" id="maxTokens">
+                    <option value="512">512</option>
+                    <option value="1024" selected>1024</option>
+                    <option value="2048">2048</option>
+                    <option value="4096">4096</option>
+                    <option value="8192">8192</option>
+                    <option value="32768">32768 (Mixtral only)</option>
+                </select>
+            </div>
+            
+            <div class="settings-actions">
+                <button class="settings-btn" onclick="clearAllData()">Clear All Data</button>
+                <button class="settings-btn primary" onclick="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
@@ -1945,6 +2212,54 @@ await typeText(aiTextEl, formatted, 25);
             }
         });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ==================== ABOUT FUNCTIONS ====================
+function showAbout() {
+    closeMenu(); // Close menu first
+    const aboutModal = document.getElementById('aboutModal');
+    aboutModal.classList.add('active');
+}
+
+function closeAbout() {
+    const aboutModal = document.getElementById('aboutModal');
+    aboutModal.classList.remove('active');
+}
+
+// Add to existing Escape key handler
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (settingsModal.classList.contains('active')) {
+            closeSettings();
+        }
+        if (menuContainer.classList.contains('active')) {
+            closeMenu();
+        }
+        if (document.getElementById('aboutModal').classList.contains('active')) {
+            closeAbout();
+        }
+    }
+});
+
+// Close about when clicking outside
+document.getElementById('aboutModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAbout();
+    }
+});
+ 
     </script>
 
 
@@ -1955,7 +2270,746 @@ await typeText(aiTextEl, formatted, 25);
 
 
 
-  
+
+
+
+
+
+<!-- About Modal - Fixed Layout -->
+<div id="about-modal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title" aria-hidden="true">
+    <div class="about-content">
+        <div class="about-header">
+            <button class="close-about" id="close-about-btn" aria-label="Close about modal">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <h2 id="about-title" class="about-title">About</h2>
+            <div class="header-spacer"></div>
+        </div>
+        
+        <div class="about-body">
+            <!-- Version Info -->
+            <div class="version-section">
+                <div class="app-name">Ventora AI</div>
+                <div class="version-info">
+                    <span class="version">Version 4.1</span>
+                    <span class="model-type">Virtual Educational Assistant</span>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="description-section">
+                <p class="description">
+                 <p>Ventora AI is an advanced artificial intelligence assistant designed specifically for academic excellence and research support. Built with cutting-edge language models, it serves as your intelligent companion for learning, studying, and academic work.</p>
+                 <p>Specializing in comprehensive academic assistance, Ventora AI provides expert support for research methodology, study planning, essay writing, and assignment completion. Whether you need help with literature reviews, concept explanations, or homework solutions, it adapts to your specific academic requirements.</p>
+                 <p>Powered by sophisticated AI technology, Ventora AI offers personalized guidance while maintaining the highest standards of academic integrity. It emphasizes critical thinking, proper citation practices, and ethical research methods to ensure quality learning outcomes.
+
+Developed with a focus on educational impact, this tool supports students, researchers, and educators in achieving their academic goals. Its intuitive interface and responsive design make advanced academic assistance accessible to everyone.</p>
+                 <p><b>Privacy & Data:</b> Your conversations remain private and secure. All data is processed locally in your browser with no storage on external servers. We use industry-standard encryption to protect your information while maintaining full transparency about our data practices.</p>
+                 <p>Ventora AI continues to evolve with regular updates and improvements, ensuring it remains at the forefront of educational technology. Your reliable partner for smarter learning and more efficient research.</p>
+
+
+
+
+
+
+                </p>
+            </div>
+            
+            <!-- Features Grid -->
+            <div class="features-section">
+                <h3 class="section-heading">Key Features</h3>
+                <div class="features-list">
+                   
+                    
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-title">Research Assistance</div>
+                            <div class="feature-desc">Academic research support</div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                <path d="M2 2l7.586 7.586"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-title">Study Help</div>
+                            <div class="feature-desc">Learning support</div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-title">Essay Writing</div>
+                            <div class="feature-desc">Writing assistance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <path d="M22 4L12 14.01l-3-3"/>
+                            </svg>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-title">Homework Support</div>
+                            <div class="feature-desc">Assignment help</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            
+            <!-- Creator Info -->
+            <div class="creator-section">
+                <h3 class="section-heading">Creator</h3>
+                <div class="creator-info">
+                    <div class="creator-avatar">
+                        <div class="avatar-initial">M</div>
+                    </div>
+                    <div class="creator-details">
+                        <div class="creator-name">Maulik Makwana</div>
+                        <div class="creator-role">Developer</div>
+                    </div>
+                    
+                     <!-- External Link -->
+            <div class="external-link">
+                <a href="https://mauliksinhmakwana.github.io/Mauliksinh-Makwana/" target="_blank" class="link-button" onclick="window.open('https://mauliksinhmakwana.github.io/Mauliksinh-Makwana/', '_blank')">
+                    <span>Portfolio</span>
+                </a>
+            </div>
+
+                </div>
+            </div>
+
+
+
+
+            
+            
+            <!-- Tech Stack -->
+            <div class="tech-section">
+                <div class="tech-item">
+                    <div class="tech-label">Powered by</div>
+                    <div class="tech-value">Ventora AI</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-label">Secured by</div>
+                    <div class="tech-value">Ventora AI</div>
+                </div>
+            </div>
+            
+           
+            
+        </div>
+    </div>
+</div>
+
+<script>
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function typeText(element, html, speed = 25) {
+    element.innerHTML = ""; 
+    
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const nodes = Array.from(temp.childNodes);
+    
+    for (const node of nodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent;
+            for (let i = 0; i < text.length; i++) {
+                element.innerHTML += text[i];
+                // This is where the error was happening
+                await sleep(speed); 
+            }
+        } else {
+            element.appendChild(node.cloneNode(true));
+            await sleep(speed); 
+        }
+        if (typeof scrollToBottom === "function") scrollToBottom();
+    }
+}
+// Function to open the About modal
+function openAboutModal() {
+    const modal = document.getElementById('about-modal');
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    
+    // Set focus to the close button
+    setTimeout(() => {
+        const closeBtn = document.getElementById('close-about-btn');
+        if (closeBtn) closeBtn.focus();
+    }, 100);
+}
+
+// Function to close the About modal
+function closeAboutModal() {
+    const modal = document.getElementById('about-modal');
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = 'auto';
+    
+    // Return focus to the button that opened the modal
+    if (window.lastFocusedElement) {
+        window.lastFocusedElement.focus();
+    }
+}
+
+// Event listeners for About modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Store reference to last focused element
+    document.addEventListener('focusin', function(e) {
+        if (!document.getElementById('about-modal').classList.contains('active')) {
+            window.lastFocusedElement = e.target;
+        }
+    });
+    
+    // Find About button in menu
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        const span = item.querySelector('span');
+        if (span && span.textContent.trim() === 'About') {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                openAboutModal();
+            });
+        }
+    });
+    
+    // Close button
+    const closeAboutBtn = document.getElementById('close-about-btn');
+    if (closeAboutBtn) {
+        closeAboutBtn.addEventListener('click', closeAboutModal);
+    }
+    
+    // Close modal when clicking outside
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutModal) {
+        aboutModal.addEventListener('click', function(e) {
+            if (e.target === aboutModal) {
+                closeAboutModal();
+            }
+        });
+    }
+    
+    // Close with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && aboutModal.classList.contains('active')) {
+            closeAboutModal();
+        }
+    });
+});
+
+// Make function available globally
+window.openAboutModal = openAboutModal;
+window.closeAboutModal = closeAboutModal;
+</script>
+
+<style>
+/* About Modal - Fixed CSS */
+.about-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1005;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 16px;
+    pointer-events: none;
+}
+
+.about-modal.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.about-content {
+    background: rgba(30, 30, 30, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 0;
+    width: 100%;
+    max-width: 400px;
+    max-height: 85vh;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: modalSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header - Fixed for mobile */
+.about-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px 24px; /* Increased top padding */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 30, 30, 0.98);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.about-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    text-align: center;
+    flex: 1;
+    line-height: 1.2; /* Better line height */
+}
+
+.close-about {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 10px; /* Larger padding */
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    min-width: 44px; /* Minimum touch target */
+    min-height: 44px;
+    margin-top: -4px; /* Adjust vertical alignment */
+}
+
+.close-about:hover,
+.close-about:focus {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    outline: none;
+}
+
+.close-about svg {
+    display: block;
+}
+
+.header-spacer {
+    width: 44px;
+    visibility: hidden;
+}
+
+/* Body */
+.about-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.about-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.about-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.about-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+/* Version Section */
+.version-section {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+}
+
+.version-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.version {
+    font-size: 0.9375rem;
+    color: var(--accent-blue);
+    font-weight: 500;
+}
+
+.model-type {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    opacity: 0.9;
+}
+
+/* Description */
+.description-section {
+    margin-bottom: 24px;
+}
+
+.description {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Features - Fixed bullet points */
+.features-section {
+    margin-bottom: 24px;
+}
+
+.section-heading {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 18px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.feature-bullet {
+    color: var(--accent-blue);
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-top: -2px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+}
+
+.feature-content {
+    flex: 1;
+}
+
+.feature-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.feature-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+/* Creator Section */
+.creator-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.creator-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.avatar-initial {
+    display: block;
+}
+
+.creator-details {
+    flex: 1;
+}
+
+.creator-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.creator-role {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Tech Section */
+.tech-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.tech-item {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.tech-label {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    opacity: 0.8;
+}
+
+.tech-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* External Link */
+.external-link {
+    text-align: center;
+}
+
+.link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    min-height: 44px;
+}
+
+.link-button:hover,
+.link-button:focus {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--accent-blue);
+    outline: none;
+    text-decoration: none;
+}
+
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 768px) {
+    .about-modal {
+        padding: 0;
+        align-items: flex-end;
+    }
+    
+    .about-content {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 20px 20px 0 0;
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* FIX FOR HEADER BEING CUT OFF */
+    .about-header {
+        padding-top: max(24px, env(safe-area-inset-top, 24px)) !important;
+        padding-left: max(20px, env(safe-area-inset-left, 20px)) !important;
+        padding-right: max(20px, env(safe-area-inset-right, 20px)) !important;
+        padding-bottom: 16px;
+    }
+    
+    .about-body {
+        padding: 20px;
+        padding-left: max(20px, env(safe-area-inset-left, 20px)) !important;
+        padding-right: max(20px, env(safe-area-inset-right, 20px)) !important;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
+    }
+    
+    .close-about {
+        min-width: 44px;
+        min-height: 44px;
+        margin-top: 0; /* Reset margin */
+    }
+    
+    .tech-section {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .app-name {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-content {
+        max-height: 95vh;
+    }
+    
+    .about-body {
+        padding: 18px;
+        font-size: 0.9375rem;
+    }
+    
+    .app-name {
+        font-size: 1.5rem;
+    }
+    
+    .section-heading {
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
+    
+    .feature-title {
+        font-size: 0.9375rem;
+    }
+    
+    .feature-desc {
+        font-size: 0.8125rem;
+    }
+    
+    .creator-name {
+        font-size: 1rem;
+    }
+    
+    .creator-avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .close-about {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    .link-button {
+        min-height: 48px;
+        padding: 14px 20px;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .about-modal,
+    .about-content {
+        transition: none;
+        animation: none;
+    }
+    
+    .about-content {
+        animation: fadeIn 0.15s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+}
+</style>
 
 
 
@@ -1963,53 +3017,91 @@ await typeText(aiTextEl, formatted, 25);
 
 
 
+
+
+
+
+
+    <div class="personalization-modal" id="personalizationModal" style="display: none;">
+    <div class="personalization-content">
+        <div class="pers-header">
+            <h2 class="pers-title">Instructions</h2>
+            <p class="pers-subtitle">Personalize how Ventora responds to you.</p>
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Preferred Name</label>
+            <input type="text" id="persName" class="pers-input" placeholder="What should I call you?">
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Proficiency Level</label>
+            <select id="persLevel" class="pers-select">
+               <option value="school">Foundation</option>
+        <option value="highschool">Intermediate</option>
+        <option value="college">Advanced Academic</option>
+        <option value="researcher">Expert / Scholar</option>
+            </select>
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Interest</label>
+            <input type="text" id="persMajor" class="pers-input" placeholder="e.g. Computer Science, Physics">
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Ventora Style</label>
+            <select id="persStyle" class="pers-select">
+                <option value="balanced">Standard (Optimal)</option>
+        <option value="technical">Technical & Analytical</option>
+        <option value="encouraging">Socratic Tutor</option>
+        <option value="concise">Direct & Precise</option>
+            </select>
+        </div>
+
+        <div class="pers-group">
+            <label class="pers-label">Your Instructions</label>
+            <textarea id="persCustom" class="pers-input" rows="4" 
+                placeholder="What would you like Ventora to know?" 
+                style="resize: none; font-family: inherit;"></textarea>
+        </div>
+
+        <div class="pers-btns">
+            <button class="pers-btn save" onclick="savePersonalization()">Save Changes</button>
+            <button class="pers-btn cancel" onclick="closePersonalization()">Cancel</button>
+        </div>
+    </div>
+</div>
 
 <button class="icon-btn" onclick="shareApp()" title="Share" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; z-index: 1000;">
     <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
 </button>
 
+<script src="personalization/personalization.js"></script>
 
-
-<!-- Main Menu Popup Logic -->
-
-<div class="main-popup-overlay" id="mainMenuPopup">
-    <div class="main-popup-container">
-        
-        <div class="main-popup-sidebar">
-            <div style="padding: 0 20px 20px; font-weight: bold; border-bottom: 1px solid var(--border)">
-                VENTORA SETTINGS
+    <div class="goal-modal" id="goalModal">
+    <div class="goal-content">
+        <div class="goal-header">
+            <button onclick="toggleGoalModal()" class="close-menu" style="margin:0; font-size:1.2rem;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h3>STUDY GOALS</h3>
+            <div style="width: 32px;"></div>
+        </div>
+        <div class="goal-body">
+            <div class="add-task-bar">
+                <input type="text" id="newTaskInput" placeholder="Add a new task...">
+                <button class="add-task-btn" onclick="addTask()">ADD</button>
             </div>
-            <div class="sidebar-nav-item" data-id="goals" onclick="switchSection('goals')">
-                <i class="fas fa-check-circle"></i> <span>Your Goals</span>
-            </div>
-            <div class="sidebar-nav-item" data-id="personalization" onclick="switchSection('personalization')">
-                <i class="fas fa-user-circle"></i> <span>Personalization</span>
-            </div>
-            <div class="sidebar-nav-item" data-id="settings" onclick="switchSection('settings')">
-                <i class="fas fa-cog"></i> <span>General Settings</span>
-            </div>
-            <div class="sidebar-nav-item" data-id="about" onclick="switchSection('about')">
-                <i class="fas fa-info-circle"></i> <span>About</span>
-            </div>
+            <div id="taskList"></div>
             
-            <div style="margin-top:auto; padding:20px">
-                <button class="settings-btn" onclick="closeMainPopup()" style="width:100%">Close</button>
+            <div class="note-section">
+                <label>Study Notes (Auto-saves)</label>
+                <textarea id="study-notes-area" placeholder="Write down important things to remember..."></textarea>
             </div>
         </div>
-
-        <div class="main-popup-content" id="popupMainContent">
-            <div class="content-header">
-                <div class="back-btn" onclick="closeSectionMobile()">
-                    <i class="fas fa-arrow-left"></i> Back
-                </div>
-                <h3 id="popupTitle" style="margin:0">Section Title</h3>
-                <button class="close-menu" onclick="closeMainPopup()">✕</button>
-            </div>
-            <div class="content-body" id="popupBody">
-                </div>
-        </div>
-
     </div>
 </div>
+
 </body>
 </html>
