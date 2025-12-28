@@ -3099,7 +3099,7 @@ window.closeAboutModal = closeAboutModal;
 
     
     <!-- Main Menu Popup Structure -->
-<!-- Main Menu Popup Structure -->
+<!-- Main Menu Popup Structure - FINAL -->
 <div class="mainmenu-modal" id="mainmenu-modal">
     <div class="mainmenu-container menu-view">
         <!-- Left Sidebar Menu -->
@@ -3107,6 +3107,10 @@ window.closeAboutModal = closeAboutModal;
             <div class="sidebar-header">
                 <h3 class="sidebar-title">Settings</h3>
                 <p class="sidebar-subtitle">Ventora AI Preferences</p>
+                <!-- Mobile Close Button -->
+                <button class="sidebar-close" onclick="closeMainMenuPopup()" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
             <div class="sidebar-menu">
