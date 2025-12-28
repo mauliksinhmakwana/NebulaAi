@@ -38,12 +38,7 @@
     }
 }
 
-/* Hide mobile close button on desktop */
-@media (min-width: 769px) {
-    .mobile-close-btn {
-        display: none !important;
-    }
-}
+
 
 
 .mainmenu-modal.active {
@@ -156,6 +151,13 @@
     
     .sidebar-close:hover {
         color: var(--menu-text);
+    }
+}
+
+/* ADD THIS RIGHT HERE - Hide mobile close button on desktop */
+@media (min-width: 769px) {
+    .sidebar-close {
+        display: none !important;
     }
 }
 
