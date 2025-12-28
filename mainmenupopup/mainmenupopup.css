@@ -19,7 +19,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--menu-bg);
+    background: rgba(0, 0, 0, 0.6);  /* Semi-transparent black */
+     backdrop-filter: blur(10px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
     z-index: 9999;
     display: none;
     align-items: center;
