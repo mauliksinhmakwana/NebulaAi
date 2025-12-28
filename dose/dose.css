@@ -1,0 +1,560 @@
+/* dose/dose.css */
+:root {
+    --dose-bg: #0a0a0a;
+    --dose-surface: #111111;
+    --dose-surface-light: #1a1a1a;
+    --dose-border: rgba(255, 255, 255, 0.08);
+    --dose-text: #ffffff;
+    --dose-text-secondary: #8a8a8a;
+    --dose-accent: #007aff; /* Medical blue */
+    --dose-accent-alt: #34c759; /* Green for completed */
+    --dose-warning: #ff9500; /* Orange for warnings */
+    --dose-danger: #ff3b30; /* Red for important */
+    --dose-radius: 16px;
+    --dose-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Modal */
+.dose-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dose-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Container */
+.dose-container {
+    background: var(--dose-surface);
+    border: 1px solid var(--dose-border);
+    border-radius: var(--dose-radius);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--dose-shadow);
+    animation: doseSlideIn 0.3s ease;
+}
+
+@keyframes doseSlideIn {
+    from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.dose-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--dose-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--dose-surface-light);
+    position: relative;
+}
+
+.dose-header h3 {
+    margin: 0;
+    color: var(--dose-text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+}
+
+.dose-back, .dose-close {
+    background: none;
+    border: none;
+    color: var(--dose-text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dose-back:hover, .dose-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--dose-text);
+}
+
+/* Body */
+.dose-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.dose-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dose-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dose-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+/* Sections */
+.dose-section {
+    margin-bottom: 25px;
+}
+
+.dose-section h4 {
+    color: var(--dose-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dose-section h4 i {
+    color: var(--dose-accent);
+}
+
+/* Medication List */
+.medication-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.medication-card {
+    background: var(--dose-surface-light);
+    border: 1px solid var(--dose-border);
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.2s;
+}
+
+.medication-card.active {
+    border-left: 4px solid var(--dose-accent);
+}
+
+.medication-card.completed {
+    opacity: 0.7;
+    border-left: 4px solid var(--dose-accent-alt);
+}
+
+.medication-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.medication-name {
+    font-weight: 600;
+    color: var(--dose-text);
+    font-size: 1rem;
+}
+
+.medication-dosage {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--dose-accent);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.medication-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.medication-detail {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: var(--dose-text-secondary);
+}
+
+.medication-detail i {
+    font-size: 0.8rem;
+}
+
+.medication-instructions {
+    font-size: 0.85rem;
+    color: var(--dose-text-secondary);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.medication-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Form Elements */
+.medication-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row .dose-input {
+    flex: 1;
+}
+
+.dose-input, .dose-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--dose-border);
+    border-radius: 10px;
+    color: var(--dose-text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dose-input:focus, .dose-textarea:focus {
+    border-color: var(--dose-accent);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.dose-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+/* Time Selector */
+.time-selector {
+    margin: 10px 0;
+}
+
+.time-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.time-chip {
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--dose-border);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.time-chip.selected {
+    background: rgba(0, 122, 255, 0.2);
+    border-color: var(--dose-accent);
+    color: var(--dose-accent);
+}
+
+/* Buttons */
+.dose-btn {
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dose-btn.primary {
+    background: var(--dose-accent);
+    color: white;
+}
+
+.dose-btn.primary:hover {
+    background: rgba(0, 122, 255, 0.9);
+}
+
+.dose-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--dose-text);
+}
+
+.dose-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dose-btn.outline {
+    background: transparent;
+    border: 1px solid var(--dose-border);
+    color: var(--dose-text);
+}
+
+.dose-btn.outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Today's Schedule */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    background: var(--dose-surface-light);
+    border: 1px solid var(--dose-border);
+    border-radius: 12px;
+}
+
+.schedule-item.completed {
+    opacity: 0.5;
+}
+
+.schedule-time {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--dose-accent);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    min-width: 70px;
+    text-align: center;
+}
+
+.schedule-details {
+    flex: 1;
+}
+
+.schedule-med {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.schedule-dosage {
+    font-size: 0.85rem;
+    color: var(--dose-text-secondary);
+}
+
+.schedule-check {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--dose-border);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.schedule-check.checked {
+    background: var(--dose-accent-alt);
+    border-color: var(--dose-accent-alt);
+}
+
+.schedule-check.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 0.8rem;
+}
+
+/* Stats */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: var(--dose-surface-light);
+    border: 1px solid var(--dose-border);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--dose-text-secondary);
+}
+
+/* Emergency Card */
+.emergency-card {
+    background: rgba(255, 59, 48, 0.05);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.emergency-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dose-danger);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.emergency-textarea {
+    width: 100%;
+    min-height: 80px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    border-radius: 8px;
+    color: var(--dose-text);
+    padding: 10px;
+    font-size: 0.9rem;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+/* Footer */
+.dose-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--dose-border);
+    display: flex;
+    gap: 10px;
+    background: var(--dose-surface-light);
+}
+
+.dose-footer .dose-btn {
+    flex: 1;
+    padding: 12px;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn.taken {
+    background: rgba(52, 199, 89, 0.15);
+    color: var(--dose-accent-alt);
+}
+
+.action-btn.taken:hover {
+    background: rgba(52, 199, 89, 0.25);
+}
+
+.action-btn.edit {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--dose-accent);
+}
+
+.action-btn.edit:hover {
+    background: rgba(0, 122, 255, 0.25);
+}
+
+.action-btn.delete {
+    background: rgba(255, 59, 48, 0.15);
+    color: var(--dose-danger);
+}
+
+.action-btn.delete:hover {
+    background: rgba(255, 59, 48, 0.25);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--dose-text-secondary);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    opacity: 0.3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dose-modal {
+        padding: 0;
+    }
+    
+    .dose-container {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .dose-footer {
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
+    }
+}
