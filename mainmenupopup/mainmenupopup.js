@@ -854,6 +854,13 @@ function setupEventListeners() {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initMainMenuPopup);
 
+function logoutUser() {
+    if (confirm('Log out from Ventora AI?')) {
+        showMenuToast('Logged out');
+        closeMainMenuPopup();
+    }
+}
+
 // Export functions
 window.openMainMenuPopup = openMainMenuPopup;
 window.closeMainMenuPopup = closeMainMenuPopup;
