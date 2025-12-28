@@ -875,6 +875,8 @@
 <link rel="stylesheet" href="fileupload/fileupload.css">
 <script src="fileupload/fileupload.js" defer></script>
     <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
+    <!-- For PDF export (optional) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -930,34 +932,13 @@
 
 
 
-    <!-- Change this in your existing profile-menu -->
-<div class="profile-menu" id="profileMenu">
-    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('goals');">
-        <i class="fas fa-check-circle"></i>
-        <span>Your Goals</span>
-    </div>
-    
-    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('personalization');">
-        <i class="fas fa-user-circle"></i>
-        <span>Personalization</span>
-    </div>
-    
-    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('settings');">
+  <div class="profile-menu" id="profileMenu">
+    <!-- Remove all other items, keep only Settings -->
+    <div class="profile-menu-item" onclick="openMainMenuPopup()">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
     </div>
-    
-    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('about');">
-        <i class="fas fa-info-circle"></i>
-        <span>About</span>
-    </div>
-    
-    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('export');">
-        <i class="fas fa-download"></i>
-        <span>Export Chat</span>
-    </div>
 </div>
-  
 
 
 
@@ -3113,7 +3094,12 @@ window.closeAboutModal = closeAboutModal;
         </div>
     </div>
 </div>
+
+
+
+    
     <!-- Main Menu Popup Structure -->
+<!-- Main Menu Popup Structure -->
 <div class="mainmenu-modal" id="mainmenu-modal">
     <div class="mainmenu-container menu-view">
         <!-- Left Sidebar Menu -->
@@ -3128,15 +3114,9 @@ window.closeAboutModal = closeAboutModal;
             </div>
             
             <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">U</div>
-                    <div class="user-info">
-                        <div class="user-name">Username</div>
-                        <div class="user-email">user@example.com</div>
-                    </div>
-                    <button class="logout-btn" onclick="logoutUser()" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                <div class="ventora-info">
+                    <div class="ventora-logo">VENTORA<span>AI</span></div>
+                    <div class="ventora-version">V5.4 MIA</div>
                 </div>
             </div>
         </div>
