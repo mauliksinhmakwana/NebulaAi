@@ -877,6 +877,7 @@
     <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
     <!-- For PDF export (optional) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="dose/dose.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -934,10 +935,19 @@
 
   <div class="profile-menu" id="profileMenu">
 
+      
+
       <div class="profile-menu-item" onclick="toggleGoalModal()">
             <i class="fas fa-check-circle"></i>
             <span>Your Goals</span>
         </div>
+      
+ <!-- Add Prescriptions Menu Item -->
+    <div class="profile-menu-item" onclick="toggleDoseModal()">
+        <i class="fas fa-pills"></i>
+        <span>My Prescriptions</span>
+    </div>
+
       
     <!-- Remove all other items, keep only Settings -->
     <div class="profile-menu-item" onclick="openMainMenuPopup()">
@@ -1191,7 +1201,24 @@ function hideHeroWelcome() {
             maxTokens: 1024
         };
 
+        // Dose Context for AI integration
+        window.doseContext = {
+            getPrescriptions: () => {
+                const saved = localStorage.getItem('ventora_prescriptions');
+                return saved ? JSON.parse(saved) : [];
+            }
+        };
 
+        // Update the AI context when loading
+        function updateDoseContext() {
+            const prescriptions = window.doseContext.getPrescriptions();
+            if (prescriptions.length > 0) {
+                window.doseContext.prescriptions = prescriptions;
+            }
+        }
+        
+        // Initialize dose context
+        updateDoseContext();
 
 
 
@@ -1726,6 +1753,20 @@ ${window.fileContext.text}
 
 ### CUSTOM USER INSTRUCTIONS ###
 ${window.personalization.customInstructions}
+
+${window.doseContext?.prescriptions && window.doseContext.prescriptions.length > 0
+? `
+### CURRENT MEDICATIONS (FOR REFERENCE ONLY) ###
+Patient's Active Prescriptions:
+${window.doseContext.prescriptions.filter(p => p.status === 'active').map(p => `
+- ${p.medication}: ${p.dosage} (${p.frequency}) for ${p.duration}
+  ${p.notes ? `Notes: ${p.notes}` : ''}
+`).join('')}
+
+Note: This is reference information only. DO NOT provide dosage advice or modify prescriptions.
+`
+: ''
+}
 
 --------------------------------------------------
 
@@ -3154,5 +3195,51 @@ window.closeAboutModal = closeAboutModal;
     </div>
 </div>
 <script src="mainmenupopup/mainmenupopup.js"></script>
+
+    <!-- Prescription & Dosage Tracker Modal -->
+<div class="dose-modal" id="doseModal">
+    <div class="dose-content">
+        <div class="dose-header">
+            <h3>My Prescriptions</h3>
+            <button class="close-dose" onclick="toggleDoseModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="dose-body">
+            <button class="add-dose-btn" onclick="showAddForm()">
+                <i class="fas fa-plus"></i>
+                Add New Prescription
+            </button>
+            
+            <!-- Add Prescription Form (hidden by default) -->
+            <div class="dose-form" id="doseForm"></div>
+            
+            <!-- Prescriptions List -->
+            <div class="prescription-list" id="prescriptionsContainer">
+                <!-- Prescriptions will be loaded here -->
+            </div>
+            
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="action-btn" onclick="exportPrescriptions()" style="flex: 1;">
+                    <i class="fas fa-download"></i> Export List
+                </button>
+                <button class="action-btn delete" onclick="clearAllPrescriptions()" style="flex: 1;">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+            
+            <!-- Safety Disclaimer -->
+            <div style="margin-top: 25px; padding: 15px; background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.2); border-radius: 10px;">
+                <p style="font-size: 0.75rem; color: #ff4757; margin: 0; line-height: 1.4;">
+                    <strong>⚠️ IMPORTANT SAFETY NOTICE:</strong><br>
+                    This is a personal reference tool only. Always follow your doctor's instructions. Do not modify doses without medical advice. In case of side effects, contact your healthcare provider immediately.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="dose/dose.js" defer></script>
 </body>
 </html>
