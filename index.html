@@ -874,6 +874,7 @@
 <script src="./typing-illusion/typing.js"></script>
 <link rel="stylesheet" href="fileupload/fileupload.css">
 <script src="fileupload/fileupload.js" defer></script>
+    <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -926,31 +927,33 @@
 
     <div class="profile-menu" id="profileMenu">
 
-        <div class="profile-menu-item" onclick="toggleGoalModal()">
-            <i class="fas fa-check-circle"></i>
-            <span>Your Goals</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="openPersonalization()">
-            <i class="fas fa-user-circle"></i>
-            <span>Personalization</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="openSettings()">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </div>
-
-        <div class="profile-menu-item" onclick="openAboutModal()">
-            <i class="fas fa-info-circle"></i>
-            <span>About</span>
-        </div>
-
-        <div class="profile-menu-item" onclick="exportChat()">
-            <i class="fas fa-download"></i>
-            <span>Export Chat</span>
-        </div>
-
+        
+ <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('goals');">
+        <i class="fas fa-check-circle"></i>
+        <span>Your Goals</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('personalization');">
+        <i class="fas fa-user-circle"></i>
+        <span>Personalization</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('settings');">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('about');">
+        <i class="fas fa-info-circle"></i>
+        <span>About</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('export');">
+        <i class="fas fa-download"></i>
+        <span>Export Chat</span>
+    </div>
     </div>
 </div>
 
@@ -3102,6 +3105,6 @@ window.closeAboutModal = closeAboutModal;
         </div>
     </div>
 </div>
-
+<script src="mainmenupopup/mainmenupopup.js"></script>
 </body>
 </html>
