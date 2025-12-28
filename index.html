@@ -656,6 +656,8 @@
 <link rel="stylesheet" href="fileupload/fileupload.css">
 <script src="fileupload/fileupload.js" defer></script>
     <link rel="stylesheet" href="about/about.css">
+<!-- Main Menu Popup (ChatGPT-style) -->
+<link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
 
 </head>
 <body onload="initApp()">
@@ -713,6 +715,10 @@
             <i class="fas fa-check-circle"></i>
             <span>Your Goals</span>
         </div>
+<div class="profile-menu-item" onclick="openMainMenuPopup()">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</div>
 
         <div class="profile-menu-item" onclick="openPersonalization()">
             <i class="fas fa-user-circle"></i>
@@ -2162,6 +2168,60 @@ await typeText(aiTextEl, formatted, 25);
     </div>
 </div>
 <script src="about/about.js" defer></script>
+<link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
+<script src="mainmenupopup/mainmenupopup.js" defer></script>
+
+<div id="main-menu-popup" class="mm-popup">
+  <div class="mm-sheet">
+
+    <!-- Header -->
+    <div class="mm-header">
+      <button class="mm-back" onclick="mmBack()">←</button>
+      <span id="mm-title">Settings</span>
+      <button onclick="closeMainMenuPopup()">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div class="mm-body">
+
+      <!-- OPTIONS (menu view) -->
+      <div class="mm-options" id="mm-options">
+        <button onclick="openMMSection('goals')">Your Goals</button>
+        <button onclick="openMMSection('personalization')">Personalization</button>
+        <button onclick="openMMSection('settings')">Settings</button>
+        <button onclick="openMMSection('about')">About</button>
+      </div>
+
+      <!-- CONTENT (content view) -->
+      <div class="mm-content" id="mm-content">
+
+        <section data-mm="goals">
+          <h3>Your Goals</h3>
+          <p>Manage learning and personal goals.</p>
+        </section>
+
+        <section data-mm="personalization">
+          <h3>Personalization</h3>
+          <p>Name, role, tone, behavior.</p>
+        </section>
+
+        <section data-mm="settings">
+          <h3>Settings</h3>
+          <button onclick="exportChat()">Export Chat</button>
+        </section>
+
+        <section data-mm="about">
+          <h3>About Ventora AI</h3>
+          <p>Medical Information Assistant</p>
+          <p>Developer: Maulik Makwana</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Menu Popup Logic -->
+<script src="mainmenupopup/mainmenupopup.js" defer></script>
 
 </body>
 </html>
