@@ -6,11 +6,11 @@ let selectedExportOption = 'all';
 
 // Sections definition
 let sections = {
-    'goals': {
+    /*'goals': {
         title: 'Your Goals',
         icon: 'fas fa-check-circle',
         render: renderGoalsSection
-    },
+    },*/
     'personalization': {
         title: 'Personalization',
         icon: 'fas fa-user-circle',
