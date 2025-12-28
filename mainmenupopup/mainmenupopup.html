@@ -1,0 +1,45 @@
+<!-- Main Menu Popup Structure -->
+<div class="mainmenu-modal" id="mainmenu-modal" aria-hidden="true">
+    <div class="mainmenu-content">
+        <!-- Left Sidebar (Menu) -->
+        <div class="mainmenu-sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Ventora AI</h2>
+                <p class="sidebar-subtitle">Settings & Preferences</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <!-- Menu items will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="menu-item" onclick="closeMainMenuPopup()">
+                    <i class="fas fa-times"></i>
+                    <span>Close</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel (Content) -->
+        <div class="mainmenu-panel">
+            <div class="panel-header">
+                <button class="panel-back" aria-label="Back to menu">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h3 class="panel-title">Settings</h3>
+                <button class="panel-close" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Content will be loaded here by JavaScript -->
+                <div class="empty-state">
+                    <i class="fas fa-cog"></i>
+                    <h3>Select a section</h3>
+                    <p>Choose an option from the menu to get started.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
