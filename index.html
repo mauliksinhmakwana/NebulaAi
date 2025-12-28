@@ -658,7 +658,7 @@
     <link rel="stylesheet" href="about/about.css">
 <!-- Main Menu Popup (ChatGPT-style) -->
 <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
-
+<script src="mainmenupopup/mainmenupopup.js" defer></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -747,61 +747,7 @@
 
 
 
-    
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <div class="settings-title">Settings</div>
-                <button class="close-settings" onclick="closeSettings()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="settings-group">
-                <label class="settings-label">Model</label>
-                <select class="settings-select" id="modelSelect">
-
-                    
-              <option value="groq:general">MIA – General</option>
-<option value="groq:research">MIA – Research & Analysis</option>
-<option value="groq:study">MIA – Clinical Reasoning</option>
-
-
-
-
-                    
-                </select>
-            </div>
-            
-            <div class="settings-group">
-                <label class="settings-label">Temperature</label>
-                <input type="range" class="settings-range" id="tempRange" min="0" max="1" step="0.1" value="0.7">
-                <div class="range-value">
-                    <span>Precise</span>
-                    <span id="tempValue">0.7</span>
-                    <span>Creative</span>
-                </div>
-            </div>
-            
-            <div class="settings-group">
-                <label class="settings-label">Max Tokens</label>
-                <select class="settings-select" id="maxTokens">
-                    <option value="512">512</option>
-                    <option value="1024" selected>1024</option>
-                    <option value="2048">2048</option>
-                    <option value="4096">4096</option>
-                    <option value="8192">8192</option>
-                    <option value="32768">32768 (Mixtral only)</option>
-                </select>
-            </div>
-            
-            <div class="settings-actions">
-                <button class="settings-btn" onclick="clearAllData()">Clear All Data</button>
-                <button class="settings-btn primary" onclick="saveSettings()">Save</button>
-            </div>
-        </div>
-    </div>
+  
     
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
@@ -2144,29 +2090,7 @@ await typeText(aiTextEl, formatted, 25);
 
 <script src="personalization/personalization.js"></script>
 
-    <div class="goal-modal" id="goalModal">
-    <div class="goal-content">
-        <div class="goal-header">
-            <button onclick="toggleGoalModal()" class="close-menu" style="margin:0; font-size:1.2rem;">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h3>STUDY GOALS</h3>
-            <div style="width: 32px;"></div>
-        </div>
-        <div class="goal-body">
-            <div class="add-task-bar">
-                <input type="text" id="newTaskInput" placeholder="Add a new task...">
-                <button class="add-task-btn" onclick="addTask()">ADD</button>
-            </div>
-            <div id="taskList"></div>
-            
-            <div class="note-section">
-                <label>Study Notes (Auto-saves)</label>
-                <textarea id="study-notes-area" placeholder="Write down important things to remember..."></textarea>
-            </div>
-        </div>
-    </div>
-</div>
+    
 <script src="about/about.js" defer></script>
 <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
 <script src="mainmenupopup/mainmenupopup.js" defer></script>
@@ -2221,7 +2145,7 @@ await typeText(aiTextEl, formatted, 25);
   </div>
 </div>
 <!-- Main Menu Popup Logic -->
-<script src="mainmenupopup/mainmenupopup.js" defer></script>
+
 <div class="main-popup-overlay" id="mainMenuPopup">
     <div class="main-popup-container">
         
