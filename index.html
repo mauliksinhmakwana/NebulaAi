@@ -874,6 +874,7 @@
 <script src="./typing-illusion/typing.js"></script>
 <link rel="stylesheet" href="fileupload/fileupload.css">
 <script src="fileupload/fileupload.js" defer></script>
+    <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -924,34 +925,44 @@
         </div>
     </div>
 
-    <div class="profile-menu" id="profileMenu">
 
-        <div class="profile-menu-item" onclick="toggleGoalModal()">
-            <i class="fas fa-check-circle"></i>
-            <span>Your Goals</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="openPersonalization()">
-            <i class="fas fa-user-circle"></i>
-            <span>Personalization</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="openSettings()">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="openAboutModal()">
-            <i class="fas fa-info-circle"></i>
-            <span>About</span>
-        </div>
 
-        <div class="profile-menu-item" onclick="exportChat()">
-            <i class="fas fa-download"></i>
-            <span>Export Chat</span>
-        </div>
-
+    <!-- Change this in your existing profile-menu -->
+<div class="profile-menu" id="profileMenu">
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('goals');">
+        <i class="fas fa-check-circle"></i>
+        <span>Your Goals</span>
     </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('personalization');">
+        <i class="fas fa-user-circle"></i>
+        <span>Personalization</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('settings');">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('about');">
+        <i class="fas fa-info-circle"></i>
+        <span>About</span>
+    </div>
+    
+    <div class="profile-menu-item" onclick="openMainMenuPopup(); openSection('export');">
+        <i class="fas fa-download"></i>
+        <span>Export Chat</span>
+    </div>
+</div>
+  
+
+
+
+
+    
 </div>
 
     </div>
@@ -3102,6 +3113,56 @@ window.closeAboutModal = closeAboutModal;
         </div>
     </div>
 </div>
-
+    <!-- Main Menu Popup Structure -->
+<div class="mainmenu-modal" id="mainmenu-modal">
+    <div class="mainmenu-container menu-view">
+        <!-- Left Sidebar Menu -->
+        <div class="menu-sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">Settings</h3>
+                <p class="sidebar-subtitle">Ventora AI Preferences</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <!-- Menu items will be inserted by JavaScript -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">Username</div>
+                        <div class="user-email">user@example.com</div>
+                    </div>
+                    <button class="logout-btn" onclick="logoutUser()" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Content Area -->
+        <div class="menu-content">
+            <div class="content-header">
+                <button class="content-back" aria-label="Back to menu">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h3 class="content-title">Settings</h3>
+                <button class="content-close" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="content-body">
+                <div class="empty-state">
+                    <i class="fas fa-cog"></i>
+                    <h4>Select a section</h4>
+                    <p>Choose an option from the menu to get started.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="mainmenupopup/mainmenupopup.js"></script>
 </body>
 </html>
