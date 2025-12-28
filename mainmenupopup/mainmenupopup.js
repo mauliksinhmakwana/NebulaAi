@@ -415,7 +415,6 @@ function renderAboutSection(container) {
 function renderPrivacySection(container) {
     container.innerHTML = `
         <div class="about-logo">VENTORA<span>AI</span></div>
-        <div class="about-tagline">Privacy & Security</div>
         
         <div class="about-description">
             Your privacy and security are our top priority. Ventora AI is designed with
