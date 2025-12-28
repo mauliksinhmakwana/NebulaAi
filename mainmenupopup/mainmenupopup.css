@@ -1,91 +1,135 @@
-.mm-popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: none;
-  z-index: 3000;
+/* mainmenupopup/mainmenupopup.css */
+:root {
+    --modal-bg: #0f0f0f;
+    --sidebar-bg: #161616;
+    --item-hover: rgba(255, 255, 255, 0.05);
 }
 
-.mm-popup.active {
-  display: flex;
-}
-
-.mm-sheet {
-  background: #0f0f0f;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.mm-header {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-
-.mm-back {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.2rem;
-}
-
-.mm-body {
-  flex: 1;
-  display: flex;
-}
-
-.mm-options {
-  width: 240px;
-  border-right: 1px solid rgba(255,255,255,.08);
-}
-
-.mm-options button {
-  width: 100%;
-  padding: 14px;
-  background: none;
-  border: none;
-  text-align: left;
-  color: white;
-}
-
-.mm-options button:hover {
-  background: rgba(255,255,255,.05);
-}
-
-.mm-content {
-  flex: 1;
-  padding: 22px;
-  overflow-y: auto;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .mm-body {
-    flex-direction: column;
-  }
-
-  .mm-options,
-  .mm-content {
-    width: 100%;
-  }
-}
-
-/* DESKTOP POPUP */
-@media (min-width: 900px) {
-  .mm-popup.active {
+.main-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    z-index: 3000;
+    display: none;
     align-items: center;
     justify-content: center;
-  }
-
-  .mm-sheet {
-    width: 720px;
-    height: 80vh;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,.08);
-  }
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
+
+.main-popup-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.main-popup-container {
+    background: var(--modal-bg);
+    width: 90%;
+    max-width: 850px;
+    height: 80vh;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.main-popup-overlay.active .main-popup-container {
+    transform: scale(1);
+}
+
+/* Sidebar */
+.main-popup-sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-nav-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.sidebar-nav-item i { width: 20px; text-align: center; }
+
+.sidebar-nav-item:hover { background: var(--item-hover); color: white; }
+
+.sidebar-nav-item.active {
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--accent-blue);
+    border-right: 3px solid var(--accent-blue);
+}
+
+/* Content Area */
+.main-popup-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--modal-bg);
+    position: relative;
+}
+
+.content-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-body {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Mobile Specific */
+@media (max-width: 768px) {
+    .main-popup-container {
+        width: 100%;
+        height: 100dvh;
+        border-radius: 0;
+        flex-direction: column;
+    }
+
+    .main-popup-sidebar {
+        width: 100%;
+        height: 100%;
+        border-right: none;
+    }
+
+    /* In mobile, we hide content until an item is clicked */
+    .main-popup-content {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        display: none;
+    }
+
+    .main-popup-content.mobile-active {
+        display: flex;
+    }
+
+    .back-btn {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent-blue);
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+}
+
+.back-btn { display: none; }
