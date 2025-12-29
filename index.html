@@ -522,30 +522,61 @@
             background: white; color: black; border: none; width: 32px; height: 32px;
             border-radius: 50%; display: none; align-items: center; justify-content: center;
         }
+
+
+
+
+
+
+
         
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 20px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            z-index: 1004;
-            opacity: 0;
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
         
-        .toast.active {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        
+       /* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    z-index: 1004;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    min-width: 200px;
+    text-align: center;
+}
+
+.toast.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast.error {
+    background: rgba(255, 71, 87, 0.15);
+    border-color: rgba(255, 71, 87, 0.3);
+    color: #ff6b81;
+}
+
+.toast.success {
+    background: rgba(46, 213, 115, 0.15);
+    border-color: rgba(46, 213, 115, 0.3);
+    color: #2ed573;
+}
+
+.toast.info {
+    background: rgba(0, 122, 255, 0.15);
+    border-color: rgba(0, 122, 255, 0.3);
+    color: var(--accent-blue);
+}
+
+
         
         /* MOBILE FIXES */
         @media (max-width: 480px) {
@@ -1034,25 +1065,26 @@
     </button>
     
     <header>
-        <button class="menu-btn" onclick="openMenu()">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <div class="logo-area" style="display: flex; align-items: baseline; gap: 12px;">
-            <div class="logo" style="font-size: 1.1rem; letter-spacing: 4px; color: var(--text-primary);">
-                VENTORA<b style="color: var(--accent-blue);">AI</b>
-            </div>
-            <div class="version-badge" style="opacity: 0.7; font-weight: 600;">
-                V5.4 MIA
-            </div>
+    <button class="menu-btn" onclick="openMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="logo-area" style="display: flex; align-items: baseline; gap: 12px;">
+        <div class="logo" style="font-size: 1.1rem; letter-spacing: 4px; color: var(--text-primary);">
+            VENTORA<b style="color: var(--accent-blue);">AI</b>
         </div>
-        <button class="icon-btn" onclick="shareApp()" title="Share" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; transition: background 0.2s;">
-    <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
-</button>
-       <!-- <button class="icon-btn" onclick="shareApp()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 16px; border-radius: 12px; font-weight: 700; font-size: 0.6rem; letter-spacing: 1px; backdrop-filter: blur(10px); color: white; cursor: pointer;">
-            SHARE
-        </button> -->
-    </header>
+        <div class="version-badge" style="opacity: 0.7; font-weight: 600;">
+            V5.4 MIA
+        </div>
+    </div>
+    <button class="icon-btn" onclick="shareApp()" title="Share" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; cursor: pointer; transition: background 0.2s;">
+        <i class="fas fa-arrow-up-from-bracket" style="font-size: 0.9rem;"></i>
+    </button>
+</header>
+
+
+
+
     
     <main id="chat-container"></main>
 
@@ -1270,6 +1302,18 @@ const AI_IDENTITY = {
         const toast = document.getElementById('toast');
 
         // ==================== INITIALIZATION ====================
+
+        // Initialize toast element on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create toast element if it doesn't exist
+            if (!document.getElementById('toast')) {
+                const toastEl = document.createElement('div');
+                toastEl.id = 'toast';
+                toastEl.className = 'toast';
+                document.body.appendChild(toastEl);
+            }
+        });
+        
         function initApp() {
             loadSettings();
             loadConversations();
@@ -1432,18 +1476,28 @@ const AI_IDENTITY = {
             settingsModal.classList.remove('active');
         }
 
-        function saveSettings() {
-            settings.model = modelSelect.value;
-            settings.temperature = parseFloat(tempRange.value);
-            settings.maxTokens = parseInt(maxTokensSelect.value);
-            
-            // Save to localStorage
-            localStorage.setItem('nebula_settings', JSON.stringify(settings));
-            
-            closeSettings();
-            showToast('Settings saved!');
-        }
 
+
+        
+function saveSettings() {
+    settings.model = modelSelect.value;
+    settings.temperature = parseFloat(tempRange.value);
+    settings.maxTokens = parseInt(maxTokensSelect.value);
+    
+    // Save to localStorage
+    localStorage.setItem('nebula_settings', JSON.stringify(settings));
+    
+    closeSettings();
+    showToast('Settings saved successfully!', 'success');
+}
+
+
+
+
+
+
+
+        
         function loadSettings() {
             const saved = localStorage.getItem('nebula_settings');
             if (saved) {
@@ -2183,34 +2237,104 @@ await typeText(aiTextEl, formatted, 25);
             closeMenu();
         }
 
-        function clearAllData() {
-            if (confirm('Are you sure? This will delete ALL chat history and settings.')) {
-                localStorage.removeItem('nebula_conversations');
-                localStorage.removeItem('nebula_settings');
-                conversations = [];
-                currentConversationId = null;
-                settings = {
-                    model: 'groq:llama-3.1-8b-instant',
-                    temperature: 0.7,
-                    maxTokens: 1024
+       function clearAllData() {
+    if (confirm('Are you sure? This will delete ALL chat history, settings, and personalization.')) {
+        try {
+            // Clear all Ventora-related data
+            localStorage.removeItem('nebula_conversations');
+            localStorage.removeItem('nebula_settings');
+            localStorage.removeItem('ventora_personalization');
+            localStorage.removeItem('ventora_prescriptions');
+            localStorage.removeItem('ventora_goals');
+            localStorage.removeItem('ventora_notes');
+            localStorage.removeItem('profile_name');
+            localStorage.removeItem('profile_role');
+            
+            // Reset state
+            conversations = [];
+            currentConversationId = null;
+            settings = {
+                model: 'groq:general',
+                temperature: 0.7,
+                maxTokens: 1024
+            };
+            
+            // Clear UI
+            chatContainer.innerHTML = '';
+            
+            // Hide hero welcome if exists
+            const hero = document.getElementById('hero-welcome');
+            if (hero) hero.style.display = 'flex';
+            
+            // Reset personalization if exists
+            if (window.personalization) {
+                window.personalization = {
+                    userName: '',
+                    studyLevel: '',
+                    major: '',
+                    responseStyle: '',
+                    customInstructions: ''
                 };
-                
-                chatContainer.innerHTML = '';
-                createNewConversation();
-                showToast('All data cleared');
-                closeSettings();
             }
+            
+            // Create new conversation
+            createNewConversation();
+            
+            // Show success message
+            showToast('All data cleared successfully', 'success');
+            
+            // Close settings modal
+            closeSettings();
+            
+        } catch (error) {
+            console.error('Error clearing data:', error);
+            showToast('Error clearing data', 'error');
         }
+    }
+}
 
-        function showToast(message, type = "info") {
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('active');
-            setTimeout(() => {
-                toast.classList.remove('active');
-            }, 3000);
-        }
 
+
+
+
+
+
+
+
+
+        
+
+       function showToast(message, type = "info") {
+    const toast = document.getElementById('toast');
+    if (!toast) {
+        console.error('Toast element not found');
+        return;
+    }
+    
+    // Set message and type
+    toast.textContent = message;
+    toast.className = 'toast'; // Reset classes
+    
+    // Add type class if specified
+    if (type === 'error' || type === 'success' || type === 'info') {
+        toast.classList.add(type);
+    }
+    
+    // Show toast
+    toast.classList.add('active');
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('active');
+        // Reset class after animation
+        setTimeout(() => {
+            toast.className = 'toast';
+        }, 300);
+    }, 3000);
+}
+
+
+        
         function shareApp() {
             if (navigator.share) {
                 navigator.share({ title: 'Nebula AI', url: window.location.href });
@@ -2219,6 +2343,12 @@ await typeText(aiTextEl, formatted, 25);
                 showToast('Link copied to clipboard!');
             }
         }
+
+
+
+
+
+        
 
                 // ==================== EVENT LISTENERS ====================
         userInput.addEventListener('keydown', (e) => {
