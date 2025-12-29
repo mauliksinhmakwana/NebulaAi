@@ -44,10 +44,9 @@
 
 
 .mainmenu-modal.active {
-    display: flex;
+    display: flex !important;
     opacity: 1;
 }
-
 /* Main Container */
 .mainmenu-container {
     background: var(--menu-surface);
