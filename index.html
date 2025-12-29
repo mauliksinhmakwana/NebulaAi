@@ -1210,6 +1210,9 @@
     
     <script>
 
+
+        
+
         function pause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -1510,21 +1513,35 @@ function saveSettings() {
         }
 
         // ==================== CHAT FUNCTIONS ====================
-        function loadConversations() {
-            const saved = localStorage.getItem('nebula_conversations');
-            if (saved) {
-                try {
-                    conversations = JSON.parse(saved);
-                } catch (e) {
-                    console.error('Error loading conversations:', e);
-                    conversations = [];
-                }
+       function loadConversations() {
+    const saved = localStorage.getItem('nebula_conversations');
+    console.log('loadConversations - saved data:', saved);
+    
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            // Make sure it's an array
+            if (Array.isArray(parsed)) {
+                conversations = parsed;
+                console.log('Loaded conversations:', conversations.length);
+            } else {
+                console.warn('Conversations data is not an array, resetting');
+                conversations = [];
             }
+        } catch (e) {
+            console.error('Error parsing conversations:', e);
+            conversations = [];
         }
+    } else {
+        console.log('No conversations found in localStorage');
+        conversations = [];
+    }
+}
 
-        function saveConversations() {
-            localStorage.setItem('nebula_conversations', JSON.stringify(conversations));
-        }
+       function saveConversations() {
+    console.log('Saving conversations:', conversations);
+    localStorage.setItem('nebula_conversations', JSON.stringify(conversations));
+}
 
         // FIX 2: Updated renderConversationsList with rename and delete options
         function renderConversationsList() {
@@ -2237,20 +2254,36 @@ await typeText(aiTextEl, formatted, 25);
             closeMenu();
         }
 
-       function clearAllData() {
-    if (confirm('Are you sure? This will delete ALL chat history, settings, and personalization.')) {
+
+
+
+
+        
+function clearAllData() {
+    if (confirm('⚠️ WARNING: This will permanently delete ALL your chat history, settings, personalization, and prescriptions. This action cannot be undone. Are you sure?')) {
         try {
-            // Clear all Ventora-related data
-            localStorage.removeItem('nebula_conversations');
-            localStorage.removeItem('nebula_settings');
-            localStorage.removeItem('ventora_personalization');
-            localStorage.removeItem('ventora_prescriptions');
-            localStorage.removeItem('ventora_goals');
-            localStorage.removeItem('ventora_notes');
-            localStorage.removeItem('profile_name');
-            localStorage.removeItem('profile_role');
+            console.log('Starting clearAllData process...');
             
-            // Reset state
+            // Show loading state
+            showToast('Clearing all data...', 'info');
+            
+            // Get all localStorage keys related to Ventora
+            const allKeys = Object.keys(localStorage);
+            const ventoraKeys = allKeys.filter(key => 
+                key.includes('nebula') || 
+                key.includes('ventora') || 
+                key.includes('profile')
+            );
+            
+            console.log('Found Ventora keys to delete:', ventoraKeys);
+            
+            // Clear each key
+            ventoraKeys.forEach(key => {
+                localStorage.removeItem(key);
+                console.log('Removed:', key);
+            });
+            
+            // Reset global state variables
             conversations = [];
             currentConversationId = null;
             settings = {
@@ -2259,14 +2292,10 @@ await typeText(aiTextEl, formatted, 25);
                 maxTokens: 1024
             };
             
-            // Clear UI
+            // Clear UI elements
             chatContainer.innerHTML = '';
             
-            // Hide hero welcome if exists
-            const hero = document.getElementById('hero-welcome');
-            if (hero) hero.style.display = 'flex';
-            
-            // Reset personalization if exists
+            // Reset personalization if it exists
             if (window.personalization) {
                 window.personalization = {
                     userName: '',
@@ -2277,18 +2306,37 @@ await typeText(aiTextEl, formatted, 25);
                 };
             }
             
-            // Create new conversation
-            createNewConversation();
+            // Show hero welcome again
+            const hero = document.getElementById('hero-welcome');
+            if (hero) {
+                hero.style.display = 'flex';
+                console.log('Hero welcome shown');
+            }
             
-            // Show success message
-            showToast('All data cleared successfully', 'success');
+            // Update UI to reflect empty state
+            renderConversationsList();
             
-            // Close settings modal
-            closeSettings();
+            // Force reload conversations from localStorage (should be empty)
+            loadConversations();
+            
+            console.log('After clear - conversations array:', conversations);
+            console.log('After clear - localStorage:', Object.keys(localStorage));
+            
+            // Create a fresh new conversation
+            setTimeout(() => {
+                createNewConversation();
+                showToast('✓ All data cleared successfully! Starting fresh...', 'success');
+                
+                // Close settings modal
+                setTimeout(() => {
+                    closeSettings();
+                }, 500);
+                
+            }, 500);
             
         } catch (error) {
             console.error('Error clearing data:', error);
-            showToast('Error clearing data', 'error');
+            showToast('❌ Error clearing data: ' + error.message, 'error');
         }
     }
 }
