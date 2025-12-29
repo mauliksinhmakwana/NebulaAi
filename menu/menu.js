@@ -15,8 +15,8 @@ document.addEventListener('click', (e) => {
 /* ===== EDIT PROFILE POPUP ===== */
 
 function openEditProfile() {
-    const name = localStorage.getItem('profile_name') || 'Maulik';
-    const role = localStorage.getItem('profile_role') || 'Student';
+    const name = localStorage.getItem('profile_name') || 'Your Name';
+    const role = localStorage.getItem('profile_role') || 'Role';
 
     const modal = document.createElement('div');
     modal.id = 'editProfileModal';
@@ -80,21 +80,68 @@ function saveProfile() {
     document.getElementById('profileRole').textContent = role;
     document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
 
+    // ALSO SAVE TO PERSONALIZATION FOR AI TO USE
+    updatePersonalizationWithProfileName(name);
+    
     closeEditProfile();
+    
+    // Show toast if available
+    if (typeof showToast === 'function') {
+        showToast('Profile updated!');
+    }
 }
 
-/* Load profile on startup */
-document.addEventListener('DOMContentLoaded', () => {
+/* ===== SYNC PROFILE NAME WITH AI PERSONALIZATION ===== */
+function updatePersonalizationWithProfileName(name) {
+    // Update the global personalization object used by AI
+    if (!window.personalization) {
+        window.personalization = {};
+    }
+    window.personalization.userName = name;
+    
+    // Also save to personalization localStorage
+    const savedPers = localStorage.getItem('ventora_personalization');
+    if (savedPers) {
+        try {
+            const persData = JSON.parse(savedPers);
+            persData.userName = name;
+            localStorage.setItem('ventora_personalization', JSON.stringify(persData));
+        } catch (e) {
+            console.error('Error updating personalization:', e);
+        }
+    }
+    
+    // Alternative: Also save to a simpler key for easy access
+    localStorage.setItem('ai_user_name', name);
+}
+
+/* ===== LOAD PROFILE ON STARTUP ===== */
+function loadProfileData() {
     const name = localStorage.getItem('profile_name');
     const role = localStorage.getItem('profile_role');
 
-    if (name) {
+    if (name && name !== 'Your Name') {
         document.getElementById('profileName').textContent = name;
-        document.getElementById('profileAvatar').textContent =
-            name.charAt(0).toUpperCase();
+        document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+        
+        // Sync with AI personalization on load
+        updatePersonalizationWithProfileName(name);
     }
 
-    if (role) {
+    if (role && role !== 'Role') {
         document.getElementById('profileRole').textContent = role;
     }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', loadProfileData);
+
+/* ===== ALTERNATIVE: CREATE A GLOBAL GETTER FOR USERNAME ===== */
+// This ensures the AI always has access to the current profile name
+Object.defineProperty(window, 'userProfileName', {
+    get: function() {
+        return localStorage.getItem('profile_name') || 
+               (window.personalization?.userName || '');
+    },
+    configurable: true
 });
