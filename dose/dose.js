@@ -5,15 +5,10 @@ let isAddingNew = false;
 
 // Initialize dose modal
 function initDoseModal() {
-    // Add dose button to menu (if not already added)
-    const menuItems = document.querySelector('.menu-items');
-    const doseMenuItem = document.createElement('div');
-    doseMenuItem.className = 'menu-item';
-    doseMenuItem.innerHTML = `
-        <i class="fas fa-pills"></i>
-        <span>My Prescriptions</span>
-    `;
-    doseMenuItem.onclick = toggleDoseModal;
+
+   
+
+
     
     // Insert before the last divider
     const dividers = menuItems.querySelectorAll('.menu-divider');
