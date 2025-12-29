@@ -1,481 +1,279 @@
-// Ventora AI - Enhanced Document & Image Processor
-document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const fileInput = document.querySelector('input[type="file"]');
-    const uploadBtn = document.querySelector('[href="#"]');
-    const removeFileBtn = document.querySelector('[onclick*="remove"], [href*="remove"]');
-    const messageInput = document.querySelector('input[type="text"], textarea');
+// fileupload/fileupload.js
+
+// GLOBAL FILE CONTEXT
+window.fileContext = {
+    text: "",
+    name: "",
+    size: ""
+};
+
+// Initialize file upload
+function initFileUpload() {
+    const fileBtn = document.getElementById("file-btn");
+    const filePopup = document.getElementById("file-popup");
+    const fileInput = document.getElementById("file-input");
+    const fileStatus = document.getElementById("file-status");
+    const fileClearSection = document.getElementById("file-clear-section");
     
-    // Configuration
-    const MAX_FILES = 5;
-    const ALLOWED_TYPES = [
-        'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp',
-        'image/tiff', 'application/pdf', 'text/plain', 'text/html', 'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
+    if (!fileBtn || !filePopup) {
+        console.error("File upload elements not found!");
+        return;
+    }
     
-    // State management
-    let uploadedFiles = [];
+    // Toggle popup on button click
+    fileBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        filePopup.classList.toggle("active");
+    });
     
-    // Fix file input for multiple uploads
-    if (fileInput) {
-        fileInput.multiple = true;
-        fileInput.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.pdf,.txt,.html,.doc,.docx';
+    // Close popup when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!filePopup.contains(e.target) && !fileBtn.contains(e.target)) {
+            filePopup.classList.remove("active");
+        }
+    });
+    
+    // Handle file selection
+    fileInput.addEventListener("change", async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
         
-        fileInput.addEventListener('change', function(e) {
-            if (this.files && this.files.length > 0) {
-                const newFiles = Array.from(this.files);
-                
-                // Check total file count
-                if (uploadedFiles.length + newFiles.length > MAX_FILES) {
-                    alert(`❌ Maximum ${MAX_FILES} files allowed. You already have ${uploadedFiles.length} files.`);
-                    this.value = '';
-                    return;
-                }
-                
-                // Validate file types
-                const invalidFiles = newFiles.filter(file => !ALLOWED_TYPES.includes(file.type));
-                if (invalidFiles.length > 0) {
-                    alert(`❌ Unsupported file types: ${invalidFiles.map(f => f.name).join(', ')}`);
-                    this.value = '';
-                    return;
-                }
-                
-                // Process each file
-                newFiles.forEach(file => {
-                    processUploadedFile(file);
-                });
-                
-                // Reset input
-                this.value = '';
-            }
-        });
-    }
-    
-    // Fix upload button
-    if (uploadBtn && fileInput) {
-        uploadBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            fileInput.click();
-        });
-    }
-    
-    // Fix remove file button (now removes all files)
-    if (removeFileBtn) {
-        removeFileBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+        fileStatus.textContent = "Reading file...";
+        fileStatus.className = "file-status";
+        if (fileClearSection) fileClearSection.style.display = "none";
+        
+        const ext = file.name.split(".").pop().toLowerCase();
+        
+        try {
+            let text = "";
             
-            // Clear all files
-            uploadedFiles = [];
+            // Check file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                throw "File too large (max 10MB)";
+            }
+            
+            // Extract text based on file type
+            if (["txt", "md", "html", "htm", "csv", "rtf"].includes(ext)) {
+                text = await file.text();
+            } 
+            else if (ext === "pdf") {
+                text = await extractPdfText(file);
+            } 
+            else if (ext === "docx" || ext === "doc") {
+                text = await extractDocxText(file);
+            }
+            else {
+                throw "Unsupported file format";
+            }
+            
+            // Validate extracted text
+            if (!text || text.trim().length < 10) {
+                throw "No readable text found";
+            }
+            
+            // Clean and limit text
+            const cleanedText = text
+                .replace(/\s+/g, ' ')
+                .replace(/[^\x20-\x7E\n\r\t]/g, ' ')
+                .trim();
+            
+            if (cleanedText.length < 20) {
+                throw "No readable text found";
+            }
+            
+            // Save file context
+            window.fileContext = {
+                text: cleanedText.slice(0, 15000), // limit to 15k chars
+                name: file.name,
+                size: formatFileSize(file.size)
+            };
+            
+            // Update UI
+            fileStatus.textContent = "File uploaded successfully âœ“";
+            fileStatus.className = "file-status success";
+            if (fileClearSection) fileClearSection.style.display = "block";
+            
+            // Show attached indicator
+            showFileAttachedIndicator();
+            
+            // Auto-close popup after 2 seconds
+            setTimeout(() => {
+                filePopup.classList.remove("active");
+            }, 2000);
+            
+        } catch (err) {
+            console.error("File error:", err);
+            
+            // Reset file context
+            window.fileContext = { text: "", name: "", size: "" };
+            
+            // Show error message
+            fileStatus.textContent = typeof err === "string" ? err : "Failed to read file";
+            fileStatus.className = "file-status error";
+            if (fileClearSection) fileClearSection.style.display = "none";
+            
+            // Hide attached indicator
+            hideFileAttachedIndicator();
             
             // Clear file input
-            if (fileInput) {
-                fileInput.value = '';
-            }
-            
-            // Clear file info display
-            const fileInfoSection = document.querySelector('.file-analysis, div:has(+ button)');
-            if (fileInfoSection) {
-                fileInfoSection.innerHTML = '<strong>No files selected</strong>';
-            }
-            
-            // Clear any results
-            const existingResult = document.querySelector('.analysis-result');
-            if (existingResult) {
-                existingResult.remove();
-            }
-            
-            // Show message
-            showStatusMessage('All files removed successfully.', 'info');
-        });
-    }
+            fileInput.value = "";
+        }
+    });
     
-    // Process uploaded file
-    function processUploadedFile(file) {
-        // Add to uploaded files
-        uploadedFiles.push({
-            id: Date.now() + Math.random(),
-            file: file,
-            processed: false,
-            textContent: null,
-            error: null
-        });
+    // Close popup with Escape key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && filePopup.classList.contains("active")) {
+            filePopup.classList.remove("active");
+        }
+    });
+}
+
+// Trigger file picker
+function pickFile() {
+    document.getElementById("file-input").click();
+}
+
+// Extract text from PDF
+async function extractPdfText(file) {
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(arrayBuffer);
         
-        // Update file info display
-        updateFileInfoDisplay();
-        
-        // Auto-process the file
-        autoProcessFile(file);
-    }
-    
-    // Update file info display
-    function updateFileInfoDisplay() {
-        const fileInfoSection = document.querySelector('.file-analysis, div:has(+ button)');
-        if (!fileInfoSection) return;
-        
-        if (uploadedFiles.length === 0) {
-            fileInfoSection.innerHTML = '<strong>No files selected</strong>';
-            return;
+        // Look for text in PDF
+        const textMatches = text.match(/\((.*?)\)/g);
+        if (textMatches) {
+            const extracted = textMatches.map(match => 
+                match.slice(1, -1).replace(/\\(.)/g, '$1')
+            ).join(' ');
+            if (extracted.trim().length > 50) return extracted;
         }
         
-        let html = `
-            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin: 10px 0;">
-                <h4 style="margin-top: 0; color: #495057;">📁 Uploaded Files (${uploadedFiles.length}/${MAX_FILES})</h4>
-                <div style="max-height: 200px; overflow-y: auto;">
-        `;
+        // Alternative extraction
+        const lines = text.split('\n');
+        const readableLines = lines.filter(line => 
+            line.trim().length > 10 && 
+            !line.includes('%PDF') && 
+            !line.includes('stream')
+        );
         
-        uploadedFiles.forEach((fileData, index) => {
-            const status = fileData.processed ? 
-                (fileData.error ? '❌ Error' : '✅ Processed') : 
-                '⏳ Processing...';
-            
-            html += `
-                <div style="display: flex; justify-content: space-between; align-items: center; 
-                            padding: 8px; border-bottom: 1px solid #e9ecef; 
-                            ${fileData.error ? 'background: #fff5f5;' : fileData.processed ? 'background: #f0fff4;' : ''}">
-                    <div style="flex: 1;">
-                        <strong>${fileData.file.name}</strong><br>
-                        <small style="color: #6c757d;">
-                            ${formatFileSize(fileData.file.size)} • ${fileData.file.type.split('/')[1] || fileData.file.type}
-                        </small>
-                    </div>
-                    <div style="margin-left: 10px;">
-                        ${status}
-                    </div>
-                    <button onclick="removeSingleFile(${index})" style="
-                        margin-left: 10px;
-                        background: #dc3545;
-                        color: white;
-                        border: none;
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        cursor: pointer;
-                        font-size: 12px;
-                    ">×</button>
-                </div>
-            `;
-        });
-        
-        html += `
-                </div>
-                <div style="margin-top: 10px; font-size: 12px; color: #6c757d;">
-                    <small>📝 Supports: Images (OCR), PDFs, Text files, Word documents</small>
-                </div>
-            </div>
-        `;
-        
-        fileInfoSection.innerHTML = html;
-    }
-    
-    // Global function to remove single file
-    window.removeSingleFile = function(index) {
-        if (index >= 0 && index < uploadedFiles.length) {
-            uploadedFiles.splice(index, 1);
-            updateFileInfoDisplay();
-            showStatusMessage('File removed.', 'info');
-        }
-    };
-    
-    // Auto-process file based on type
-    function autoProcessFile(file) {
-        // Show processing status
-        showStatusMessage(`Processing ${file.name}...`, 'info');
-        
-        if (file.type.startsWith('image/')) {
-            processImageFile(file);
-        } else if (file.type === 'application/pdf') {
-            processPDFFile(file);
-        } else if (file.type.startsWith('text/') || 
-                   file.type.includes('wordprocessingml') || 
-                   file.type === 'application/msword') {
-            processTextFile(file);
-        } else {
-            markFileAsError(file, 'Unsupported file type for processing');
-        }
-    }
-    
-    // Process image file (OCR simulation)
-    function processImageFile(file) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const img = new Image();
-            img.src = e.target.result;
-            
-            img.onload = function() {
-                // Simulate OCR processing
-                setTimeout(() => {
-                    // Check if image has extractable content
-                    const hasText = simulateOCRDetection(img);
-                    
-                    if (hasText) {
-                        const extractedText = simulateTextExtraction(file.name);
-                        markFileAsProcessed(file, extractedText);
-                        showExtractedContent(file, extractedText, 'image');
-                    } else {
-                        markFileAsError(file, 'No text could be extracted from this image. The image might be too blurry, dark, or contain no readable text.');
-                    }
-                }, 1500); // Simulate processing delay
-            };
-            
-            img.onerror = function() {
-                markFileAsError(file, 'Failed to load image file');
-            };
-        };
-        
-        reader.onerror = function() {
-            markFileAsError(file, 'Failed to read image file');
-        };
-        
-        reader.readAsDataURL(file);
-    }
-    
-    // Process PDF file (simulated)
-    function processPDFFile(file) {
-        // Simulate PDF processing
-        setTimeout(() => {
-            const hasContent = Math.random() > 0.3; // 70% chance of having content
-            
-            if (hasContent) {
-                const extractedText = simulatePDFExtraction(file.name);
-                markFileAsProcessed(file, extractedText);
-                showExtractedContent(file, extractedText, 'pdf');
-            } else {
-                markFileAsError(file, 'No text content could be extracted from this PDF. The file might be scanned images, encrypted, or empty.');
-            }
-        }, 2000);
-    }
-    
-    // Process text file
-    function processTextFile(file) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const content = e.target.result;
-            
-            if (content && content.trim().length > 0) {
-                markFileAsProcessed(file, content);
-                showExtractedContent(file, content, 'text');
-            } else {
-                markFileAsError(file, 'The text file is empty or contains no readable content.');
-            }
-        };
-        
-        reader.onerror = function() {
-            markFileAsError(file, 'Failed to read text file');
-        };
-        
-        reader.readAsText(file);
-    }
-    
-    // Mark file as processed
-    function markFileAsProcessed(file, textContent) {
-        const fileIndex = uploadedFiles.findIndex(f => f.file === file);
-        if (fileIndex !== -1) {
-            uploadedFiles[fileIndex].processed = true;
-            uploadedFiles[fileIndex].textContent = textContent;
-            updateFileInfoDisplay();
-            showStatusMessage(`✅ Successfully processed ${file.name}`, 'success');
-        }
-    }
-    
-    // Mark file as error
-    function markFileAsError(file, errorMessage) {
-        const fileIndex = uploadedFiles.findIndex(f => f.file === file);
-        if (fileIndex !== -1) {
-            uploadedFiles[fileIndex].processed = true;
-            uploadedFiles[fileIndex].error = errorMessage;
-            updateFileInfoDisplay();
-            showStatusMessage(`❌ ${errorMessage}`, 'error');
-        }
-    }
-    
-    // Show extracted content
-    function showExtractedContent(file, content, fileType) {
-        // Remove previous result for this file
-        const existingResult = document.querySelector(`.file-result-${file.name.replace(/[^a-z0-9]/gi, '_')}`);
-        if (existingResult) {
-            existingResult.remove();
+        if (readableLines.length > 0) {
+            return readableLines.slice(0, 100).join(' ');
         }
         
-        // Create result container
-        const resultDiv = document.createElement('div');
-        resultDiv.className = `file-result-${file.name.replace(/[^a-z0-9]/gi, '_')} analysis-result`;
-        resultDiv.style.cssText = `
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        `;
+        throw "Could not extract text from PDF";
         
-        // Format content preview
-        const previewContent = content.length > 500 ? 
-            content.substring(0, 500) + '...' : 
-            content;
+    } catch (error) {
+        console.error("PDF extraction error:", error);
+        throw "PDF text extraction failed. Ensure PDF has selectable text.";
+    }
+}
+
+// Extract text from DOCX
+async function extractDocxText(file) {
+    try {
+        const text = await file.text();
         
-        // Get icon based on file type
-        const fileIcon = fileType === 'image' ? '🖼️' : 
-                        fileType === 'pdf' ? '📄' : 
-                        '📝';
+        // Look for readable content
+        const lines = text.split('\n').filter(line => 
+            line.trim().length > 0 && 
+            line.length > 10 &&
+            !line.includes('PK') &&
+            !line.includes('<?xml')
+        );
         
-        resultDiv.innerHTML = `
-            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
-                <div style="font-size: 24px; margin-right: 12px;">${fileIcon}</div>
-                <div style="flex: 1;">
-                    <h4 style="margin: 0 0 5px 0; color: #333; font-size: 16px;">
-                        ${file.name}
-                    </h4>
-                    <div style="color: #666; font-size: 14px;">
-                        <span style="background: #e8f4fd; color: #1976d2; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-                            ${fileType.toUpperCase()}
-                        </span>
-                        <span style="margin-left: 10px;">${formatFileSize(file.size)}</span>
-                        <span style="margin-left: 10px;">${new Date().toLocaleTimeString()}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <strong style="color: #495057;">Extracted Content:</strong>
-                    <small style="color: #6c757d;">${content.length} characters</small>
-                </div>
-                <div style="
-                    max-height: 200px;
-                    overflow-y: auto;
-                    font-family: 'Courier New', monospace;
-                    font-size: 14px;
-                    line-height: 1.5;
-                    color: #333;
-                    white-space: pre-wrap;
-                    word-wrap: break-word;
-                    padding: 10px;
-                    background: white;
-                    border-radius: 4px;
-                ">
-                    ${escapeHtml(previewContent)}
-                </div>
-                ${content.length > 500 ? `
-                    <div style="text-align: center; margin-top: 10px;">
-                        <small style="color: #6c757d;">(Content truncated. Full text available for analysis)</small>
-                    </div>
-                ` : ''}
-            </div>
-            
-            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 4px;">
-                <div style="display: flex; align-items: flex-start;">
-                    <div style="margin-right: 10px; color: #856404;">💡</div>
-                    <div style="flex: 1;">
-                        <strong style="color: #856404;">How to use this extracted text:</strong>
-                        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #856404; font-size: 13px;">
-                            <li>Copy and paste relevant sections into the chat below</li>
-                            <li>Ask specific questions about the content</li>
-                            <li>Request summarization, translation, or analysis</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
-                <small>
-                    <span style="margin-right: 15px;">⚠️ Ventora AI can make mistakes</span>
-                    <span>• Verify important information</span>
-                </small>
-            </div>
-        `;
-        
-        // Insert the result
-        const container = document.querySelector('.file-analysis-section') || 
-                         document.querySelector('body > div') || 
-                         document.body;
-        
-        const fileInfoSection = document.querySelector('.file-analysis, div:has(+ button)');
-        if (fileInfoSection && fileInfoSection.parentNode) {
-            fileInfoSection.parentNode.insertBefore(resultDiv, fileInfoSection.nextSibling);
-        } else {
-            container.appendChild(resultDiv);
+        if (lines.length > 0) {
+            return lines.slice(0, 100).join(' ');
         }
         
-        // Scroll to result
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    
-    // Simulate OCR detection
-    function simulateOCRDetection(img) {
-        // Simple simulation: 80% chance of finding text
-        // In reality, this would use actual OCR detection
-        return Math.random() > 0.2;
-    }
-    
-    // Simulate text extraction
-    function simulateTextExtraction(filename) {
-        const sampleTexts = [
-            `Document: ${filename}\n\nThis is a sample text extracted from the uploaded image. The content appears to be a document containing important information. Always verify the accuracy of OCR results.\n\nSample extracted text for analysis purposes.`,
-            
-            `IMAGE CONTENT EXTRACTED\n\nFilename: ${filename}\nDate: ${new Date().toLocaleDateString()}\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.`,
-            
-            `Extracted from image scan:\n\nPatient Information\nName: Sample Document\nDate: Current\n\nInstructions: Take as directed by physician. Store in a cool dry place. Keep out of reach of children.\n\nAdditional notes may be present in the original document.`
-        ];
+        // Fallback
+        const asciiText = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ');
+        const cleanAscii = asciiText.replace(/\s+/g, ' ').trim();
         
-        return sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-    }
-    
-    // Simulate PDF extraction
-    function simulatePDFExtraction(filename) {
-        const samplePDFs = [
-            `PDF Document: ${filename}\n\nThis PDF contains multiple pages of content. The text has been extracted for analysis. PDFs may contain complex formatting, images, and tables that affect text extraction accuracy.\n\nPage 1 of 3\nDocument processed successfully.`,
-            
-            `EXTRACTED PDF CONTENT\n\nFile: ${filename}\nPages: 5\nWords: 1250\n\nChapter 1: Introduction\nThis document discusses important topics related to the subject matter. Multiple sections contain detailed information that requires careful analysis.\n\nReferences and citations are included in the original document.`
-        ];
-        
-        return samplePDFs[Math.floor(Math.random() * samplePDFs.length)];
-    }
-    
-    // Show status message
-    function showStatusMessage(message, type = 'info') {
-        // Remove existing status
-        const existingStatus = document.querySelector('.status-message');
-        if (existingStatus) {
-            existingStatus.remove();
+        if (cleanAscii.length > 100) {
+            return cleanAscii.substring(0, 5000);
         }
         
-        const statusDiv = document.createElement('div');
-        statusDiv.className = 'status-message';
-        statusDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            max-width: 400px;
-        `;
+        throw "Could not read DOCX file";
         
-        // Set color based on type
-        if (type === 'error') {
-            statusDiv.style.background = '#dc3545';
-        } else if (type === 'success') {
-            statusDiv.style.background = '#28a745';
-        } else {
-            statusDiv.style.background = '#17a2b8';
-        }
-        
-        statusDiv.textContent = message;
-        
-        document.body.appendChild(statusDiv);
-        
-        // Auto remove after 3 seconds
-        setTimeout(() => {
-            if (statusDiv.parentNode) {
-                statusDiv.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    if (statusDiv.parentNode) {
-                        statusDiv.remove();
-         
+    } catch (error) {
+        console.error("DOCX extraction error:", error);
+        throw "Could not read DOCX file";
+    }
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Show file attached indicator
+function showFileAttachedIndicator() {
+    const fileBtn = document.getElementById("file-btn");
+    if (!fileBtn) return;
+    
+    // Remove existing indicator
+    const existingIndicator = fileBtn.querySelector(".file-attached-indicator");
+    if (existingIndicator) existingIndicator.remove();
+    
+    // Add new indicator
+    const indicator = document.createElement("div");
+    indicator.className = "file-attached-indicator";
+    indicator.title = "File attached";
+    fileBtn.appendChild(indicator);
+    
+    // Update button appearance
+    fileBtn.classList.add("active");
+}
+
+// Hide file attached indicator
+function hideFileAttachedIndicator() {
+    const fileBtn = document.getElementById("file-btn");
+    if (!fileBtn) return;
+    
+    const indicator = fileBtn.querySelector(".file-attached-indicator");
+    if (indicator) indicator.remove();
+    
+    // Reset button appearance
+    fileBtn.classList.remove("active");
+}
+
+// Clear attached file
+function clearAttachedFile() {
+    window.fileContext = { text: "", name: "", size: "" };
+    hideFileAttachedIndicator();
+    
+    // Clear file input
+    const fileInput = document.getElementById("file-input");
+    if (fileInput) fileInput.value = "";
+    
+    // Hide clear section
+    const fileClearSection = document.getElementById("file-clear-section");
+    if (fileClearSection) fileClearSection.style.display = "none";
+    
+    // Clear status
+    const fileStatus = document.getElementById("file-status");
+    if (fileStatus) {
+        fileStatus.textContent = "";
+        fileStatus.className = "file-status";
+    }
+    
+    // Show toast
+    if (typeof showToast === "function") {
+        showToast("File removed", "info");
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(initFileUpload, 500);
+});
+
+// Export functions
+window.initFileUpload = initFileUpload;
+window.pickFile = pickFile;
+window.clearAttachedFile = clearAttachedFile;
