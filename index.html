@@ -546,26 +546,6 @@
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
-
-/* Toast type styles */
-.toast.success {
-    background: rgba(46, 213, 115, 0.15);
-    border-color: rgba(46, 213, 115, 0.3);
-    color: #2ed573;
-}
-
-.toast.error {
-    background: rgba(255, 71, 87, 0.15);
-    border-color: rgba(255, 71, 87, 0.3);
-    color: #ff6b81;
-}
-
-.toast.info {
-    background: rgba(0, 122, 255, 0.15);
-    border-color: rgba(0, 122, 255, 0.3);
-    color: var(--accent-blue);
-}
-        
         
         /* MOBILE FIXES */
         @media (max-width: 480px) {
@@ -2223,44 +2203,15 @@ await typeText(aiTextEl, formatted, 25);
             }
         }
 
-
-        
         function showToast(message, type = "info") {
-    // Always get the toast element fresh
-    const toastElement = document.getElementById('toast');
-    
-    if (!toastElement) {
-        console.error('Toast element not found!');
-        return;
-    }
-    
-    // Clear any existing timeout
-    if (window.toastTimer) {
-        clearTimeout(window.toastTimer);
-        toastElement.classList.remove('active');
-    }
-    
-    // Set the message and type
-    toastElement.textContent = message;
-    
-    // Reset classes
-    toastElement.className = 'toast';
-    
-    // Add type class if provided
-    if (type === 'success' || type === 'error' || type === 'info') {
-        toastElement.classList.add(type);
-    }
-    
-    // Show the toast
-    setTimeout(() => {
-        toastElement.classList.add('active');
-    }, 10);
-    
-    // Auto-hide after 3 seconds
-    window.toastTimer = setTimeout(() => {
-        toastElement.classList.remove('active');
-    }, 3000);
-}
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
         function shareApp() {
             if (navigator.share) {
                 navigator.share({ title: 'Nebula AI', url: window.location.href });
