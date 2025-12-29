@@ -58,7 +58,7 @@
 }
 
 .close-dose {
-    background: rgba(255, 255, 255, 0.1);
+    background: transparent;
     border: none;
     color: var(--text-secondary);
     width: 36px;
