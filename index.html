@@ -1773,11 +1773,19 @@ Note: This is reference information only. DO NOT provide dosage advice or modify
 : ''
 }
 
+====================================================================================================
 
 ${window.dietContext?.getDietPlan && window.dietContext.getDietPlan().foods.length > 0
 ? `
 ### CURRENT DIET PLAN ###
 ${window.dietContext.formatForAI()}
+
+Note: Use this information to provide personalized nutrition advice.
+Consider:
+1. Balanced meal suggestions based on current diet
+2. Nutrient gaps or excesses
+3. Healthy alternatives or additions
+4. Meal timing optimization
 `
 : ''
 }
@@ -1814,7 +1822,7 @@ Rules:
 - Simple questions → very short, structured answers
 - Use labels, not paragraphs
 - No prescriptions, no dosage, no treatment advice
-- Expand only if the user asks “explain”, “how”, or “why”
+- Expand only if the user asks “explain”, “how”, or “why” etc...
 - Focus on understanding, not instructions
 
 --------------------------------------------------
@@ -1855,7 +1863,7 @@ ANSWER STYLE:
 
 FORMATTING RULES:
 - Use **bold headings**
-- Use bullet points when helpful(-)(•)
+- Use bullet points when helpful
 - Keep answers readable and clean
 
 --------------------------------------------------
