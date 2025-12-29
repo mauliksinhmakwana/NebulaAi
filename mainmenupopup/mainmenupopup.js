@@ -182,7 +182,6 @@ function loadAllData() {
     if (!window.personalization) {
         window.personalization = JSON.parse(localStorage.getItem('ventora_personalization')) || {
             userName: '',
-            studyLevel: 'college',
             major: '',
             responseStyle: 'balanced',
             customInstructions: ''
@@ -192,7 +191,7 @@ function loadAllData() {
     // App Settings
     if (!window.ventoraSettings) {
         window.ventoraSettings = JSON.parse(localStorage.getItem('ventora_settings')) || {
-            model: 'groq:general',
+            model: 'mia:general',
             temperature: 0.7,
             maxTokens: 1024
         };
@@ -638,7 +637,7 @@ function saveMenuSettings() {
 function resetMenuSettings() {
     if (confirm('Reset settings to default values?')) {
         window.ventoraSettings = {
-            model: 'groq:general',
+            model: 'mia:general',
             temperature: 0.7,
             maxTokens: 1024
         };
@@ -1499,29 +1498,9 @@ function clearAllMenuData() {
 
 // Toast notification - IMPROVED
 function showMenuToast(message, type = "success") {
-    // Call the global function in index.html instead of creating a new one
     if (typeof window.showToast === 'function') {
         window.showToast(message, type);
     }
-}
-    // Create new toast element
-    const toast = document.createElement('div');
-    toast.className = `menu-toast ${type}`;
-    toast.textContent = message;
-    toast.style.animation = 'toastSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-    
-    // Add to document
-    document.body.appendChild(toast);
-    
-    // Remove after delay
-    setTimeout(() => {
-        toast.style.animation = 'toastSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
-        setTimeout(() => {
-            if (toast.parentNode) {
-                document.body.removeChild(toast);
-            }
-        }, 300);
-    }, 3000);
 }
 
 // Setup event listeners
@@ -1578,33 +1557,3 @@ window.closeMainMenuPopup = closeMainMenuPopup;
 window.openSection = openSection;
 window.selectExportOption = selectExportOption;
 window.clearAllMenuData = clearAllMenuData;
-// FORCE GLOBAL SCOPE - ADD TO TOP OF settings 2.js
-window.openMainMenuPopup = function() {
-    console.log("Settings Button Clicked!"); // This helps you debug
-    
-    const modal = document.getElementById('mainmenu-modal');
-    const container = document.querySelector('.mainmenu-container');
-    
-    if (modal) {
-        // 1. Close the sidebar first
-        if (typeof closeMenu === 'function') closeMenu();
-        
-        // 2. Prepare the view for mobile/desktop
-        if (window.innerWidth <= 768 && container) {
-            container.classList.add('menu-view');
-            container.classList.remove('content-view');
-        }
-        
-        // 3. Show the modal
-        modal.style.display = 'flex'; // Force visibility
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        
-        // 4. Force render the first page (Personalization)
-        if (typeof openSection === 'function') {
-            openSection('personalization');
-        }
-    } else {
-        console.error("Critical Error: #mainmenu-modal not found in HTML!");
-    }
-};
