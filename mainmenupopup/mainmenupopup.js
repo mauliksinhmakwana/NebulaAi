@@ -1499,10 +1499,11 @@ function clearAllMenuData() {
 
 // Toast notification - IMPROVED
 function showMenuToast(message, type = "success") {
-    // Remove any existing menu toast
-    const existingToasts = document.querySelectorAll('.menu-toast');
-    existingToasts.forEach(toast => toast.remove());
-    
+    // Call the global function in index.html instead of creating a new one
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+    }
+}
     // Create new toast element
     const toast = document.createElement('div');
     toast.className = `menu-toast ${type}`;
