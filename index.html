@@ -941,6 +941,12 @@
             <i class="fas fa-check-circle"></i>
             <span>Your Diet</span>
         </div>
+       <!-- Settings and Export -->
+            <div class="menu-item" onclick="openSettings()">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+
       
  <!-- Add Prescriptions Menu Item -->
     <div class="profile-menu-item" onclick="toggleDoseModal()">
@@ -980,6 +986,10 @@
             <div class="settings-group">
                 <label class="settings-label">Model</label>
                 <select class="settings-select" id="modelSelect">
+
+                   <option value="mia:general">MIA – General</option>
+  <option value="mia:reasoning">MIA – Clinical Reasoning</option>
+  <option value="mia:research">MIA – Research & Thinking</option> 
 
                     
               <option value="groq:general">MIA – General</option>
