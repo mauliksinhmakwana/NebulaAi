@@ -58,15 +58,6 @@
     -webkit-text-fill-color: transparent;*/
 }
 
-.dose-header p {
-    margin: 4px 0 0 0;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    opacity: 0.9;
-    line-height: 1.3;
-    margin-top: 8px; /* increased from 4px to 8px */
-}
-
 .close-dose {
     background: transparent;
     border: none;
