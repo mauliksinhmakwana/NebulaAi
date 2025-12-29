@@ -58,6 +58,15 @@
     -webkit-text-fill-color: transparent;*/
 }
 
+/* Add subtitle to dose header */
+.dose-header p {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
 .close-dose {
     background: transparent;
     border: none;
