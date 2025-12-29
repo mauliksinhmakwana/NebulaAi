@@ -1,22 +1,27 @@
-// goal/goal.js - Diet Plan Edition
+// goal/goal.js - Diet Plan Edition with AI Integration
 
-// Food database with nutrition information (you can expand this)
+// Food database with nutrition information
 const FOOD_DATABASE = {
-    'chicken breast': { protein: 31, carbs: 0, fat: 3.6, calories: 165 },
-    'brown rice': { protein: 2.6, carbs: 23, fat: 0.9, calories: 111 },
-    'broccoli': { protein: 2.8, carbs: 7, fat: 0.4, calories: 34 },
-    'salmon': { protein: 25, carbs: 0, fat: 13, calories: 206 },
-    'eggs': { protein: 13, carbs: 1.1, fat: 11, calories: 155 },
-    'avocado': { protein: 2, carbs: 9, fat: 15, calories: 160 },
-    'oats': { protein: 13, carbs: 66, fat: 7, calories: 389 },
-    'banana': { protein: 1.3, carbs: 27, fat: 0.4, calories: 105 },
-    'almonds': { protein: 21, carbs: 22, fat: 50, calories: 579 },
-    'spinach': { protein: 2.9, carbs: 3.6, fat: 0.4, calories: 23 },
-    'sweet potato': { protein: 2, carbs: 20, fat: 0.2, calories: 90 },
-    'greek yogurt': { protein: 10, carbs: 4, fat: 0.4, calories: 59 },
-    'quinoa': { protein: 4.4, carbs: 21, fat: 1.9, calories: 120 },
-    'apple': { protein: 0.3, carbs: 14, fat: 0.2, calories: 52 },
-    'protein powder': { protein: 25, carbs: 3, fat: 1, calories: 120 }
+    'chicken breast': { protein: 31, carbs: 0, fat: 3.6, calories: 165, category: 'protein' },
+    'brown rice': { protein: 2.6, carbs: 23, fat: 0.9, calories: 111, category: 'carbs' },
+    'broccoli': { protein: 2.8, carbs: 7, fat: 0.4, calories: 34, category: 'vegetable' },
+    'salmon': { protein: 25, carbs: 0, fat: 13, calories: 206, category: 'protein' },
+    'eggs': { protein: 13, carbs: 1.1, fat: 11, calories: 155, category: 'protein' },
+    'avocado': { protein: 2, carbs: 9, fat: 15, calories: 160, category: 'fat' },
+    'oats': { protein: 13, carbs: 66, fat: 7, calories: 389, category: 'carbs' },
+    'banana': { protein: 1.3, carbs: 27, fat: 0.4, calories: 105, category: 'fruit' },
+    'almonds': { protein: 21, carbs: 22, fat: 50, calories: 579, category: 'fat' },
+    'spinach': { protein: 2.9, carbs: 3.6, fat: 0.4, calories: 23, category: 'vegetable' },
+    'sweet potato': { protein: 2, carbs: 20, fat: 0.2, calories: 90, category: 'carbs' },
+    'greek yogurt': { protein: 10, carbs: 4, fat: 0.4, calories: 59, category: 'protein' },
+    'quinoa': { protein: 4.4, carbs: 21, fat: 1.9, calories: 120, category: 'carbs' },
+    'apple': { protein: 0.3, carbs: 14, fat: 0.2, calories: 52, category: 'fruit' },
+    'protein powder': { protein: 25, carbs: 3, fat: 1, calories: 120, category: 'protein' },
+    'whole wheat bread': { protein: 9, carbs: 49, fat: 3, calories: 265, category: 'carbs' },
+    'milk': { protein: 3.5, carbs: 5, fat: 3.5, calories: 61, category: 'dairy' },
+    'cheese': { protein: 25, carbs: 1, fat: 33, calories: 404, category: 'dairy' },
+    'lentils': { protein: 9, carbs: 20, fat: 0.4, calories: 116, category: 'protein' },
+    'tofu': { protein: 8, carbs: 2, fat: 4, calories: 76, category: 'protein' }
 };
 
 // Daily nutrition goals (can be customized)
@@ -25,6 +30,58 @@ const DAILY_GOALS = {
     carbs: 200,   // grams
     fat: 70,      // grams
     calories: 2200 // kcal
+};
+
+// Initialize diet context for AI
+window.dietContext = {
+    getDietPlan: () => {
+        const foods = JSON.parse(localStorage.getItem('ventora_foods')) || [];
+        const notes = localStorage.getItem('ventora_study_notes') || '';
+        
+        // Calculate totals
+        let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+        foods.forEach(food => {
+            const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
+            totals.protein += nutrition.protein;
+            totals.carbs += nutrition.carbs;
+            totals.fat += nutrition.fat;
+            totals.calories += nutrition.calories;
+        });
+        
+        return {
+            foods: foods,
+            notes: notes,
+            totals: totals,
+            goals: DAILY_GOALS,
+            lastUpdated: new Date().toISOString()
+        };
+    },
+    
+    formatForAI: () => {
+        const diet = window.dietContext.getDietPlan();
+        let text = `=== DIET PLAN CONTEXT ===\n\n`;
+        
+        if (diet.foods.length === 0) {
+            text += `No foods logged today.\n`;
+        } else {
+            text += `Today's Diet (${diet.foods.length} items):\n`;
+            diet.foods.forEach((food, index) => {
+                const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
+                text += `${index + 1}. ${food.quantity}${food.unit} ${food.name}: ${nutrition.protein}g protein, ${nutrition.carbs}g carbs, ${nutrition.fat}g fat, ${nutrition.calories} calories\n`;
+            });
+            
+            text += `\nTOTALS: ${Math.round(diet.totals.protein)}g protein, ${Math.round(diet.totals.carbs)}g carbs, ${Math.round(diet.totals.fat)}g fat, ${diet.totals.calories} calories\n`;
+            text += `GOALS: ${DAILY_GOALS.protein}g protein, ${DAILY_GOALS.carbs}g carbs, ${DAILY_GOALS.fat}g fat, ${DAILY_GOALS.calories} calories\n`;
+            text += `PROGRESS: Protein ${Math.round((diet.totals.protein/DAILY_GOALS.protein)*100)}%, Carbs ${Math.round((diet.totals.carbs/DAILY_GOALS.carbs)*100)}%, Calories ${Math.round((diet.totals.calories/DAILY_GOALS.calories)*100)}%\n`;
+        }
+        
+        if (diet.notes) {
+            text += `\nDIET NOTES:\n${diet.notes}\n`;
+        }
+        
+        text += `\n=== END DIET CONTEXT ===`;
+        return text;
+    }
 };
 
 let foods = JSON.parse(localStorage.getItem('ventora_foods')) || [];
@@ -49,6 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize notes
     initNotes();
+    
+    // Initialize diet context
+    if (!window.dietContext) window.dietContext = {};
     
     // Auto-focus food name input when modal opens
     const modal = document.getElementById('goalModal');
@@ -169,7 +229,8 @@ function addFood() {
             name: name,
             quantity: quantity,
             unit: unit,
-            date: new Date().toISOString()
+            date: new Date().toISOString(),
+            id: Date.now() + Math.random().toString(36).substr(2, 9)
         });
         showToast('Food added successfully!', 'success');
     }
@@ -180,6 +241,11 @@ function addFood() {
     nameInput.focus();
     
     saveAndRender();
+    
+    // Update AI context
+    if (window.dietContext && window.dietContext.updateDietContext) {
+        window.dietContext.updateDietContext();
+    }
 }
 
 function calculateNutrition(foodName, quantity, unit) {
@@ -192,15 +258,15 @@ function calculateNutrition(foodName, quantity, unit) {
     switch(unit) {
         case 'g': multiplier = 1; break;
         case 'kg': multiplier = 1000; break;
-        case 'ml': multiplier = 1; break; // Assuming 1ml = 1g for water-based foods
+        case 'ml': multiplier = 1; break;
         case 'l': multiplier = 1000; break;
-        case 'cup': multiplier = 240; break; // Approximate
+        case 'cup': multiplier = 240; break;
         case 'tbsp': multiplier = 15; break;
         case 'tsp': multiplier = 5; break;
         case 'oz': multiplier = 28.35; break;
         case 'lb': multiplier = 453.6; break;
-        case 'piece': multiplier = 100; break; // Average piece
-        case 'slice': multiplier = 30; break; // Average slice
+        case 'piece': multiplier = 100; break;
+        case 'slice': multiplier = 30; break;
     }
     
     const actualQuantity = quantity * multiplier / 100; // Per 100g
@@ -214,30 +280,33 @@ function calculateNutrition(foodName, quantity, unit) {
 }
 
 function predictNutrition(foodName) {
-    // Simple AI prediction based on food category
-    // In production, you'd call an API here
     const foodLower = foodName.toLowerCase();
     
-    if (foodLower.includes('chicken') || foodLower.includes('turkey')) {
-        return { protein: 25, carbs: 0, fat: 5, calories: 150 };
-    } else if (foodLower.includes('fish') || foodLower.includes('seafood')) {
-        return { protein: 22, carbs: 0, fat: 10, calories: 180 };
-    } else if (foodLower.includes('beef') || foodLower.includes('pork')) {
-        return { protein: 26, carbs: 0, fat: 15, calories: 250 };
-    } else if (foodLower.includes('rice') || foodLower.includes('pasta')) {
-        return { protein: 3, carbs: 28, fat: 0.5, calories: 130 };
-    } else if (foodLower.includes('bread') || foodLower.includes('toast')) {
-        return { protein: 9, carbs: 49, fat: 3, calories: 265 };
-    } else if (foodLower.includes('fruit') || foodLower.includes('berry')) {
-        return { protein: 1, carbs: 15, fat: 0.5, calories: 60 };
-    } else if (foodLower.includes('vegetable') || foodLower.includes('salad')) {
-        return { protein: 2, carbs: 5, fat: 0.3, calories: 25 };
-    } else if (foodLower.includes('milk') || foodLower.includes('yogurt')) {
-        return { protein: 3.5, carbs: 5, fat: 3.5, calories: 61 };
+    // Enhanced prediction with more categories
+    if (foodLower.includes('chicken') || foodLower.includes('turkey') || foodLower.includes('poultry')) {
+        return { protein: 25, carbs: 0, fat: 5, calories: 150, category: 'protein' };
+    } else if (foodLower.includes('fish') || foodLower.includes('seafood') || foodLower.includes('shrimp')) {
+        return { protein: 22, carbs: 0, fat: 10, calories: 180, category: 'protein' };
+    } else if (foodLower.includes('beef') || foodLower.includes('pork') || foodLower.includes('lamb')) {
+        return { protein: 26, carbs: 0, fat: 15, calories: 250, category: 'protein' };
+    } else if (foodLower.includes('rice') || foodLower.includes('pasta') || foodLower.includes('noodles')) {
+        return { protein: 3, carbs: 28, fat: 0.5, calories: 130, category: 'carbs' };
+    } else if (foodLower.includes('bread') || foodLower.includes('toast') || foodLower.includes('bagel')) {
+        return { protein: 9, carbs: 49, fat: 3, calories: 265, category: 'carbs' };
+    } else if (foodLower.includes('fruit') || foodLower.includes('berry') || foodLower.includes('orange')) {
+        return { protein: 1, carbs: 15, fat: 0.5, calories: 60, category: 'fruit' };
+    } else if (foodLower.includes('vegetable') || foodLower.includes('salad') || foodLower.includes('carrot')) {
+        return { protein: 2, carbs: 5, fat: 0.3, calories: 25, category: 'vegetable' };
+    } else if (foodLower.includes('milk') || foodLower.includes('yogurt') || foodLower.includes('cream')) {
+        return { protein: 3.5, carbs: 5, fat: 3.5, calories: 61, category: 'dairy' };
     } else if (foodLower.includes('cheese')) {
-        return { protein: 25, carbs: 1, fat: 33, calories: 404 };
-    } else if (foodLower.includes('nut') || foodLower.includes('seed')) {
-        return { protein: 20, carbs: 20, fat: 50, calories: 600 };
+        return { protein: 25, carbs: 1, fat: 33, calories: 404, category: 'dairy' };
+    } else if (foodLower.includes('nut') || foodLower.includes('seed') || foodLower.includes('walnut')) {
+        return { protein: 20, carbs: 20, fat: 50, calories: 600, category: 'fat' };
+    } else if (foodLower.includes('bean') || foodLower.includes('lentil') || foodLower.includes('chickpea')) {
+        return { protein: 9, carbs: 20, fat: 0.4, calories: 116, category: 'protein' };
+    } else if (foodLower.includes('potato') || foodLower.includes('corn') || foodLower.includes('pea')) {
+        return { protein: 2, carbs: 17, fat: 0.1, calories: 77, category: 'carbs' };
     }
     
     return null;
@@ -280,9 +349,9 @@ function updateSummary() {
     const carbsProgress = Math.min(100, Math.round((totalCarbs / DAILY_GOALS.carbs) * 100));
     const caloriesProgress = Math.min(100, Math.round((totalCalories / DAILY_GOALS.calories) * 100));
     
-    document.getElementById('totalProtein').textContent = `${totalProtein}g`;
-    document.getElementById('totalCarbs').textContent = `${totalCarbs}g`;
-    document.getElementById('totalCalories').textContent = totalCalories;
+    document.getElementById('totalProtein').textContent = `${Math.round(totalProtein)}g`;
+    document.getElementById('totalCarbs').textContent = `${Math.round(totalCarbs)}g`;
+    document.getElementById('totalCalories').textContent = Math.round(totalCalories);
     
     document.getElementById('proteinProgress').style.width = `${proteinProgress}%`;
     document.getElementById('carbsProgress').style.width = `${carbsProgress}%`;
@@ -298,17 +367,28 @@ function showAISuggestion() {
         return sum + nutrition.protein;
     }, 0);
     
+    const totalCarbs = foods.reduce((sum, food) => {
+        const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
+        return sum + nutrition.carbs;
+    }, 0);
+    
     const proteinDiff = DAILY_GOALS.protein - totalProtein;
+    const carbsDiff = DAILY_GOALS.carbs - totalCarbs;
+    
     let suggestion = '';
     
-    if (proteinDiff > 30) {
-        suggestion = `You need about ${Math.round(proteinDiff)}g more protein. Consider adding chicken breast, Greek yogurt, or protein powder.`;
+    if (proteinDiff > 30 && carbsDiff > 50) {
+        suggestion = `Need more protein (${Math.round(proteinDiff)}g) and carbs (${Math.round(carbsDiff)}g). Try chicken with brown rice or salmon with sweet potato.`;
+    } else if (proteinDiff > 30) {
+        suggestion = `Focus on protein: add ${Math.round(proteinDiff)}g more. Good options: chicken breast, Greek yogurt, eggs, or protein powder.`;
+    } else if (carbsDiff > 50) {
+        suggestion = `Need more energy: add ${Math.round(carbsDiff)}g carbs. Try brown rice, oats, bananas, or whole wheat bread.`;
     } else if (proteinDiff > 10) {
-        suggestion = `Almost at your protein goal! Just ${Math.round(proteinDiff)}g to go. A small snack like nuts or an egg would help.`;
+        suggestion = `Almost at protein goal! Just ${Math.round(proteinDiff)}g to go. A protein shake or handful of nuts would help.`;
     } else if (proteinDiff <= 10 && proteinDiff > 0) {
         suggestion = 'Great job! You\'re very close to your protein goal.';
     } else if (proteinDiff <= 0) {
-        suggestion = 'Excellent! You\'ve met or exceeded your protein goal for today.';
+        suggestion = 'Excellent! You\'ve met or exceeded your protein goal. Consider adding some healthy fats like avocado or nuts.';
     }
     
     // Only show suggestion if there are foods
@@ -380,6 +460,12 @@ function saveAndRender() {
     renderDietPlan();
     updateSummary();
     showAISuggestion();
+    
+    // Update the global diet context for AI
+    if (window.dietContext) {
+        window.dietContext.foods = foods;
+        window.dietContext.lastUpdated = new Date().toISOString();
+    }
 }
 
 // Toast notification
@@ -411,6 +497,10 @@ function initNotes() {
         clearTimeout(timer);
         timer = setTimeout(() => {
             localStorage.setItem('ventora_study_notes', area.value);
+            // Update diet context
+            if (window.dietContext) {
+                window.dietContext.notes = area.value;
+            }
         }, 1000);
     });
 }
@@ -467,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <input type="text" id="foodName" class="form-input" placeholder="e.g., chicken breast, brown rice" autocomplete="off">
                             <div class="form-row">
                                 <input type="number" id="foodQuantity" class="form-input" placeholder="Quantity" value="100" min="1" step="1">
-                                <select id="foodUnit" class="form-input">
+                                <select id="foodUnit" class="form-select">
                                     <option value="g">grams (g)</option>
                                     <option value="kg">kilograms (kg)</option>
                                     <option value="ml">milliliters (ml)</option>
@@ -544,6 +634,72 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDietPlan();
     updateSummary();
     showAISuggestion();
+    
+    // Initialize global diet context
+    window.dietContext = {
+        getDietPlan: () => {
+            const foods = JSON.parse(localStorage.getItem('ventora_foods')) || [];
+            const notes = localStorage.getItem('ventora_study_notes') || '';
+            
+            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+            foods.forEach(food => {
+                const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
+                totals.protein += nutrition.protein;
+                totals.carbs += nutrition.carbs;
+                totals.fat += nutrition.fat;
+                totals.calories += nutrition.calories;
+            });
+            
+            return {
+                foods: foods,
+                notes: notes,
+                totals: totals,
+                goals: DAILY_GOALS,
+                lastUpdated: new Date().toISOString()
+            };
+        },
+        
+        formatForAI: () => {
+            const diet = window.dietContext.getDietPlan();
+            let text = `=== CURRENT DIET PLAN ===\n\n`;
+            
+            if (diet.foods.length === 0) {
+                text += `No foods logged today.\n`;
+            } else {
+                text += `Today's Diet Log (${diet.foods.length} items):\n`;
+                diet.foods.forEach((food, index) => {
+                    const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
+                    text += `• ${food.quantity}${food.unit} ${food.name}: ${Math.round(nutrition.protein)}g protein, ${Math.round(nutrition.carbs)}g carbs, ${Math.round(nutrition.fat)}g fat, ${nutrition.calories} cal\n`;
+                });
+                
+                text += `\nDAILY TOTALS:\n`;
+                text += `• Protein: ${Math.round(diet.totals.protein)}g / ${DAILY_GOALS.protein}g (${Math.round((diet.totals.protein/DAILY_GOALS.protein)*100)}%)\n`;
+                text += `• Carbs: ${Math.round(diet.totals.carbs)}g / ${DAILY_GOALS.carbs}g (${Math.round((diet.totals.carbs/DAILY_GOALS.carbs)*100)}%)\n`;
+                text += `• Fat: ${Math.round(diet.totals.fat)}g / ${DAILY_GOALS.fat}g (${Math.round((diet.totals.fat/DAILY_GOALS.fat)*100)}%)\n`;
+                text += `• Calories: ${diet.totals.calories} / ${DAILY_GOALS.calories} (${Math.round((diet.totals.calories/DAILY_GOALS.calories)*100)}%)\n`;
+                
+                // Add analysis
+                if (diet.totals.protein < DAILY_GOALS.protein * 0.7) {
+                    text += `\nNOTE: Protein intake is low. Consider adding protein-rich foods.`;
+                }
+                if (diet.totals.calories < DAILY_GOALS.calories * 0.7) {
+                    text += `\nNOTE: Calorie intake is below target.`;
+                }
+            }
+            
+            if (diet.notes) {
+                text += `\n\nUSER DIET NOTES:\n"${diet.notes}"\n`;
+            }
+            
+            text += `\n=== END DIET DATA ===`;
+            return text;
+        },
+        
+        updateDietContext: () => {
+            // This function is called whenever diet data changes
+            console.log('Diet context updated for AI');
+        }
+    };
 });
 
 // Make functions available globally
