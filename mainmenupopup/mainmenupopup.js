@@ -268,9 +268,12 @@ function renderSettingsSection(container) {
         <div class="form-group">
             <label class="form-label">AI Model</label>
             <select class="form-select" id="menu-settings-model">
-                <option value="groq:general" ${window.ventoraSettings.model === 'groq:general' ? 'selected' : ''}>MIA – General</option>
-                <option value="groq:research" ${window.ventoraSettings.model === 'groq:research' ? 'selected' : ''}>MIA – Research & Analysis</option>
-                <option value="groq:study" ${window.ventoraSettings.model === 'groq:study' ? 'selected' : ''}>MIA – Clinical Reasoning</option>
+               
+  <option value="mia:general">MIA – General</option>
+  <option value="mia:reasoning">MIA – Clinical Reasoning</option>
+  <option value="mia:research">MIA – Research & Thinking</option>
+
+
             </select>
             <div class="form-info">Choose the AI model for responses</div>
         </div>
