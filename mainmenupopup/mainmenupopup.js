@@ -1180,6 +1180,13 @@ function clearAllMenuData() {
     }
 }
 
+// At the end of clearAllMenuData() function, add:
+setTimeout(() => {
+    window.location.reload();
+}, 1500);
+
+
+
 // Toast notification
 function showMenuToast(message, type = "success") {
     // Try to use main app's showToast first
