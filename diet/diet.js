@@ -625,10 +625,10 @@ function showToast(message, type = "info") {
 document.addEventListener('DOMContentLoaded', function() {
     // Add Diet button to menu if not already there
     setTimeout(() => {
-        const menuItems = document.querySelector('.menu-items');
-        if (menuItems && !document.querySelector('.menu-item[onclick*="toggleDietModal"]')) {
+        const menuItems = document.querySelector('');
+        if (menuItems && !document.querySelector('')) {
             const dietItem = document.createElement('a');
-            dietItem.className = 'menu-item';
+            dietItem.className = '';
             dietItem.innerHTML = `
                
             `;
