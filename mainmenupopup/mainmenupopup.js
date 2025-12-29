@@ -1296,7 +1296,39 @@ function setupEventListeners() {
 document.addEventListener('DOMContentLoaded', initMainMenuPopup);
 
 // Export functions
-window.openMainMenuPopup = openMainMenuPopup;
+// REPLACE the existing window.openMainMenuPopup lines at the bottom of settings 2.js with this:
+window.openMainMenuPopup = function() {
+    console.log("Attempting to open Settings Popup..."); // Debug line
+    const modal = document.getElementById('mainmenu-modal');
+    const container = document.querySelector('.mainmenu-container');
+    
+    if (!modal) {
+        console.error("Modal element #mainmenu-modal not found!");
+        return;
+    }
+    
+    // Close the sidebar menu if it's open
+    if (typeof closeMenu === 'function') closeMenu();
+    
+    // Reset views
+    if (window.innerWidth <= 768) {
+        container.classList.add('menu-view');
+        container.classList.remove('content-view');
+    }
+    
+    // Show modal
+    modal.style.display = 'flex'; // Force display
+    setTimeout(() => {
+        modal.classList.add('active');
+    }, 10);
+    
+    document.body.style.overflow = 'hidden';
+    
+    // Force render the first section
+    currentSection = 'personalization';
+    renderMenu();
+    renderSection('personalization');
+};
 window.closeMainMenuPopup = closeMainMenuPopup;
 window.openSection = openSection;
 window.selectExportOption = selectExportOption;
