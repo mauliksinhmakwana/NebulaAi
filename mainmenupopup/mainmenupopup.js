@@ -123,10 +123,11 @@ function openSection(sectionId) {
 function renderMenu() {
     const menuContainer = document.querySelector('.sidebar-menu');
     if (!menuContainer) return;
-     //${renderMenuItem('goals', 'Your Goals', 'fas fa-check-circle')}
+    
     menuContainer.innerHTML = `
         <div class="menu-section">
             <h4 class="section-title">Preferences</h4>
+            ${renderMenuItem('goals', 'Your Goals', 'fas fa-check-circle')}
             ${renderMenuItem('personalization', 'Personalization', 'fas fa-user-circle')}
             ${renderMenuItem('settings', 'Settings', 'fas fa-cog')}
         </div>
@@ -135,11 +136,6 @@ function renderMenu() {
             <h4 class="section-title">Data</h4>
             ${renderMenuItem('export', 'Export Chat', 'fas fa-download')}
             <div class="menu-item" onclick="clearAllMenuData()">
-                <i class="fas fa-trash-alt"></i>
-                <span>Clear Settings</span>
-            </div>
-            
-            <div class="menu-item" onclick="clearAllData()">
                 <i class="fas fa-trash-alt"></i>
                 <span>Clear All Data</span>
             </div>
@@ -463,7 +459,7 @@ function renderPrivacySection(container) {
     `;
 }
 
-// Export Section - UPDATED with PDF option
+// Export Section
 function renderExportSection(container) {
     // Get conversations - try ventora_ first, then nebula_ for compatibility
     let conversations = JSON.parse(localStorage.getItem('ventora_conversations')) || [];
@@ -521,12 +517,10 @@ function renderExportSection(container) {
             <label class="form-label">Export Format</label>
             <select class="form-select" id="menu-export-format">
                 <option value="txt">Text File (.txt)</option>
-                <option value="pdf">PDF Document (.pdf)</option>
                 <option value="json">JSON (.json)</option>
                 <option value="html">HTML (.html)</option>
                 <option value="markdown">Markdown (.md)</option>
             </select>
-            <div class="form-info">PDF export may take a moment to generate</div>
         </div>
         
         <div class="form-group">
@@ -685,7 +679,7 @@ function deleteMenuTask(index) {
     }
 }
 
-// Export chat - UPDATED with PDF support
+// Export chat
 function exportMenuChat() {
     const format = document.getElementById('menu-export-format')?.value || 'txt';
     const includeTimestamps = document.getElementById('menu-include-timestamps')?.checked !== false;
@@ -707,12 +701,6 @@ function exportAllConversations(format, includeTimestamps, includeMetadata) {
     
     if (conversations.length === 0) {
         showMenuToast('No conversations to export', 'error');
-        return;
-    }
-    
-    if (format === 'pdf') {
-        // Use PDF export for all conversations
-        exportAllConversationsAsPDF(conversations, includeTimestamps, includeMetadata);
         return;
     }
     
@@ -783,12 +771,6 @@ function exportSingleConversation(conversationId, format, includeTimestamps, inc
         return;
     }
     
-    if (format === 'pdf') {
-        // Use PDF export for single conversation
-        exportSingleConversationAsPDF(conversation, includeTimestamps, includeMetadata);
-        return;
-    }
-    
     let content = '';
     let filename = `ventora-chat-${conversation.id}`;
     let mimeType = 'text/plain';
@@ -816,271 +798,6 @@ function exportSingleConversation(conversationId, format, includeTimestamps, inc
     
     downloadFile(content, filename, mimeType);
     showMenuToast('Chat exported!', 'success');
-}
-
-// PDF Export Functions
-function exportSingleConversationAsPDF(conversation, includeTimestamps, includeMetadata) {
-    showMenuToast('Generating PDF...', 'info');
-    
-    // Check if jsPDF is loaded
-    if (typeof window.jspdf === 'undefined') {
-        showMenuToast('PDF library not loaded. Loading...', 'info');
-        loadJSPDFLibrary().then(() => {
-            generateSingleConversationPDF(conversation, includeTimestamps, includeMetadata);
-        }).catch(() => {
-            showMenuToast('Failed to load PDF library', 'error');
-        });
-        return;
-    }
-    
-    generateSingleConversationPDF(conversation, includeTimestamps, includeMetadata);
-}
-
-function exportAllConversationsAsPDF(conversations, includeTimestamps, includeMetadata) {
-    showMenuToast('Generating PDF...', 'info');
-    
-    // Check if jsPDF is loaded
-    if (typeof window.jspdf === 'undefined') {
-        showMenuToast('PDF library not loaded. Loading...', 'info');
-        loadJSPDFLibrary().then(() => {
-            generateAllConversationsPDF(conversations, includeTimestamps, includeMetadata);
-        }).catch(() => {
-            showMenuToast('Failed to load PDF library', 'error');
-        });
-        return;
-    }
-    
-    generateAllConversationsPDF(conversations, includeTimestamps, includeMetadata);
-}
-
-function loadJSPDFLibrary() {
-    return new Promise((resolve, reject) => {
-        if (typeof window.jspdf !== 'undefined') {
-            resolve();
-            return;
-        }
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject();
-        document.head.appendChild(script);
-    });
-}
-
-function generateSingleConversationPDF(conversation, includeTimestamps, includeMetadata) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Set document properties
-    doc.setProperties({
-        title: conversation.title,
-        subject: 'Ventora AI Conversation Export',
-        author: 'Ventora AI',
-        keywords: 'ventora, chat, conversation, export',
-        creator: 'Ventora AI'
-    });
-    
-    // Add header
-    doc.setFontSize(20);
-    doc.setTextColor(0, 0, 0);
-    doc.text(conversation.title, 20, 20);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Exported: ${new Date().toLocaleString()}`, 20, 30);
-    
-    if (includeMetadata) {
-        doc.text(`Created: ${new Date(conversation.createdAt).toLocaleString()}`, 20, 37);
-        doc.text(`Updated: ${new Date(conversation.updatedAt).toLocaleString()}`, 20, 44);
-    }
-    
-    // Add separator line
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, 50, 190, 50);
-    
-    let y = 60; // Starting Y position for messages
-    
-    // Add messages
-    conversation.messages.forEach((msg, index) => {
-        const role = msg.role === 'user' ? 'You' : 'Ventora AI';
-        const time = includeTimestamps ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-        
-        // Set font based on role
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
-        
-        if (msg.role === 'user') {
-            doc.setTextColor(0, 100, 200); // Blue for user
-        } else {
-            doc.setTextColor(0, 150, 0); // Green for AI
-        }
-        
-        const header = time ? `${time} - ${role}` : role;
-        doc.text(header, 20, y);
-        
-        // Add message content
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(11);
-        doc.setTextColor(0, 0, 0);
-        
-        const lines = doc.splitTextToSize(msg.content, 170);
-        doc.text(lines, 20, y + 7);
-        
-        y += (lines.length * 7) + 15;
-        
-        // Check if we need a new page
-        if (y > 270 && index < conversation.messages.length - 1) {
-            doc.addPage();
-            y = 20;
-        }
-    });
-    
-    // Add footer
-    doc.setFontSize(10);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Exported from Ventora AI • Created by Maulik Makwana', 105, 285, null, null, 'center');
-    
-    // Save the PDF
-    const filename = `ventora-chat-${conversation.id}.pdf`;
-    doc.save(filename);
-    showMenuToast('PDF exported successfully!', 'success');
-}
-
-function generateAllConversationsPDF(conversations, includeTimestamps, includeMetadata) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Set document properties
-    doc.setProperties({
-        title: 'Ventora AI All Conversations',
-        subject: 'Ventora AI Conversations Export',
-        author: 'Ventora AI',
-        keywords: 'ventora, chat, conversations, export',
-        creator: 'Ventora AI'
-    });
-    
-    // Add header
-    doc.setFontSize(24);
-    doc.setTextColor(0, 0, 0);
-    doc.text('Ventora AI Conversations', 20, 20);
-    
-    doc.setFontSize(12);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Export Date: ${new Date().toLocaleString()}`, 20, 30);
-    doc.text(`Total Conversations: ${conversations.length}`, 20, 38);
-    
-    // Add table of contents
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text('Table of Contents', 20, 55);
-    
-    doc.setFontSize(11);
-    let tocY = 65;
-    conversations.forEach((conv, index) => {
-        doc.text(`${index + 1}. ${conv.title}`, 25, tocY);
-        doc.text(`Page ${index + 2}`, 180, tocY, null, null, 'right');
-        tocY += 7;
-        
-        if (tocY > 270) {
-            doc.addPage();
-            tocY = 20;
-            doc.setFontSize(14);
-            doc.text('Table of Contents (continued)', 20, tocY);
-            tocY = 30;
-            doc.setFontSize(11);
-        }
-    });
-    
-    // Add each conversation
-    conversations.forEach((conv, convIndex) => {
-        doc.addPage();
-        
-        // Conversation header
-        doc.setFontSize(18);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`${convIndex + 1}. ${conv.title}`, 20, 20);
-        
-        doc.setFontSize(11);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Created: ${new Date(conv.createdAt).toLocaleString()}`, 20, 30);
-        doc.text(`Updated: ${new Date(conv.updatedAt).toLocaleString()}`, 20, 37);
-        doc.text(`Messages: ${conv.messages?.length || 0}`, 20, 44);
-        
-        // Add separator line
-        doc.setDrawColor(200, 200, 200);
-        doc.line(20, 50, 190, 50);
-        
-        let y = 60; // Starting Y position for messages
-        
-        // Add messages
-        conv.messages?.forEach((msg, msgIndex) => {
-            const role = msg.role === 'user' ? 'You' : 'Ventora AI';
-            const time = includeTimestamps ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-            
-            // Set font based on role
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            
-            if (msg.role === 'user') {
-                doc.setTextColor(0, 100, 200); // Blue for user
-            } else {
-                doc.setTextColor(0, 150, 0); // Green for AI
-            }
-            
-            const header = time ? `${time} - ${role}` : role;
-            doc.text(header, 20, y);
-            
-            // Add message content
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
-            doc.setTextColor(0, 0, 0);
-            
-            const lines = doc.splitTextToSize(msg.content, 170);
-            doc.text(lines, 20, y + 5);
-            
-            y += (lines.length * 5) + 12;
-            
-            // Check if we need a new page within conversation
-            if (y > 270 && msgIndex < conv.messages.length - 1) {
-                doc.addPage();
-                y = 20;
-            }
-        });
-    });
-    
-    // Add final page with export info
-    doc.addPage();
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text('Export Information', 20, 30);
-    
-    doc.setFontSize(12);
-    doc.setTextColor(100, 100, 100);
-    
-    const infoLines = [
-        `Total Conversations: ${conversations.length}`,
-        `Total Messages: ${conversations.reduce((total, conv) => total + (conv.messages?.length || 0), 0)}`,
-        `Export Date: ${new Date().toLocaleString()}`,
-        `Generated by: Ventora AI V5.4 MIA`,
-        `Created by: Maulik Makwana`,
-        '',
-        'Note: This export contains your conversation history from Ventora AI.',
-        'Your data remains private and is not stored on external servers.',
-        '',
-        'Thank you for using Ventora AI!'
-    ];
-    
-    let infoY = 50;
-    infoLines.forEach(line => {
-        doc.text(line, 20, infoY);
-        infoY += 7;
-    });
-    
-    // Save the PDF
-    const filename = `ventora-all-conversations-${new Date().toISOString().slice(0, 10)}.pdf`;
-    doc.save(filename);
-    showMenuToast(`PDF with ${conversations.length} conversations exported!`, 'success');
 }
 
 // Export helper functions
@@ -1198,13 +915,6 @@ function previewMenuExport() {
     let conversations = JSON.parse(localStorage.getItem('ventora_conversations')) || [];
     if (conversations.length === 0) {
         conversations = JSON.parse(localStorage.getItem('nebula_conversations')) || [];
-    }
-    
-    const format = document.getElementById('menu-export-format')?.value || 'txt';
-    
-    if (format === 'pdf') {
-        showMenuToast('PDF preview not available. Export to see PDF.', 'info');
-        return;
     }
     
     if (selectedExportOption === 'all') {
@@ -1401,9 +1111,9 @@ function downloadFile(content, filename, mimeType) {
     URL.revokeObjectURL(url);
 }
 
-// Clear all data - FIXED
+// Clear all data
 function clearAllMenuData() {
-    if (confirm('Are you sure? This will delete your settings, personalization, goals, notes, and prescriptions. This cannot be undone.')) {
+    if (confirm('Are you sure? This will delete ALL chat history, settings, personalization, goals, notes, and prescriptions. This cannot be undone.')) {
         // Clear all Ventora data
         localStorage.removeItem('ventora_conversations');
         localStorage.removeItem('ventora_settings');
@@ -1422,7 +1132,7 @@ function clearAllMenuData() {
         localStorage.removeItem('profile_role');
         localStorage.removeItem('ai_user_name');
         
-        // Reset global variables IN THIS POPUP
+        // Reset global variables
         window.personalization = {
             userName: '',
             studyLevel: 'college',
@@ -1440,82 +1150,95 @@ function clearAllMenuData() {
         window.ventoraTasks = [];
         window.ventoraNotes = '';
         
-        // IMPORTANT: Update main app's global variables directly
-        if (window.conversations !== undefined) {
-            window.conversations = [];
-            window.currentConversationId = null;
-        }
-        
+        // Also reset main app variables if they exist
         if (window.settings) {
             window.settings.model = 'groq:general';
             window.settings.temperature = 0.7;
             window.settings.maxTokens = 1024;
         }
         
-        showMenuToast('All data cleared successfully!', 'success');
+        if (window.conversations) {
+            window.conversations = [];
+        }
         
-        // Update main app's conversation list UI immediately
-        setTimeout(() => {
-            // Call main app functions if they exist
-            if (typeof window.renderConversationsList === 'function') {
-                window.renderConversationsList();
-            }
-            
-            // Create new conversation in main app
-            if (typeof window.createNewConversation === 'function') {
-                window.createNewConversation();
-            }
-            
-            // Update profile display in main app
-            const mainProfileName = document.getElementById('profileName');
-            const mainProfileRole = document.getElementById('profileRole');
-            const mainProfileAvatar = document.getElementById('profileAvatar');
-            
-            if (mainProfileName) mainProfileName.textContent = 'Username';
-            if (mainProfileRole) mainProfileRole.textContent = 'Role';
-            if (mainProfileAvatar) mainProfileAvatar.textContent = 'U';
-            
-            // Also update the profile in this popup
-            const popupProfileName = document.querySelector('.profile-name');
-            const popupProfileRole = document.querySelector('.profile-role');
-            const popupProfileAvatar = document.querySelector('.profile-avatar');
-            
-            if (popupProfileName) popupProfileName.textContent = 'Username';
-            if (popupProfileRole) popupProfileRole.textContent = 'Role';
-            if (popupProfileAvatar) popupProfileAvatar.textContent = 'U';
-        }, 100);
+        showMenuToast('All data cleared successfully!', 'success');
         
         // If on a section, refresh it
         if (currentSection) {
             renderSection(currentSection);
         }
         
-        // Close menu popup after 1.5 seconds
+        // Refresh chat if function exists
+        if (typeof createNewConversation === 'function') {
+            createNewConversation();
+        }
+        
+        // Close menu popup
         setTimeout(() => {
             closeMainMenuPopup();
-        }, 1500);
+        }, 1000);
     }
 }
 
-// Toast notification - IMPROVED
+
+
+
+
+// Toast notification
 function showMenuToast(message, type = "success") {
-    // Call the global function in index.html instead of creating a new one
+    // Try to use main app's showToast first
     if (typeof window.showToast === 'function') {
         window.showToast(message, type);
+        return;
     }
-}
-    // Create new toast element
-    const toast = document.createElement('div');
-    toast.className = `menu-toast ${type}`;
-    toast.textContent = message;
-    toast.style.animation = 'toastSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
     
-    // Add to document
+    // Fallback toast
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.className = 'menu-toast';
+    
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(20, 20, 20, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 20px;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        z-index: 10000;
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    `;
+    
+    // Add color based on type
+    if (type === 'success') {
+        toast.style.borderColor = 'rgba(46, 213, 115, 0.3)';
+        toast.style.background = 'rgba(20, 20, 20, 0.95)';
+    } else if (type === 'error') {
+        toast.style.borderColor = 'rgba(255, 71, 87, 0.3)';
+        toast.style.background = 'rgba(40, 20, 20, 0.95)';
+    } else if (type === 'info') {
+        toast.style.borderColor = 'rgba(0, 122, 255, 0.3)';
+        toast.style.background = 'rgba(20, 20, 40, 0.95)';
+    }
+    
     document.body.appendChild(toast);
+    
+    // Show with animation
+    setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
     
     // Remove after delay
     setTimeout(() => {
-        toast.style.animation = 'toastSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+        toast.style.opacity = '0';
         setTimeout(() => {
             if (toast.parentNode) {
                 document.body.removeChild(toast);
