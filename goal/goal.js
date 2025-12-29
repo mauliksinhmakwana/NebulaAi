@@ -1,4 +1,4 @@
-// goal/goal.js - Diet Plan Edition with AI Integration
+// goal/goal.js - Diet Plan Edition with AI Integration - FIXED VERSION
 
 // Food database with nutrition information
 const FOOD_DATABASE = {
@@ -86,49 +86,228 @@ window.dietContext = {
 
 let foods = JSON.parse(localStorage.getItem('ventora_foods')) || [];
 
+// Toggle modal - FIXED
 function toggleGoalModal() {
     const modal = document.getElementById('goalModal');
-    modal.classList.toggle('active');
+    if (!modal) {
+        console.error('Goal modal not found!');
+        return;
+    }
+    
     if (modal.classList.contains('active')) {
-        renderDietPlan();
-        updateSummary();
-        showAISuggestion();
+        closeGoalModal();
+    } else {
+        openGoalModal();
     }
 }
 
-// Close button functionality
-document.addEventListener('DOMContentLoaded', () => {
-    // Add close button to modal
-    const closeBtn = document.querySelector('.close-goal');
-    if (closeBtn) {
-        closeBtn.onclick = toggleGoalModal;
+// Open modal - FIXED FOR MOBILE
+function openGoalModal() {
+    const modal = document.getElementById('goalModal');
+    if (!modal) return;
+    
+    modal.classList.add('active');
+    
+    // Add class to body to prevent scrolling
+    document.body.classList.add('goal-modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    
+    // Mobile-specific fixes
+    if (window.innerWidth <= 768) {
+        // Lock the viewport
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--goal-vh', `${vh}px`);
+        
+        // Force fullscreen
+        modal.style.height = '100vh';
+        modal.style.height = 'calc(var(--goal-vh, 1vh) * 100)';
+        
+        const container = modal.querySelector('.goal-content');
+        if (container) {
+            container.style.height = '100vh';
+            container.style.height = 'calc(var(--goal-vh, 1vh) * 100)';
+        }
     }
     
-    // Initialize notes
-    initNotes();
+    renderDietPlan();
+    updateSummary();
+    showAISuggestion();
     
-    // Initialize diet context
-    if (!window.dietContext) window.dietContext = {};
-    
-    // Auto-focus food name input when modal opens
-    const modal = document.getElementById('goalModal');
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                if (modal.classList.contains('active')) {
-                    setTimeout(() => {
-                        const input = document.getElementById('foodName');
-                        if (input) input.focus();
-                    }, 300);
-                }
-            }
-        });
-    });
-    observer.observe(modal, { attributes: true });
-});
+    // Focus on food input
+    setTimeout(() => {
+        const input = document.getElementById('foodName');
+        if (input) {
+            input.focus();
+        }
+    }, 300);
+}
 
+// Close modal
+function closeGoalModal() {
+    const modal = document.getElementById('goalModal');
+    if (!modal) return;
+    
+    modal.classList.remove('active');
+    
+    // Remove class from body
+    document.body.classList.remove('goal-modal-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.height = '';
+}
+
+// Add food - FIXED SAVE BUTTON
+function addFood() {
+    console.log('addFood function called');
+    
+    const nameInput = document.getElementById('foodName');
+    const quantityInput = document.getElementById('foodQuantity');
+    const unitSelect = document.getElementById('foodUnit');
+    
+    if (!nameInput || !quantityInput || !unitSelect) {
+        console.error('Input elements not found!');
+        showDietToast('Error: Form elements missing', 'error');
+        return;
+    }
+    
+    const name = nameInput.value.trim().toLowerCase();
+    const quantity = parseFloat(quantityInput.value);
+    const unit = unitSelect.value;
+    
+    console.log('Form values:', { name, quantity, unit });
+    
+    if (!name) {
+        showDietToast('Please enter food name', 'error');
+        nameInput.focus();
+        return;
+    }
+    
+    if (!quantity || isNaN(quantity) || quantity <= 0) {
+        showDietToast('Please enter valid quantity', 'error');
+        quantityInput.focus();
+        return;
+    }
+    
+    // Check if food exists in database
+    let foodData = FOOD_DATABASE[name];
+    if (!foodData) {
+        // Try AI prediction for unknown foods
+        foodData = predictNutrition(name);
+        if (!foodData) {
+            showDietToast(`"${name}" not recognized. Try common foods like: chicken, rice, eggs, apple`, 'error');
+            return;
+        }
+        // Add to database for future use
+        FOOD_DATABASE[name] = foodData;
+    }
+    
+    // Check for duplicate food entries (same name and unit)
+    const existingIndex = foods.findIndex(f => 
+        f.name === name && f.unit === unit
+    );
+    
+    if (existingIndex > -1) {
+        // Update existing food quantity
+        foods[existingIndex].quantity += quantity;
+        showDietToast(`Updated quantity for ${name}`, 'info');
+    } else {
+        // Add new food
+        foods.push({
+            id: Date.now().toString(),
+            name: name,
+            quantity: quantity,
+            unit: unit,
+            date: new Date().toISOString()
+        });
+        showDietToast(`${name} added successfully!`, 'success');
+    }
+    
+    // Clear and reset inputs
+    nameInput.value = '';
+    quantityInput.value = '100';
+    nameInput.focus();
+    
+    saveAndRender();
+    
+    // Update AI context
+    if (window.dietContext && window.dietContext.updateDietContext) {
+        window.dietContext.updateDietContext();
+    }
+}
+
+// Calculate nutrition
+function calculateNutrition(foodName, quantity, unit) {
+    const food = FOOD_DATABASE[foodName.toLowerCase()];
+    if (!food) return { protein: 0, carbs: 0, fat: 0, calories: 0 };
+    
+    let multiplier = 1;
+    
+    // Convert units to grams for calculation
+    switch(unit) {
+        case 'g': multiplier = 1; break;
+        case 'kg': multiplier = 1000; break;
+        case 'ml': multiplier = 1; break;
+        case 'l': multiplier = 1000; break;
+        case 'cup': multiplier = 240; break;
+        case 'tbsp': multiplier = 15; break;
+        case 'tsp': multiplier = 5; break;
+        case 'oz': multiplier = 28.35; break;
+        case 'lb': multiplier = 453.6; break;
+        case 'piece': multiplier = 100; break;
+        case 'slice': multiplier = 30; break;
+    }
+    
+    const actualQuantity = quantity * multiplier / 100; // Per 100g
+    
+    return {
+        protein: Math.round((food.protein * actualQuantity) * 10) / 10,
+        carbs: Math.round((food.carbs * actualQuantity) * 10) / 10,
+        fat: Math.round((food.fat * actualQuantity) * 10) / 10,
+        calories: Math.round(food.calories * actualQuantity)
+    };
+}
+
+// Predict nutrition for unknown foods
+function predictNutrition(foodName) {
+    const foodLower = foodName.toLowerCase();
+    
+    // Enhanced prediction with more categories
+    if (foodLower.includes('chicken') || foodLower.includes('turkey') || foodLower.includes('poultry')) {
+        return { protein: 25, carbs: 0, fat: 5, calories: 150, category: 'protein' };
+    } else if (foodLower.includes('fish') || foodLower.includes('seafood') || foodLower.includes('shrimp')) {
+        return { protein: 22, carbs: 0, fat: 10, calories: 180, category: 'protein' };
+    } else if (foodLower.includes('beef') || foodLower.includes('pork') || foodLower.includes('lamb')) {
+        return { protein: 26, carbs: 0, fat: 15, calories: 250, category: 'protein' };
+    } else if (foodLower.includes('rice') || foodLower.includes('pasta') || foodLower.includes('noodles')) {
+        return { protein: 3, carbs: 28, fat: 0.5, calories: 130, category: 'carbs' };
+    } else if (foodLower.includes('bread') || foodLower.includes('toast') || foodLower.includes('bagel')) {
+        return { protein: 9, carbs: 49, fat: 3, calories: 265, category: 'carbs' };
+    } else if (foodLower.includes('fruit') || foodLower.includes('berry') || foodLower.includes('orange')) {
+        return { protein: 1, carbs: 15, fat: 0.5, calories: 60, category: 'fruit' };
+    } else if (foodLower.includes('vegetable') || foodLower.includes('salad') || foodLower.includes('carrot')) {
+        return { protein: 2, carbs: 5, fat: 0.3, calories: 25, category: 'vegetable' };
+    } else if (foodLower.includes('milk') || foodLower.includes('yogurt') || foodLower.includes('cream')) {
+        return { protein: 3.5, carbs: 5, fat: 3.5, calories: 61, category: 'dairy' };
+    } else if (foodLower.includes('cheese')) {
+        return { protein: 25, carbs: 1, fat: 33, calories: 404, category: 'dairy' };
+    } else if (foodLower.includes('nut') || foodLower.includes('seed') || foodLower.includes('walnut')) {
+        return { protein: 20, carbs: 20, fat: 50, calories: 600, category: 'fat' };
+    } else if (foodLower.includes('bean') || foodLower.includes('lentil') || foodLower.includes('chickpea')) {
+        return { protein: 9, carbs: 20, fat: 0.4, calories: 116, category: 'protein' };
+    } else if (foodLower.includes('potato') || foodLower.includes('corn') || foodLower.includes('pea')) {
+        return { protein: 2, carbs: 17, fat: 0.1, calories: 77, category: 'carbs' };
+    }
+    
+    return null;
+}
+
+// Render diet plan
 function renderDietPlan() {
     const list = document.getElementById('taskList');
+    if (!list) return;
     
     if (foods.length === 0) {
         list.innerHTML = `
@@ -190,128 +369,7 @@ function renderDietPlan() {
     list.innerHTML = html;
 }
 
-function addFood() {
-    const nameInput = document.getElementById('foodName');
-    const quantityInput = document.getElementById('foodQuantity');
-    const unitSelect = document.getElementById('foodUnit');
-    
-    const name = nameInput.value.trim().toLowerCase();
-    const quantity = parseFloat(quantityInput.value);
-    const unit = unitSelect.value;
-    
-    if (!name || !quantity || quantity <= 0) {
-        showToast('Please enter valid food name and quantity', 'error');
-        return;
-    }
-    
-    // Check if food exists in database
-    if (!FOOD_DATABASE[name]) {
-        // Try AI prediction for unknown foods
-        const prediction = predictNutrition(name);
-        if (!prediction) {
-            showToast('Food not recognized. Try a common food name.', 'error');
-            return;
-        }
-        // Add to database for future use
-        FOOD_DATABASE[name] = prediction;
-    }
-    
-    // Check for duplicate food entries
-    const existingIndex = foods.findIndex(f => 
-        f.name === name && f.unit === unit
-    );
-    
-    if (existingIndex > -1) {
-        foods[existingIndex].quantity += quantity;
-        showToast('Quantity updated for existing food', 'info');
-    } else {
-        foods.push({
-            name: name,
-            quantity: quantity,
-            unit: unit,
-            date: new Date().toISOString(),
-            id: Date.now() + Math.random().toString(36).substr(2, 9)
-        });
-        showToast('Food added successfully!', 'success');
-    }
-    
-    // Clear inputs
-    nameInput.value = '';
-    quantityInput.value = '100';
-    nameInput.focus();
-    
-    saveAndRender();
-    
-    // Update AI context
-    if (window.dietContext && window.dietContext.updateDietContext) {
-        window.dietContext.updateDietContext();
-    }
-}
-
-function calculateNutrition(foodName, quantity, unit) {
-    const food = FOOD_DATABASE[foodName.toLowerCase()];
-    if (!food) return { protein: 0, carbs: 0, fat: 0, calories: 0 };
-    
-    let multiplier = 1;
-    
-    // Convert units to grams for calculation
-    switch(unit) {
-        case 'g': multiplier = 1; break;
-        case 'kg': multiplier = 1000; break;
-        case 'ml': multiplier = 1; break;
-        case 'l': multiplier = 1000; break;
-        case 'cup': multiplier = 240; break;
-        case 'tbsp': multiplier = 15; break;
-        case 'tsp': multiplier = 5; break;
-        case 'oz': multiplier = 28.35; break;
-        case 'lb': multiplier = 453.6; break;
-        case 'piece': multiplier = 100; break;
-        case 'slice': multiplier = 30; break;
-    }
-    
-    const actualQuantity = quantity * multiplier / 100; // Per 100g
-    
-    return {
-        protein: Math.round((food.protein * actualQuantity) * 10) / 10,
-        carbs: Math.round((food.carbs * actualQuantity) * 10) / 10,
-        fat: Math.round((food.fat * actualQuantity) * 10) / 10,
-        calories: Math.round(food.calories * actualQuantity)
-    };
-}
-
-function predictNutrition(foodName) {
-    const foodLower = foodName.toLowerCase();
-    
-    // Enhanced prediction with more categories
-    if (foodLower.includes('chicken') || foodLower.includes('turkey') || foodLower.includes('poultry')) {
-        return { protein: 25, carbs: 0, fat: 5, calories: 150, category: 'protein' };
-    } else if (foodLower.includes('fish') || foodLower.includes('seafood') || foodLower.includes('shrimp')) {
-        return { protein: 22, carbs: 0, fat: 10, calories: 180, category: 'protein' };
-    } else if (foodLower.includes('beef') || foodLower.includes('pork') || foodLower.includes('lamb')) {
-        return { protein: 26, carbs: 0, fat: 15, calories: 250, category: 'protein' };
-    } else if (foodLower.includes('rice') || foodLower.includes('pasta') || foodLower.includes('noodles')) {
-        return { protein: 3, carbs: 28, fat: 0.5, calories: 130, category: 'carbs' };
-    } else if (foodLower.includes('bread') || foodLower.includes('toast') || foodLower.includes('bagel')) {
-        return { protein: 9, carbs: 49, fat: 3, calories: 265, category: 'carbs' };
-    } else if (foodLower.includes('fruit') || foodLower.includes('berry') || foodLower.includes('orange')) {
-        return { protein: 1, carbs: 15, fat: 0.5, calories: 60, category: 'fruit' };
-    } else if (foodLower.includes('vegetable') || foodLower.includes('salad') || foodLower.includes('carrot')) {
-        return { protein: 2, carbs: 5, fat: 0.3, calories: 25, category: 'vegetable' };
-    } else if (foodLower.includes('milk') || foodLower.includes('yogurt') || foodLower.includes('cream')) {
-        return { protein: 3.5, carbs: 5, fat: 3.5, calories: 61, category: 'dairy' };
-    } else if (foodLower.includes('cheese')) {
-        return { protein: 25, carbs: 1, fat: 33, calories: 404, category: 'dairy' };
-    } else if (foodLower.includes('nut') || foodLower.includes('seed') || foodLower.includes('walnut')) {
-        return { protein: 20, carbs: 20, fat: 50, calories: 600, category: 'fat' };
-    } else if (foodLower.includes('bean') || foodLower.includes('lentil') || foodLower.includes('chickpea')) {
-        return { protein: 9, carbs: 20, fat: 0.4, calories: 116, category: 'protein' };
-    } else if (foodLower.includes('potato') || foodLower.includes('corn') || foodLower.includes('pea')) {
-        return { protein: 2, carbs: 17, fat: 0.1, calories: 77, category: 'carbs' };
-    }
-    
-    return null;
-}
-
+// Edit food
 function editFood(index) {
     const food = foods[index];
     const newQuantity = prompt(`Edit quantity for ${food.name}:`, food.quantity);
@@ -319,19 +377,30 @@ function editFood(index) {
     if (newQuantity && !isNaN(newQuantity) && parseFloat(newQuantity) > 0) {
         foods[index].quantity = parseFloat(newQuantity);
         saveAndRender();
-        showToast('Food updated!', 'success');
+        showDietToast('Food updated!', 'success');
     }
 }
 
+// Delete food
 function deleteFood(index) {
     if (confirm('Delete this food from your diet plan?')) {
         foods.splice(index, 1);
         saveAndRender();
-        showToast('Food removed', 'info');
+        showDietToast('Food removed', 'info');
     }
 }
 
+// Update summary
 function updateSummary() {
+    const totalProteinEl = document.getElementById('totalProtein');
+    const totalCarbsEl = document.getElementById('totalCarbs');
+    const totalCaloriesEl = document.getElementById('totalCalories');
+    const proteinProgressEl = document.getElementById('proteinProgress');
+    const carbsProgressEl = document.getElementById('carbsProgress');
+    const caloriesProgressEl = document.getElementById('caloriesProgress');
+    
+    if (!totalProteinEl || !totalCarbsEl || !totalCaloriesEl) return;
+    
     let totalProtein = 0;
     let totalCarbs = 0;
     let totalFat = 0;
@@ -349,15 +418,16 @@ function updateSummary() {
     const carbsProgress = Math.min(100, Math.round((totalCarbs / DAILY_GOALS.carbs) * 100));
     const caloriesProgress = Math.min(100, Math.round((totalCalories / DAILY_GOALS.calories) * 100));
     
-    document.getElementById('totalProtein').textContent = `${Math.round(totalProtein)}g`;
-    document.getElementById('totalCarbs').textContent = `${Math.round(totalCarbs)}g`;
-    document.getElementById('totalCalories').textContent = Math.round(totalCalories);
+    totalProteinEl.textContent = `${Math.round(totalProtein)}g`;
+    totalCarbsEl.textContent = `${Math.round(totalCarbs)}g`;
+    totalCaloriesEl.textContent = Math.round(totalCalories);
     
-    document.getElementById('proteinProgress').style.width = `${proteinProgress}%`;
-    document.getElementById('carbsProgress').style.width = `${carbsProgress}%`;
-    document.getElementById('caloriesProgress').style.width = `${caloriesProgress}%`;
+    if (proteinProgressEl) proteinProgressEl.style.width = `${proteinProgress}%`;
+    if (carbsProgressEl) carbsProgressEl.style.width = `${carbsProgress}%`;
+    if (caloriesProgressEl) caloriesProgressEl.style.width = `${caloriesProgress}%`;
 }
 
+// Show AI suggestion
 function showAISuggestion() {
     const suggestionDiv = document.getElementById('aiSuggestion');
     if (!suggestionDiv) return;
@@ -406,17 +476,19 @@ function showAISuggestion() {
     }
 }
 
+// Clear all foods
 function clearAllFoods() {
     if (confirm('Clear all foods from your diet plan?')) {
         foods = [];
         saveAndRender();
-        showToast('All foods cleared', 'info');
+        showDietToast('All foods cleared', 'info');
     }
 }
 
+// Export diet plan
 function exportDietPlan() {
     if (foods.length === 0) {
-        showToast('No foods to export', 'error');
+        showDietToast('No foods to export', 'error');
         return;
     }
     
@@ -452,9 +524,10 @@ function exportDietPlan() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showToast('Diet plan exported!', 'success');
+    showDietToast('Diet plan exported!', 'success');
 }
 
+// Save and render
 function saveAndRender() {
     localStorage.setItem('ventora_foods', JSON.stringify(foods));
     renderDietPlan();
@@ -468,28 +541,39 @@ function saveAndRender() {
     }
 }
 
-// Toast notification
-function showToast(message, type = 'success') {
+// Toast notification for diet
+function showDietToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `goal-toast ${type}`;
     toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === 'error' ? '#ff3b30' : type === 'info' ? '#007aff' : '#34c759'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        z-index: 10000;
+        animation: toastFade 3s ease;
+    `;
+    
     document.body.appendChild(toast);
     
-    setTimeout(() => toast.classList.add('active'), 10);
-    
     setTimeout(() => {
-        toast.classList.remove('active');
-        setTimeout(() => {
-            if (toast.parentNode) {
-                document.body.removeChild(toast);
-            }
-        }, 300);
+        if (toast.parentNode) {
+            document.body.removeChild(toast);
+        }
     }, 3000);
 }
 
 // Auto-save Notes
 function initNotes() {
     const area = document.getElementById('study-notes-area');
+    if (!area) return;
+    
     area.value = localStorage.getItem('ventora_study_notes') || '';
     
     let timer;
@@ -505,201 +589,110 @@ function initNotes() {
     });
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initNotes();
+// Setup event listeners
+function setupDietEventListeners() {
+    // Enter key to add food
+    const foodNameInput = document.getElementById('foodName');
+    const quantityInput = document.getElementById('foodQuantity');
     
-    // Update the modal structure for diet plan
-    const goalModal = document.getElementById('goalModal');
-    if (goalModal) {
-        const goalContent = goalModal.querySelector('.goal-content');
-        if (goalContent) {
-            goalContent.innerHTML = `
-                <div class="goal-header">
-                    <h3>YOUR DIET PLAN</h3>
-                    <button class="close-goal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="goal-body">
-                    <!-- Daily Summary -->
-                    <div class="diet-summary">
-                        <div class="summary-card">
-                            <div class="summary-value" id="totalProtein">0g</div>
-                            <div class="summary-label">Protein</div>
-                            <div style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                                <div style="height: 100%; background: #007aff; border-radius: 2px; width: 0%;" id="proteinProgress"></div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-value" id="totalCarbs">0g</div>
-                            <div class="summary-label">Carbs</div>
-                            <div style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                                <div style="height: 100%; background: #2ed573; border-radius: 2px; width: 0%;" id="carbsProgress"></div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-value" id="totalCalories">0</div>
-                            <div class="summary-label">Calories</div>
-                            <div style="margin-top: 8px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                                <div style="height: 100%; background: #ff6b81; border-radius: 2px; width: 0%;" id="caloriesProgress"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Add Food Section -->
-                    <div class="add-food-section">
-                        <div class="section-title">
-                            <i class="fas fa-plus-circle"></i>
-                            Add Food
-                        </div>
-                        <div class="food-form">
-                            <input type="text" id="foodName" class="form-input" placeholder="e.g., chicken breast, brown rice" autocomplete="off">
-                            <div class="form-row">
-                                <input type="number" id="foodQuantity" class="form-input" placeholder="Quantity" value="100" min="1" step="1">
-                                <select id="foodUnit" class="form-select">
-                                    <option value="g">grams (g)</option>
-                                    <option value="kg">kilograms (kg)</option>
-                                    <option value="ml">milliliters (ml)</option>
-                                    <option value="cup">cups</option>
-                                    <option value="tbsp">tablespoons</option>
-                                    <option value="tsp">teaspoons</option>
-                                    <option value="oz">ounces (oz)</option>
-                                    <option value="lb">pounds (lb)</option>
-                                    <option value="piece">piece</option>
-                                    <option value="slice">slice</option>
-                                </select>
-                            </div>
-                            <button class="add-food-btn" onclick="addFood()">
-                                <i class="fas fa-plus"></i>
-                                Add to Diet
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- AI Suggestion -->
-                    <div class="ai-suggestion" id="aiSuggestion" style="display: none;"></div>
-                    
-                    <!-- Food List -->
-                    <div id="taskList"></div>
-                    
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="action-btn" onclick="clearAllFoods()" style="flex: 1;">
-                            <i class="fas fa-trash"></i> Clear All
-                        </button>
-                        <button class="action-btn" onclick="exportDietPlan()" style="flex: 1;">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
-                    
-                    <!-- Notes Section -->
-                    <div class="note-section">
-                        <label>
-                            <i class="fas fa-sticky-note"></i>
-                            Diet Notes (Auto-saves)
-                        </label>
-                        <textarea id="study-notes-area" placeholder="Add notes about your diet, meal timing, or how you feel..."></textarea>
-                    </div>
-                </div>
-            `;
-            
-            // Re-attach close button functionality
-            const closeBtn = goalContent.querySelector('.close-goal');
-            if (closeBtn) {
-                closeBtn.onclick = toggleGoalModal;
+    if (foodNameInput && quantityInput) {
+        foodNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                quantityInput.focus();
             }
+        });
+        
+        quantityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addFood();
+            }
+        });
+    }
+    
+    // Close button
+    const closeBtn = document.querySelector('.close-goal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeGoalModal);
+    }
+    
+    // Close on background click
+    const modal = document.getElementById('goalModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeGoalModal();
+            }
+        });
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('goalModal');
+            if (modal && modal.classList.contains('active')) {
+                closeGoalModal();
+            }
+        }
+    });
+    
+    // Make sure add food button works
+    const addFoodBtn = document.querySelector('.add-food-btn');
+    if (addFoodBtn) {
+        addFoodBtn.addEventListener('click', addFood);
+    }
+}
+
+// Mobile viewport fixes
+function fixGoalMobileViewport() {
+    if (window.innerWidth <= 768) {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--goal-vh', `${vh}px`);
+        
+        const modal = document.getElementById('goalModal');
+        if (modal && modal.classList.contains('active')) {
+            modal.style.height = 'calc(var(--goal-vh, 1vh) * 100)';
             
-            // Add enter key support for adding food
-            const foodNameInput = goalContent.querySelector('#foodName');
-            const quantityInput = goalContent.querySelector('#foodQuantity');
-            
-            if (foodNameInput && quantityInput) {
-                foodNameInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        quantityInput.focus();
-                    }
-                });
-                
-                quantityInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        addFood();
-                    }
-                });
+            const container = modal.querySelector('.goal-content');
+            if (container) {
+                container.style.height = 'calc(var(--goal-vh, 1vh) * 100)';
             }
         }
     }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup notes auto-save
+    initNotes();
     
-    // Load existing foods
+    // Setup event listeners
+    setupDietEventListeners();
+    
+    // Initial render
     renderDietPlan();
     updateSummary();
     showAISuggestion();
     
-    // Initialize global diet context
-    window.dietContext = {
-        getDietPlan: () => {
-            const foods = JSON.parse(localStorage.getItem('ventora_foods')) || [];
-            const notes = localStorage.getItem('ventora_study_notes') || '';
-            
-            let totals = { protein: 0, carbs: 0, fat: 0, calories: 0 };
-            foods.forEach(food => {
-                const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
-                totals.protein += nutrition.protein;
-                totals.carbs += nutrition.carbs;
-                totals.fat += nutrition.fat;
-                totals.calories += nutrition.calories;
+    // Setup viewport fixes for mobile
+    window.addEventListener('resize', fixGoalMobileViewport);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(fixGoalMobileViewport, 150);
+    });
+    
+    // Fix iOS zoom on input focus
+    if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+        const inputs = document.querySelectorAll('#foodName, #foodQuantity, #study-notes-area');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.fontSize = '16px';
             });
-            
-            return {
-                foods: foods,
-                notes: notes,
-                totals: totals,
-                goals: DAILY_GOALS,
-                lastUpdated: new Date().toISOString()
-            };
-        },
-        
-        formatForAI: () => {
-            const diet = window.dietContext.getDietPlan();
-            let text = `=== CURRENT DIET PLAN ===\n\n`;
-            
-            if (diet.foods.length === 0) {
-                text += `No foods logged today.\n`;
-            } else {
-                text += `Today's Diet Log (${diet.foods.length} items):\n`;
-                diet.foods.forEach((food, index) => {
-                    const nutrition = calculateNutrition(food.name, food.quantity, food.unit);
-                    text += `• ${food.quantity}${food.unit} ${food.name}: ${Math.round(nutrition.protein)}g protein, ${Math.round(nutrition.carbs)}g carbs, ${Math.round(nutrition.fat)}g fat, ${nutrition.calories} cal\n`;
-                });
-                
-                text += `\nDAILY TOTALS:\n`;
-                text += `• Protein: ${Math.round(diet.totals.protein)}g / ${DAILY_GOALS.protein}g (${Math.round((diet.totals.protein/DAILY_GOALS.protein)*100)}%)\n`;
-                text += `• Carbs: ${Math.round(diet.totals.carbs)}g / ${DAILY_GOALS.carbs}g (${Math.round((diet.totals.carbs/DAILY_GOALS.carbs)*100)}%)\n`;
-                text += `• Fat: ${Math.round(diet.totals.fat)}g / ${DAILY_GOALS.fat}g (${Math.round((diet.totals.fat/DAILY_GOALS.fat)*100)}%)\n`;
-                text += `• Calories: ${diet.totals.calories} / ${DAILY_GOALS.calories} (${Math.round((diet.totals.calories/DAILY_GOALS.calories)*100)}%)\n`;
-                
-                // Add analysis
-                if (diet.totals.protein < DAILY_GOALS.protein * 0.7) {
-                    text += `\nNOTE: Protein intake is low. Consider adding protein-rich foods.`;
-                }
-                if (diet.totals.calories < DAILY_GOALS.calories * 0.7) {
-                    text += `\nNOTE: Calorie intake is below target.`;
-                }
-            }
-            
-            if (diet.notes) {
-                text += `\n\nUSER DIET NOTES:\n"${diet.notes}"\n`;
-            }
-            
-            text += `\n=== END DIET DATA ===`;
-            return text;
-        },
-        
-        updateDietContext: () => {
-            // This function is called whenever diet data changes
-            console.log('Diet context updated for AI');
-        }
-    };
+            input.addEventListener('blur', function() {
+                this.style.fontSize = '';
+            });
+        });
+    }
 });
 
 // Make functions available globally
@@ -709,3 +702,5 @@ window.editFood = editFood;
 window.deleteFood = deleteFood;
 window.clearAllFoods = clearAllFoods;
 window.exportDietPlan = exportDietPlan;
+
+console.log('Diet Plan (in goal.js) loaded successfully');
