@@ -268,9 +268,12 @@ function renderSettingsSection(container) {
         <div class="form-group">
             <label class="form-label">AI Model</label>
             <select class="form-select" id="menu-settings-model">
+               
   <option value="mia:general">MIA – General</option>
   <option value="mia:reasoning">MIA – Clinical Reasoning</option>
   <option value="mia:research">MIA – Research & Thinking</option>
+
+
             </select>
             <div class="form-info">Choose the AI model for responses</div>
         </div>
