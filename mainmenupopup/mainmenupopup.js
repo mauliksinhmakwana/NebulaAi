@@ -134,12 +134,12 @@ function renderMenu() {
         <div class="menu-section">
             <h4 class="section-title">Data</h4>
             ${renderMenuItem('export', 'Export Chat', 'fas fa-download')}
-            <div class="menu-item" onclick="clearAllData()">
+            <div class="menu-item" onclick="clearAllMenuData()">
                 <i class="fas fa-trash-alt"></i>
                 <span>Clear Settings</span>
             </div>
             
-            <div class="menu-item" onclick="clearAllMenuData()">
+            <div class="menu-item" onclick="clearAllData()">
                 <i class="fas fa-trash-alt"></i>
                 <span>Clear All Data</span>
             </div>
