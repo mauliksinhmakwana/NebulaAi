@@ -58,12 +58,11 @@
     -webkit-text-fill-color: transparent;*/
 }
 
-.diet-header p {
+.dose-header p {
     margin: 4px 0 0 0;
     font-size: 0.85rem;
     color: var(--text-secondary);
 }
-
 
 .close-dose {
 background: none;
