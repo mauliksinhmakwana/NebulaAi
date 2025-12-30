@@ -18,13 +18,6 @@ function initFileUpload() {
     if (!fileBtn || !filePopup) {
         console.error("File upload elements not found!");
         return;
-        
- setTimeout(() => {
-        if (typeof initOCR === 'function') {
-            initOCR();
-        }
-    }, 100);
-        
     }
     
     // Toggle popup on button click
