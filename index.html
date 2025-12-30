@@ -532,10 +532,46 @@
             transform: scale(0.95);
             cursor: not-allowed;
         }
+
+
+
+
+        /* 🔥 ADD STOP BUTTON STYLES HERE */
+#send-btn.sending {
+    background: #ff4757 !important;
+    color: white !important;
+    transform: scale(1);
+    animation: pulse 1.5s infinite;
+    cursor: pointer !important;
+    opacity: 1 !important;
+}
+
+#send-btn.sending .send-icon {
+    display: none;
+}
+
+#send-btn.sending .stop-icon {
+    display: block !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+
+        
         #send-btn:active:not(.sending) { transform: scale(0.92); }
         .footer-info {
             margin-top: 12px; font-size: 0.65rem; color: var(--text-secondary); text-align: center;
         }
+
+
+
+
+
+        
         
         #scroll-down-btn {
    position: fixed; 
@@ -1256,12 +1292,21 @@
 
                 
                 <textarea id="user-input" rows="1" placeholder="Ask anything..." oninput="autoExpand(this)"></textarea>
-                <button id="send-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </button>
+              <button id="send-btn">
+    <!-- Send icon (default) -->
+    <svg class="send-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+    </svg>
+    
+    <!-- Stop icon (hidden by default) -->
+    <svg class="stop-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display: none;">
+        <rect x="6" y="6" width="12" height="12" rx="1"></rect>
+    </svg>
+</button>
+
+
+                
             </div>
             <div class="footer-info">
                 Ai generated for reference only.
@@ -1989,7 +2034,31 @@ Ventora helps people understand how medicines, diseases, diet, and health concep
 
 
 
+// Reset stop flag
+stopGenerating = false;
 
+try {
+    const response = await fetch('https://ventora-ai.vercel.app/api/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: settings.model,
+            messages: [
+                // ... your messages
+            ],
+            temperature: settings.temperature,
+            max_tokens: settings.maxTokens
+        })
+    });
+
+    // 🔥 CHECK IF USER STOPPED
+    if (stopGenerating) {
+        throw new Error('Generation stopped by user');
+    }
+    
+    // ... rest of your code
 
 
 
@@ -2431,7 +2500,25 @@ function copyUserMessage(btn) {
 
 
 
+// 🔥 ADD: Stop generating function
+let stopGenerating = false;
 
+function stopGeneration() {
+    if (isSending) {
+        stopGenerating = true;
+        isSending = false;
+        sendBtn.classList.remove('sending');
+        showToast('Stopped generating', 'info');
+    }
+}
+
+// Add click event to send button for stop functionality
+sendBtn.addEventListener('click', function(e) {
+    if (isSending) {
+        e.preventDefault();
+        stopGeneration();
+    }
+});
 
 
 
