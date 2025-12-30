@@ -1,158 +1,147 @@
-/* fileupload/fileupload.css */
+/* Mobile Camera Button */
+.mobile-only {
+    display: none;
+}
 
-/* FILE BUTTON */
-.file-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
+.camera-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    border-radius: 12px;
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    padding: 8px;
-    margin-right: 4px;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    transition: all 0.2s;
-    width: 36px;
-    height: 36px;
-    position: relative;
-}
-
-.file-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-}
-
-.file-btn.active {
-    background: rgba(0, 122, 255, 0.1);
-    color: var(--accent-blue);
-}
-
-/* POPUP CONTAINER */
-.file-upload-wrapper {
-    position: relative;
-    flex-shrink: 0;
-}
-
-/* FILE POPUP */
-.file-popup {
-    position: absolute;
-    bottom: 50px;
-    left: -10px;
-    display: none;
-    z-index: 1006;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.2s, transform 0.2s;
-}
-
-.file-popup.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.file-popup-content {
-    background: rgba(25, 25, 25, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    padding: 16px;
-    width: 220px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    animation: popupSlide 0.2s ease;
-}
-
-@keyframes popupSlide {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.file-title {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    gap: 10px;
     margin-bottom: 12px;
 }
 
-.file-action {
+.camera-btn:hover {
+    background: rgba(0, 122, 255, 0.15);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+/* Preview for taken photos */
+.camera-preview {
     width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    background: white;
-    color: black;
-    font-weight: 600;
-    border: none;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 10px 0;
+    display: none;
+}
+
+/* Action Buttons in Popup */
+.popup-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 0.85rem;
     transition: all 0.2s;
 }
 
-.file-action:hover {
-    background: #f0f0f0;
+.action-btn.clear-all {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+    border-color: rgba(255, 59, 48, 0.2);
 }
 
-.file-action:active {
-    transform: scale(0.98);
+.action-btn.clear-all:hover {
+    background: rgba(255, 59, 48, 0.15);
 }
 
-.file-status {
-    margin-top: 10px;
-    font-size: 0.75rem;
+.action-btn.attach {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--accent-blue);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+.action-btn.attach:hover {
+    background: rgba(0, 122, 255, 0.2);
+}
+
+/* Popup Status */
+.popup-status {
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    margin: 12px 0;
     min-height: 20px;
-    line-height: 1.4;
 }
 
-.file-status.success {
-    color: #34c759;
-}
-
-.file-status.error {
+.popup-status.error {
     color: #ff3b30;
 }
 
-/* File attached indicator */
-.file-attached-indicator {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 8px;
-    height: 8px;
-    background: var(--accent-blue);
+.popup-status.success {
+    color: #34c759;
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    border: 2px solid var(--bg);
-    animation: pulse 2s infinite;
+    border-top-color: var(--accent-blue);
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-/* Mobile adjustments */
-@media (max-width: 480px) {
-    .file-btn {
-        width: 32px;
-        height: 32px;
-        padding: 6px;
+/* Remove Button */
+.remove-file {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.remove-file:hover {
+    color: #ff3b30;
+    background: rgba(255, 59, 48, 0.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block !important;
     }
     
     .file-popup {
-        bottom: 45px;
-        left: -40px;
+        width: 320px;
+        max-width: 95vw;
+        bottom: 60px;
+        left: -20px;
     }
     
-    .file-popup-content {
-        width: 200px;
-        padding: 14px;
+    .file-btn {
+        width: 36px;
+        height: 36px;
     }
 }
