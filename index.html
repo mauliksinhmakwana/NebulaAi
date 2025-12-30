@@ -2217,6 +2217,26 @@ await typeText(aiTextEl, formatted, 25);
         }
 
 
+function copyUserMessage(btn) {
+    const msgElement = btn.closest('.msg');
+    
+    // Get the first child (which should be the message text)
+    const messageText = msgElement.childNodes[0]?.textContent || '';
+    
+    // Clean up: remove any trailing whitespace/newlines
+    const cleanText = messageText.trim();
+    
+    navigator.clipboard.writeText(cleanText).then(() => {
+        btn.textContent = 'Copied ✓';
+        btn.style.opacity = '1';
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.style.opacity = '0.7';
+        }, 2000);
+    });
+}
+
+        
         
         function scrollToBottom() {
             chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
@@ -2246,8 +2266,21 @@ await typeText(aiTextEl, formatted, 25);
                         </div>`;
                 }
             } else {
+                
+ msg.innerHTML = `
+        ${text}
+        <div class="timestamp">${getTime()}</div>
+        <div class="user-copy-btn" onclick="copyUserMessage(this)" style="
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            margin-top: 8px;
+        ">Copy</div>`;
+                /*
                 msg.innerText = text;
-                msg.innerHTML += `<div class="timestamp">${getTime()}</div>`;
+                msg.innerHTML += `<div class="timestamp">${getTime()}</div>`; */
             }
 
             wrapper.appendChild(msg);
