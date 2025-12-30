@@ -3,13 +3,16 @@
 let prescriptions = JSON.parse(localStorage.getItem('ventora_prescriptions')) || [];
 let isAddingNew = false;
 
+// Update the global dose context for AI to access
+function updateDoseContext() {
+    if (!window.doseContext) {
+        window.doseContext = {};
+    }
+    window.doseContext.prescriptions = [...prescriptions]; // Create a copy
+}
+
 // Initialize dose modal
 function initDoseModal() {
-
-   
-
-
-    
     // Insert before the last divider
     const dividers = menuItems.querySelectorAll('.menu-divider');
     if (dividers.length > 0) {
@@ -19,6 +22,7 @@ function initDoseModal() {
     // Load prescriptions
     loadPrescriptions();
     renderPrescriptions();
+    updateDoseContext(); // Initialize the context
 }
 
 // Toggle dose modal
@@ -43,11 +47,13 @@ function loadPrescriptions() {
             prescriptions = [];
         }
     }
+    updateDoseContext(); // Initialize context after loading
 }
 
 // Save prescriptions to localStorage
 function savePrescriptions() {
     localStorage.setItem('ventora_prescriptions', JSON.stringify(prescriptions));
+    updateDoseContext(); // Update context after saving
 }
 
 // Render prescriptions list
@@ -59,7 +65,7 @@ function renderPrescriptions() {
             <div class="empty-state">
                 <i class="fas fa-pills"></i>
                 <h4>No Prescriptions Yet</h4>
-                <p>Add your first prescription to track medications and dosages.</p>
+                <p>Add your prescription to track medications and dosages.</p>
             </div>
         `;
         return;
@@ -202,6 +208,7 @@ function savePrescription() {
     savePrescriptions();
     renderPrescriptions();
     cancelForm();
+    updateDoseContext(); // Update context after adding
     
     // Show success message
     showToast('Prescription saved successfully!');
@@ -292,6 +299,7 @@ function updatePrescription(index) {
     savePrescriptions();
     renderPrescriptions();
     cancelForm();
+    updateDoseContext(); // Update context after editing
     
     showToast('Prescription updated!');
 }
@@ -302,6 +310,7 @@ function deletePrescription(index) {
         prescriptions.splice(index, 1);
         savePrescriptions();
         renderPrescriptions();
+        updateDoseContext(); // Update context after deleting
         showToast('Prescription deleted');
     }
 }
@@ -364,6 +373,7 @@ function clearAllPrescriptions() {
         prescriptions = [];
         savePrescriptions();
         renderPrescriptions();
+        updateDoseContext(); // Update context after clearing
         showToast('All prescriptions cleared');
     }
 }
