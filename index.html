@@ -884,6 +884,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="dose/dose.css">
     <!-- Add this in the head section -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+   <link rel="stylesheet" href="ocr/ocr.css">
+<script src="ocr/ocr.js"></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -1148,9 +1152,20 @@
     <!-- File Popup -->
     <div class="file-popup" id="file-popup">
         <input type="file" id="file-input" hidden accept=".txt,.pdf,.doc,.docx,.rtf,.md,.html,.csv" />
+        <input type="file" id="ocr-input" hidden accept="image/*" capture="camera" />
         
         <div class="file-popup-content">
             <div class="file-title">Upload file</div>
+            <button class="file-action ocr-primary-btn" onclick="document.getElementById('ocr-input').click()" style="
+    background: var(--accent-blue); 
+    color: white; 
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;">
+    <i class="fas fa-camera"></i> Scan Medicine Image
+</button>
             <button class="file-action" onclick="pickFile()">
                 Choose file
             </button>
