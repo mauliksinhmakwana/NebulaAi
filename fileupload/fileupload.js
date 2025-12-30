@@ -1,8 +1,21 @@
-// File Upload and OCR Management
+// File Upload and OCR Management with OCR.space API
 let fileContext = {
     files: [],
     text: '',
     name: ''
+};
+
+// OCR.space API Configuration
+const OCR_CONFIG = {
+    apiUrl: 'https://api.ocr.space/parse/image',
+    apiKey: 'OCR_KEY_VENTORA', // Will be replaced by Vercel environment variable
+    maxFileSize: 1024 * 1024, // 1MB for free plan
+    maxPdfPages: 3,
+    language: 'eng',
+    isOverlayRequired: false,
+    scale: true,
+    isTable: false,
+    detectOrientation: true
 };
 
 // Initialize file context
@@ -37,7 +50,6 @@ function openFilePopup() {
     const popup = document.getElementById('file-popup');
     popup.style.display = 'block';
     
-    // Add click outside listener
     setTimeout(() => {
         document.addEventListener('click', closeFilePopupOnOutsideClick);
     }, 10);
@@ -83,7 +95,6 @@ document.getElementById('ocr-input').addEventListener('change', function(e) {
     if (this.files.length > 0) {
         const files = Array.from(this.files);
         files.forEach(file => {
-            // Rename camera photos
             if (file.type.startsWith('image/')) {
                 const newFile = new File([file], `scan_${Date.now()}.jpg`, {
                     type: file.type,
@@ -137,36 +148,30 @@ function addFileToContext(file) {
     saveFileContext();
     
     // Process file
-    processFile(fileObj);
+    processFileWithOCR(fileObj);
 }
 
-async function processFile(fileObj) {
+async function processFileWithOCR(fileObj) {
     const index = fileContext.files.findIndex(f => f.id === fileObj.id);
     if (index === -1) return;
     
     try {
-        // Check file size
-        if (fileObj.size > 10 * 1024 * 1024) {
-            throw new Error('File too large (10MB max)');
+        // Check file size (1MB limit for free plan)
+        if (fileObj.size > OCR_CONFIG.maxFileSize) {
+            throw new Error('File too large (max 1MB)');
         }
         
-        let extractedText = '';
-        
-        if (fileObj.type.startsWith('image/')) {
-            // OCR for images
-            extractedText = await extractTextFromImage(fileObj.file);
-        } else if (fileObj.type === 'application/pdf') {
-            // PDF text
-            extractedText = await extractTextFromPDF(fileObj.file);
-        } else if (fileObj.type.includes('text') || fileObj.name.match(/\.(txt|md|html|rtf|csv)$/i)) {
-            // Text files
-            extractedText = await extractTextFromTextFile(fileObj.file);
-        } else {
+        // Check if file type is supported
+        const isSupported = isFileTypeSupported(fileObj);
+        if (!isSupported) {
             throw new Error('File type not supported');
         }
         
+        // Extract text using OCR.space API
+        const extractedText = await extractTextWithOCRSpace(fileObj.file, fileObj.type);
+        
         if (!extractedText || extractedText.trim().length < 10) {
-            throw new Error('No text found');
+            throw new Error('No text could be extracted');
         }
         
         // Success
@@ -174,7 +179,7 @@ async function processFile(fileObj) {
         fileContext.files[index].text = extractedText.trim();
         fileContext.files[index].error = null;
         
-        showPopupStatus(`${fileObj.name}: OK`, 'success');
+        showPopupStatus(`${fileObj.name}: Text extracted`, 'success');
         
     } catch (error) {
         fileContext.files[index].status = 'error';
@@ -188,52 +193,115 @@ async function processFile(fileObj) {
     updateFilesList();
 }
 
-// OCR Function
-async function extractTextFromImage(file) {
-    try {
-        const { createWorker } = Tesseract;
-        const worker = await createWorker('eng');
-        const result = await worker.recognize(file);
-        await worker.terminate();
-        return result.data.text;
-    } catch (error) {
-        throw new Error('OCR failed');
-    }
+function isFileTypeSupported(fileObj) {
+    const supportedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'image/tiff',
+        'application/pdf',
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/html',
+        'text/csv',
+        'text/markdown',
+        'application/rtf'
+    ];
+    
+    return supportedTypes.includes(fileObj.type) || 
+           fileObj.name.match(/\.(jpg|jpeg|png|gif|bmp|tiff|tif|pdf|txt|doc|docx|html|csv|md|rtf)$/i);
 }
 
-// PDF text extraction
-async function extractTextFromPDF(file) {
+async function extractTextWithOCRSpace(file, fileType) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const content = e.target.result;
-                const text = content
-                    .replace(/[^\x20-\x7E\n\r]/g, ' ')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-                
-                if (text.length > 10) {
-                    resolve(text.substring(0, 5000));
-                } else {
-                    reject(new Error('No text in PDF'));
-                }
-            } catch (err) {
-                reject(new Error('PDF read error'));
+        // For text files, read directly
+        if (fileType.includes('text') || 
+            fileType.includes('html') || 
+            fileType.includes('csv') ||
+            fileType.includes('markdown') ||
+            fileType.includes('rtf') ||
+            file.name.match(/\.(txt|md|html|csv|rtf)$/i)) {
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                resolve(e.target.result);
+            };
+            reader.onerror = () => reject(new Error('Failed to read text file'));
+            reader.readAsText(file);
+            return;
+        }
+        
+        // For PDF and images, use OCR.space API
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Add API parameters
+        formData.append('apikey', OCR_CONFIG.apiKey);
+        formData.append('language', OCR_CONFIG.language);
+        formData.append('isOverlayRequired', OCR_CONFIG.isOverlayRequired.toString());
+        formData.append('scale', OCR_CONFIG.scale.toString());
+        formData.append('isTable', OCR_CONFIG.isTable.toString());
+        formData.append('detectOrientation', OCR_CONFIG.detectOrientation.toString());
+        
+        // For PDFs, add page limit
+        if (fileType === 'application/pdf') {
+            formData.append('pages', '1-' + OCR_CONFIG.maxPdfPages);
+        }
+        
+        // Show processing status
+        showPopupStatus(`Extracting text from ${file.name}...`, 'info');
+        
+        // Make API request
+        fetch(OCR_CONFIG.apiUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
             }
-        };
-        reader.onerror = () => reject(new Error('Failed to read PDF'));
-        reader.readAsBinaryString(file);
-    });
-}
-
-// Text file extraction
-async function extractTextFromTextFile(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.readAsText(file);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.IsErroredOnProcessing) {
+                throw new Error(data.ErrorMessage || 'OCR processing failed');
+            }
+            
+            // Extract text from all parsed results
+            let extractedText = '';
+            if (data.ParsedResults && data.ParsedResults.length > 0) {
+                extractedText = data.ParsedResults
+                    .map(result => result.ParsedText || '')
+                    .filter(text => text.trim())
+                    .join('\n\n');
+            }
+            
+            if (!extractedText || extractedText.trim().length === 0) {
+                throw new Error('No text found in document');
+            }
+            
+            resolve(extractedText);
+        })
+        .catch(error => {
+            console.error('OCR.space API error:', error);
+            
+            // Handle specific errors
+            if (error.message.includes('API key')) {
+                reject(new Error('OCR service unavailable. Please try again.'));
+            } else if (error.message.includes('size limit')) {
+                reject(new Error('File too large for OCR processing'));
+            } else if (error.message.includes('rate limit')) {
+                reject(new Error('OCR service busy. Please try again later.'));
+            } else {
+                reject(new Error('OCR processing failed: ' + error.message));
+            }
+        });
     });
 }
 
@@ -302,7 +370,7 @@ function getFileStatusHTML(file) {
         const textLength = file.text ? file.text.length : 0;
         return `<span class="mini-status-success"><i class="fas fa-check-circle"></i> ${textLength} chars</span>`;
     } else if (file.status === 'error') {
-        return `<span class="mini-status-error"><i class="fas fa-exclamation-circle"></i> Error</span>`;
+        return `<span class="mini-status-error"><i class="fas fa-exclamation-circle"></i> ${file.error || 'Error'}</span>`;
     }
     return '<span>Pending</span>';
 }
@@ -350,7 +418,7 @@ function attachFiles() {
         return;
     }
     
-    // Format text for AI
+    // Format text for AI exactly as requested
     const combinedText = successfulFiles.map(f => 
         `[File: ${f.name}]\n${f.text}\n`
     ).join('\n');
@@ -360,7 +428,22 @@ function attachFiles() {
     
     saveFileContext();
     closeFilePopup();
-    showToast('Files attached', 'success');
+    showToast('Files attached to chat', 'success');
+}
+
+function clearAttachedFile() {
+    if (confirm('Remove all files from chat?')) {
+        fileContext.text = '';
+        fileContext.name = '';
+        saveFileContext();
+        showToast('Files detached from chat', 'info');
+        
+        // Update UI
+        const clearSection = document.getElementById('file-clear-section');
+        if (clearSection) {
+            clearSection.style.display = 'none';
+        }
+    }
 }
 
 function saveFileContext() {
@@ -388,3 +471,28 @@ function saveFileContext() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', initFileContext);
+
+// Clear file context when creating new chat
+const originalCreateNewConversation = window.createNewConversation;
+if (originalCreateNewConversation) {
+    window.createNewConversation = function() {
+        // Clear file context
+        fileContext.text = '';
+        fileContext.name = '';
+        saveFileContext();
+        
+        // Update UI
+        const clearSection = document.getElementById('file-clear-section');
+        if (clearSection) {
+            clearSection.style.display = 'none';
+        }
+        
+        return originalCreateNewConversation.apply(this, arguments);
+    };
+}
+
+// Export for use in main chat
+window.fileContext = fileContext;
+window.clearAttachedFile = clearAttachedFile;
+window.openFilePicker = openFilePicker;
+window.toggleFilePopup = toggleFilePopup;
