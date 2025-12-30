@@ -1,45 +1,59 @@
 /* ocr/ocr.css */
 
-/* OCR Section in File Popup */
-.file-ocr-section {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* OCR Divider */
+.ocr-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    color: var(--text-secondary);
 }
 
-.file-section-title {
+.ocr-divider::before,
+.ocr-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ocr-divider-text {
+    padding: 0 12px;
     font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* OCR Option */
+/* OCR Options */
+.ocr-options {
+    margin-bottom: 12px;
+}
+
 .ocr-option {
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
     cursor: pointer;
     transition: all 0.2s;
-    margin-bottom: 6px;
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
 }
 
 .ocr-option:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .ocr-option:active {
     transform: scale(0.98);
 }
 
-.ocr-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(0, 122, 255, 0.15);
+.ocr-option-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 122, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,35 +61,43 @@
     flex-shrink: 0;
 }
 
-.ocr-icon i {
+.ocr-option-icon i {
     color: var(--accent-blue);
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
-.ocr-text {
+.ocr-option-content {
     flex: 1;
 }
 
 .ocr-option-title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-primary);
     margin-bottom: 2px;
 }
 
-.ocr-option-subtitle {
+.ocr-option-desc {
     font-size: 0.75rem;
     color: var(--text-secondary);
     opacity: 0.8;
 }
 
+.ocr-option-arrow {
+    color: var(--text-secondary);
+    opacity: 0.6;
+    font-size: 0.8rem;
+}
+
 /* OCR Status */
 .ocr-status {
-    font-size: 0.75rem;
-    min-height: 20px;
-    padding: 6px 8px;
-    border-radius: 6px;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 8px;
     margin-top: 8px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
     transition: all 0.3s;
 }
 
@@ -104,23 +126,16 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.95);
+    background: #000;
     z-index: 2000;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.ocr-camera-container {
+.ocr-camera-modal {
     width: 100%;
-    max-width: 500px;
-    height: 100vh;
+    height: 100%;
     background: #000;
     display: flex;
     flex-direction: column;
@@ -133,6 +148,12 @@
     justify-content: space-between;
     background: rgba(0, 0, 0, 0.8);
     z-index: 10;
+}
+
+.ocr-camera-title {
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
 }
 
 .ocr-camera-close {
@@ -154,16 +175,6 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-.ocr-camera-title {
-    color: white;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-
-.ocr-camera-spacer {
-    width: 40px;
-}
-
 .ocr-camera-preview {
     flex: 1;
     position: relative;
@@ -176,22 +187,21 @@
     object-fit: cover;
 }
 
-.ocr-camera-frame {
+.ocr-camera-guide {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 280px;
-    height: 200px;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    border-radius: 12px;
-    background: transparent;
+    height: 180px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
     pointer-events: none;
 }
 
-.ocr-frame-text {
+.ocr-guide-text {
     position: absolute;
-    bottom: -40px;
+    top: -30px;
     left: 0;
     right: 0;
     text-align: center;
@@ -200,14 +210,22 @@
     opacity: 0.8;
 }
 
-.ocr-camera-controls {
-    padding: 24px;
+.ocr-camera-footer {
+    padding: 20px;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
     background: rgba(0, 0, 0, 0.8);
 }
 
-.ocr-camera-capture {
+.ocr-camera-hint {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    flex: 1;
+    text-align: center;
+}
+
+.ocr-camera-btn {
     width: 70px;
     height: 70px;
     border-radius: 50%;
@@ -217,49 +235,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
 }
 
-.ocr-camera-capture:hover {
-    transform: scale(1.05);
-}
-
-.ocr-capture-circle {
+.ocr-camera-icon {
     width: 58px;
     height: 58px;
     border-radius: 50%;
     background: white;
 }
 
-.ocr-camera-hint {
-    padding: 16px;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    background: rgba(0, 0, 0, 0.8);
+.ocr-camera-spacer {
+    width: 70px;
 }
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
-    .ocr-camera-frame {
+    .ocr-camera-guide {
         width: 250px;
-        height: 180px;
+        height: 160px;
     }
     
-    .ocr-camera-capture {
+    .ocr-camera-btn {
         width: 65px;
         height: 65px;
     }
     
-    .ocr-capture-circle {
+    .ocr-camera-icon {
         width: 53px;
         height: 53px;
     }
 }
 
-@media (max-width: 480px) {
-    .ocr-camera-frame {
-        width: 220px;
-        height: 160px;
+/* Hide camera option on desktop */
+@media (min-width: 769px) {
+    .mobile-only {
+        display: none !important;
     }
 }
