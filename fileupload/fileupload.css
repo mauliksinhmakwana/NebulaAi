@@ -38,9 +38,12 @@ background: transparent;
 }
 
 .file-btn:hover {
+background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    /*
     background: rgba(255, 255, 255, 0.12);
     color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.2); */
 }
 
 /* Mini Popup - Small & Compact */
