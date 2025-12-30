@@ -145,3 +145,76 @@
         height: 36px;
     }
 }
+
+
+/* Camera Modal Styles */
+.camera-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.camera-modal video {
+    width: 100%;
+    max-width: 500px;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #000;
+}
+
+.camera-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.camera-capture-btn,
+.camera-cancel-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    transition: all 0.2s;
+}
+
+.camera-capture-btn {
+    background: var(--accent-blue);
+    color: white;
+}
+
+.camera-cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.camera-capture-btn:hover {
+    background: rgba(0, 122, 255, 0.8);
+}
+
+.camera-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Empty list state */
+.empty-list {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
