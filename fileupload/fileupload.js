@@ -1,9 +1,15 @@
+// Add Tesseract.js to your head section in index.html
+// <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.0/dist/tesseract.min.js"></script>
+
 // File Upload and OCR Management
 let fileContext = {
     files: [],
     text: '',
     name: ''
 };
+
+// Initialize Tesseract worker
+let tesseractWorker = null;
 
 // Initialize file context from localStorage
 function initFileContext() {
@@ -18,11 +24,6 @@ function initFileContext() {
         }
     }
     window.fileContext = fileContext;
-}
-
-// Check if mobile device
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 // Toggle file popup
@@ -41,12 +42,6 @@ function toggleFilePopup(event) {
 function openFilePopup() {
     const popup = document.getElementById('file-popup');
     popup.style.display = 'block';
-    
-    // Show mobile camera button if on mobile
-    const mobileCameraBtn = document.getElementById('mobile-camera-btn');
-    if (isMobileDevice()) {
-        mobileCameraBtn.style.display = 'block';
-    }
     
     // Add click outside listener
     setTimeout(() => {
@@ -78,137 +73,35 @@ function openFilePicker() {
 
 // Take photo on mobile
 function takePhoto() {
-    if (!isMobileDevice()) {
-        showPopupStatus('Camera is only available on mobile devices.', 'error');
-        return;
-    }
-    
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        // Fallback to file input with camera capture
-        document.getElementById('camera-input').click();
-        return;
-    }
-    
-    // Request camera permission
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            // Create camera preview modal
-            showCameraPreview(stream);
-        })
-        .catch(err => {
-            console.error('Camera error:', err);
-            showPopupStatus('Cannot access camera. Please check permissions.', 'error');
-        });
-}
-
-function showCameraPreview(stream) {
-    // Create camera preview modal
-    const modal = document.createElement('div');
-    modal.className = 'camera-modal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.9);
-        z-index: 10001;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    `;
-    
-    const video = document.createElement('video');
-    video.style.cssText = `
-        width: 100%;
-        max-width: 500px;
-        max-height: 70vh;
-        object-fit: contain;
-    `;
-    video.autoplay = true;
-    video.srcObject = stream;
-    
-    const controls = document.createElement('div');
-    controls.style.cssText = `
-        margin-top: 20px;
-        display: flex;
-        gap: 20px;
-    `;
-    
-    const captureBtn = document.createElement('button');
-    captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture';
-    captureBtn.style.cssText = `
-        padding: 12px 24px;
-        background: var(--accent-blue);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        cursor: pointer;
-    `;
-    
-    const cancelBtn = document.createElement('button');
-    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
-    cancelBtn.style.cssText = `
-        padding: 12px 24px;
-        background: rgba(255,255,255,0.1);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        cursor: pointer;
-    `;
-    
-    captureBtn.onclick = () => {
-        // Create canvas and capture image
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0);
-        
-        // Convert to blob
-        canvas.toBlob(blob => {
-            // Stop camera stream
-            stream.getTracks().forEach(track => track.stop());
-            
-            // Remove modal
-            document.body.removeChild(modal);
-            
-            // Process the captured image
-            const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
-            processFile(file);
-            
-        }, 'image/jpeg', 0.8);
-    };
-    
-    cancelBtn.onclick = () => {
-        stream.getTracks().forEach(track => track.stop());
-        document.body.removeChild(modal);
-    };
-    
-    controls.appendChild(captureBtn);
-    controls.appendChild(cancelBtn);
-    
-    modal.appendChild(video);
-    modal.appendChild(controls);
-    document.body.appendChild(modal);
+    document.getElementById('ocr-input').click();
 }
 
 // Handle file selection
 document.getElementById('file-input').addEventListener('change', function(e) {
     if (this.files.length > 0) {
         handleFiles(this.files);
-        this.value = ''; // Reset input
+        this.value = '';
     }
 });
 
-// Handle camera capture
-document.getElementById('camera-input').addEventListener('change', function(e) {
+// Handle camera input
+document.getElementById('ocr-input').addEventListener('change', function(e) {
     if (this.files.length > 0) {
-        handleFiles(this.files);
-        this.value = ''; // Reset input
+        // Rename camera images to indicate they're photos
+        const files = Array.from(this.files);
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                // Create a new file with better name
+                const newFile = new File([file], `medicine_photo_${Date.now()}.jpg`, {
+                    type: file.type,
+                    lastModified: file.lastModified
+                });
+                handleFiles([newFile]);
+            } else {
+                handleFiles([file]);
+            }
+        });
+        this.value = '';
     }
 });
 
@@ -221,6 +114,8 @@ function handleFiles(fileList) {
         showPopupStatus('Maximum 5 files allowed. Remove some files first.', 'error');
         return;
     }
+    
+    showPopupStatus('Processing files...', 'info');
     
     // Process each file
     files.forEach(file => {
@@ -241,7 +136,8 @@ function addFileToContext(file) {
         status: 'processing',
         error: null,
         text: '',
-        file: file
+        file: file,
+        isCameraImage: file.name.includes('medicine_photo_')
     };
     
     fileContext.files.push(fileObj);
@@ -261,41 +157,51 @@ async function processFile(fileObj) {
             throw new Error('File too large (max 10MB)');
         }
         
-        // Extract text based on file type
         let extractedText = '';
         
         if (fileObj.type.startsWith('image/')) {
             // Image file - use OCR
+            showPopupStatus(`Scanning ${fileObj.name}...`, 'info');
             extractedText = await extractTextFromImage(fileObj.file);
+            
+            if (!extractedText || extractedText.trim().length === 0) {
+                throw new Error('No text found in image');
+            }
+            
         } else if (fileObj.type === 'application/pdf') {
             // PDF file
+            showPopupStatus(`Reading PDF: ${fileObj.name}...`, 'info');
             extractedText = await extractTextFromPDF(fileObj.file);
-        } else if (fileObj.type.includes('word') || 
-                   fileObj.type.includes('excel') || 
-                   fileObj.type.includes('powerpoint') ||
-                   fileObj.type.includes('rtf') ||
-                   fileObj.type.includes('text')) {
+            
+            if (!extractedText || extractedText.trim().length < 10) {
+                throw new Error('PDF appears to be empty or unreadable');
+            }
+            
+        } else if (fileObj.type.includes('text') || 
+                   fileObj.type.includes('document') ||
+                   fileObj.name.match(/\.(txt|md|html|rtf|csv)$/i)) {
             // Text-based documents
+            showPopupStatus(`Reading ${fileObj.name}...`, 'info');
             extractedText = await extractTextFromTextFile(fileObj.file);
+            
         } else {
-            throw new Error('Unsupported file type');
+            throw new Error('File type not supported for text extraction');
         }
         
-        // Check if text was extracted
-        if (!extractedText || extractedText.trim().length === 0) {
-            throw new Error('No text could be extracted from this file');
-        }
-        
-        // Update file object
+        // Success
         fileContext.files[index].status = 'success';
-        fileContext.files[index].text = extractedText;
+        fileContext.files[index].text = extractedText.trim();
         fileContext.files[index].error = null;
+        
+        showPopupStatus(`${fileObj.name}: ${extractedText.length} characters extracted`, 'success');
         
     } catch (error) {
         console.error('Error processing file:', error);
         fileContext.files[index].status = 'error';
         fileContext.files[index].error = error.message;
         fileContext.files[index].text = '';
+        
+        showPopupStatus(`${fileObj.name}: ${error.message}`, 'error');
     }
     
     saveFileContext();
@@ -303,73 +209,70 @@ async function processFile(fileObj) {
     updateFileContextDisplay();
 }
 
-// Text extraction functions
+// OCR Function using Tesseract.js
 async function extractTextFromImage(file) {
-    // Load Tesseract.js dynamically
-    const { createWorker } = await import('https://unpkg.com/tesseract.js@v4.0.0/dist/tesseract.min.js');
-    
-    const worker = await createWorker('eng');
-    
     try {
-        const result = await worker.recognize(file);
-        await worker.terminate();
+        // Create worker if it doesn't exist
+        if (!tesseractWorker) {
+            tesseractWorker = await Tesseract.createWorker('eng');
+        }
+        
+        // Convert file to image URL
+        const imageUrl = URL.createObjectURL(file);
+        
+        // Recognize text
+        const result = await tesseractWorker.recognize(imageUrl);
+        
+        // Clean up
+        URL.revokeObjectURL(imageUrl);
         
         return result.data.text;
+        
     } catch (error) {
-        await worker.terminate();
-        throw new Error('OCR failed: ' + error.message);
+        throw new Error('OCR processing failed: ' + error.message);
     }
 }
 
+// PDF text extraction
 async function extractTextFromPDF(file) {
-    // Simple PDF text extraction (for basic PDFs)
-    // Note: For production, use a proper PDF library like pdf.js
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
+        
         reader.onload = function(e) {
-            // This is a basic implementation - actual PDF parsing requires pdf.js
-            const content = e.target.result;
-            // Try to extract any text-like content
-            const textMatch = content.match(/\/FlateDecode.*?stream[\s\S]*?endstream/);
-            if (textMatch) {
-                // Very basic text extraction
-                const text = textMatch[0]
-                    .replace(/[^\x20-\x7E\n\r]/g, ' ') // Remove non-printable chars
-                    .replace(/\s+/g, ' ') // Normalize whitespace
+            try {
+                // For simple PDFs, extract text from binary
+                const content = e.target.result;
+                const text = content
+                    .replace(/[^\x20-\x7E\n\r]/g, ' ')
+                    .replace(/\s+/g, ' ')
                     .trim();
                 
                 if (text.length > 10) {
-                    resolve(text.substring(0, 5000)); // Limit text length
+                    resolve(text.substring(0, 10000));
                 } else {
-                    reject(new Error('No readable text found in PDF'));
+                    reject(new Error('PDF appears to be empty or scanned'));
                 }
-            } else {
-                reject(new Error('PDF text extraction not supported'));
+            } catch (err) {
+                reject(new Error('Error reading PDF'));
             }
         };
-        reader.onerror = reject;
+        
+        reader.onerror = () => reject(new Error('Failed to read PDF file'));
         reader.readAsBinaryString(file);
     });
 }
 
+// Text file extraction
 async function extractTextFromTextFile(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            resolve(e.target.result);
-        };
-        reader.onerror = reject;
-        
-        if (file.type.includes('text') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-            reader.readAsText(file);
-        } else {
-            // For binary files, try as text anyway
-            reader.readAsText(file);
-        }
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
     });
 }
 
-// Update files list in popup
+// Update files list
 function updateFilesList() {
     const filesList = document.getElementById('files-list');
     const popupActions = document.getElementById('popup-actions');
@@ -379,7 +282,12 @@ function updateFilesList() {
     filesList.innerHTML = '';
     
     if (fileContext.files.length === 0) {
-        filesList.innerHTML = '<div class="empty-list">No files attached</div>';
+        filesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-file"></i>
+                <span>No files attached</span>
+            </div>
+        `;
         popupActions.style.display = 'none';
         return;
     }
@@ -390,7 +298,7 @@ function updateFilesList() {
         const fileItem = document.createElement('div');
         fileItem.className = `file-item ${file.status === 'error' ? 'error' : ''}`;
         
-        const fileIcon = getFileIcon(file.type);
+        const fileIcon = getFileIcon(file);
         
         fileItem.innerHTML = `
             <div class="file-info">
@@ -404,7 +312,7 @@ function updateFilesList() {
                     </div>
                 </div>
             </div>
-            <button class="remove-file" onclick="removeFile('${file.id}')">
+            <button class="remove-file" onclick="removeFile('${file.id}')" title="Remove file">
                 <i class="fas fa-times"></i>
             </button>
         `;
@@ -413,23 +321,24 @@ function updateFilesList() {
     });
 }
 
-function getFileIcon(fileType) {
-    if (fileType.startsWith('image/')) return '<i class="fas fa-image"></i>';
-    if (fileType.includes('pdf')) return '<i class="fas fa-file-pdf"></i>';
-    if (fileType.includes('word')) return '<i class="fas fa-file-word"></i>';
-    if (fileType.includes('excel') || fileType.includes('sheet')) return '<i class="fas fa-file-excel"></i>';
-    if (fileType.includes('text') || fileType.includes('plain')) return '<i class="fas fa-file-alt"></i>';
+function getFileIcon(file) {
+    if (file.isCameraImage) return '<i class="fas fa-camera"></i>';
+    if (file.type.startsWith('image/')) return '<i class="fas fa-image"></i>';
+    if (file.type.includes('pdf')) return '<i class="fas fa-file-pdf"></i>';
+    if (file.type.includes('word')) return '<i class="fas fa-file-word"></i>';
+    if (file.type.includes('excel')) return '<i class="fas fa-file-excel"></i>';
+    if (file.type.includes('text')) return '<i class="fas fa-file-alt"></i>';
     return '<i class="fas fa-file"></i>';
 }
 
 function getFileStatusHTML(file) {
     if (file.status === 'processing') {
-        return '<span class="processing"><i class="fas fa-spinner fa-spin"></i> Processing...</span>';
+        return '<span class="status-processing"><span class="spinner"></span> Processing</span>';
     } else if (file.status === 'success') {
-        const textLength = file.text.length;
-        return `<span class="success"><i class="fas fa-check-circle"></i> ${textLength} chars extracted</span>`;
+        const textLength = file.text ? file.text.length : 0;
+        return `<span class="status-success"><i class="fas fa-check-circle"></i> ${textLength} chars</span>`;
     } else if (file.status === 'error') {
-        return `<span class="error"><i class="fas fa-exclamation-circle"></i> ${file.error}</span>`;
+        return `<span class="status-error"><i class="fas fa-exclamation-circle"></i> Error</span>`;
     }
     return '<span>Pending</span>';
 }
@@ -440,16 +349,17 @@ function showPopupStatus(message, type = 'info') {
     
     statusEl.textContent = message;
     statusEl.className = 'popup-status';
-    if (type) {
-        statusEl.classList.add(type);
+    if (type === 'error') {
+        statusEl.classList.add('error');
+    } else if (type === 'success') {
+        statusEl.classList.add('success');
     }
     
-    // Auto-clear after 5 seconds
-    if (type !== 'processing') {
+    if (type !== 'info') {
         setTimeout(() => {
             statusEl.textContent = '';
             statusEl.className = 'popup-status';
-        }, 5000);
+        }, 3000);
     }
 }
 
@@ -462,28 +372,33 @@ function removeFile(fileId) {
     if (fileContext.files.length === 0) {
         clearFileContext();
     }
+    
+    showPopupStatus('File removed', 'success');
 }
 
 function clearAllFiles() {
+    if (fileContext.files.length === 0) return;
+    
     if (confirm('Remove all attached files?')) {
-        clearFileContext();
+        fileContext.files = [];
+        saveFileContext();
         updateFilesList();
+        updateFileContextDisplay();
         showPopupStatus('All files removed', 'success');
     }
 }
 
 function attachFiles() {
-    // Combine all successful file texts
-    const successfulFiles = fileContext.files.filter(f => f.status === 'success');
+    const successfulFiles = fileContext.files.filter(f => f.status === 'success' && f.text);
     
     if (successfulFiles.length === 0) {
         showPopupStatus('No files with extracted text to attach', 'error');
         return;
     }
     
-    // Combine texts
+    // Format text for AI context
     const combinedText = successfulFiles.map(f => 
-        `=== ${f.name} ===\n${f.text}\n`
+        `[File: ${f.name}]\n${f.text}\n`
     ).join('\n');
     
     // Update global file context
@@ -498,8 +413,10 @@ function attachFiles() {
 }
 
 function clearAttachedFile() {
-    clearFileContext();
-    showToast('Files detached from chat', 'info');
+    if (confirm('Remove all files from chat?')) {
+        clearFileContext();
+        showToast('Files detached from chat', 'info');
+    }
 }
 
 function clearFileContext() {
@@ -511,31 +428,21 @@ function clearFileContext() {
     window.fileContext = fileContext;
     localStorage.removeItem('ventora_file_context');
     updateFileContextDisplay();
+    updateFilesList();
+    showPopupStatus('Files cleared', 'success');
 }
 
 function updateFileContextDisplay() {
-    // Update any UI that shows file status
-    const fileStatus = document.getElementById('file-status');
-    if (fileStatus) {
-        if (fileContext.text) {
-            fileStatus.textContent = `${fileContext.files.length} file(s) attached`;
-            fileStatus.style.color = 'var(--accent-blue)';
-        } else {
-            fileStatus.textContent = 'No file attached';
-            fileStatus.style.color = 'var(--text-secondary)';
-        }
-    }
-    
-    // Update file clear section visibility
+    // Update main input bar clear section
     const clearSection = document.getElementById('file-clear-section');
     if (clearSection) {
-        clearSection.style.display = fileContext.text ? 'block' : 'none';
+        const hasFiles = fileContext.files.length > 0;
+        clearSection.style.display = hasFiles ? 'block' : 'none';
     }
 }
 
 function saveFileContext() {
     try {
-        // Don't save the File objects (they're not serializable)
         const serializableFiles = fileContext.files.map(f => ({
             id: f.id,
             name: f.name,
@@ -543,8 +450,8 @@ function saveFileContext() {
             size: f.size,
             status: f.status,
             error: f.error,
-            text: f.text
-            // file: f.file // Don't save File object
+            text: f.text,
+            isCameraImage: f.isCameraImage
         }));
         
         const toSave = {
@@ -556,18 +463,25 @@ function saveFileContext() {
         localStorage.setItem('ventora_file_context', JSON.stringify(toSave));
     } catch (e) {
         console.error('Error saving file context:', e);
+        showPopupStatus('Error saving files', 'error');
     }
 }
 
 function openGoogleDrive() {
     showPopupStatus('Google Drive integration coming soon', 'info');
-    // For now, we'll just show a message
-    // In production, you would implement OAuth and Google Drive API
 }
+
+// Clean up Tesseract worker
+window.addEventListener('beforeunload', () => {
+    if (tesseractWorker) {
+        tesseractWorker.terminate();
+    }
+});
 
 // Export for use in main chat
 window.fileContext = fileContext;
 window.clearAttachedFile = clearAttachedFile;
+window.openFilePicker = openFilePicker;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
