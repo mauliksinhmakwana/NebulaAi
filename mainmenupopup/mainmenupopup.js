@@ -396,6 +396,9 @@ function renderAboutSection(container) {
         </div>
         
         <div class="social-links">
+        <a href="https://mauliksinhmakwana.github.io/IntroducingVentoraAI/index.html" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="About Ventora AI">
+  <i class="fas fa-info-circle"></i>
+</a>
             <a href="#" class="social-link" target="_blank" aria-label="LinkedIn">
                 <i class="fab fa-linkedin-in"></i>
             </a>
