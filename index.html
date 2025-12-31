@@ -2472,13 +2472,45 @@ function copyUserMessage(btn) {
                 handleSend();
             }
         });
-        
-        sendBtn.addEventListener('click', (e) => {
+        // 🔥 REPLACE THIS SECTION in your code:
+
+sendBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (sendBtn.classList.contains('sending')) return;
+    handleSend();
+});
+
+// Add click event to send button for stop functionality
+sendBtn.addEventListener('click', function(e) {
+    if (isSending) {
+        e.preventDefault();
+        stopGeneration();
+    }
+});
+
+// 🔥 WITH THIS SINGLE UNIFIED HANDLER:
+
+sendBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    if (sendBtn.classList.contains('sending')) {
+        // If already sending, stop it
+        stopGeneration();
+    } else {
+        // If not sending, start sending
+        if (isSending || (Date.now() - lastSendTime < 1000)) {
+            showToast('Please wait...', 'info');
+            return;
+        }
+        handleSend();
+    }
+});
+      /*  sendBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (sendBtn.classList.contains('sending')) return;
             handleSend();
         });
-        
+        */
         // Update temperature value when slider changes
         tempRange.addEventListener('input', () => {
             tempValue.textContent = tempRange.value;
@@ -2528,7 +2560,28 @@ function getModelDisplayName(modelKey) {
 // 🔥 ADD: Stop generating function
 let stopGenerating = false;
 
-function stopGeneration() {
+
+        function stopGeneration() {
+    if (isSending) {
+        stopGenerating = true;
+        isSending = false;
+        sendBtn.classList.remove('sending');
+        // Clear the flag after a short delay
+        setTimeout(() => {
+            stopGenerating = false;
+        }, 100);
+        showToast('Stopped generating', 'info');
+        
+        // Also hide any typing indicators
+        const typingIndicators = document.querySelectorAll('.typing-dots');
+        typingIndicators.forEach(indicator => {
+            if (indicator.closest('.msg')) {
+                indicator.closest('.msg').innerHTML = 'Generation stopped.';
+            }
+        });
+    }
+}
+        /*function stopGeneration() {
     if (isSending) {
         stopGenerating = true;
         isSending = false;
@@ -2543,7 +2596,7 @@ sendBtn.addEventListener('click', function(e) {
         e.preventDefault();
         stopGeneration();
     }
-});
+});*/
 
 
 
