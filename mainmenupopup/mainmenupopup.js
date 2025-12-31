@@ -1565,6 +1565,35 @@ function showMenuToast(message, type = "success") {
 }
 
 
+// Add this right before the toast animation starts or after adding the 'success' class
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `menu-toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // FORCE LIGHT GRAY BORDER - ADD THIS LINE
+    toast.style.borderColor = 'rgba(229, 231, 235, 0.6)';
+    
+    // Animate in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+
+
+
     
 // Setup event listeners
 function setupEventListeners() {
