@@ -1,82 +1,143 @@
-// vdiv.js - Ventora Drug Interaction Visualizer
-class VentoraDrugVisualizer {
-  constructor(container) {
-    this.container = container;
-    this.nodes = [];
-    this.edges = [];
-  }
+// vdiv/vdiv.js - Best Drug Interaction Visualizer using Cytoscape.js
 
-  render(data) {
-    // Clear previous
-    this.container.innerHTML = `
-      <div class="vdiv-title">Drug & Food Interactions</div>
-      <div class="vdiv-network" id="vdiv-network"></div>
-      <div class="vdiv-legend">
-        <div class="vdiv-legend-item"><div class="vdiv-legend-color" style="background:#86efac"></div><span>Minor</span></div>
-        <div class="vdiv-legend-item"><div class="vdiv-legend-color" style="background:#fdba74"></div><span>Moderate</span></div>
-        <div class="vdiv-legend-item"><div class="vdiv-legend-color" style="background:#f87171"></div><span>Major</span></div>
-        <div class="vdiv-legend-item"><div class="vdiv-legend-color" style="background:#4b5563;opacity:0.3"></div><span>No known</span></div>
-      </div>
-    `;
-
-    const network = document.getElementById('vdiv-network');
-    const width = network.offsetWidth;
-    const height = network.offsetHeight;
-
-    // Simple circle layout
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) / 3;
-
-    data.nodes.forEach((node, i) => {
-      const angle = (i / data.nodes.length) * 2 * Math.PI;
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-
-      const nodeEl = document.createElement('div');
-      nodeEl.className = `vdiv-node ${node.type || ''}`;
-      nodeEl.style.left = `${x - 50}px`;
-      nodeEl.style.top = `${y - 50}px`;
-      nodeEl.textContent = node.name;
-      network.appendChild(nodeEl);
-    });
-
-    // Draw edges
-    data.edges.forEach(edge => {
-      const fromNode = data.nodes[edge.from];
-      const toNode = data.nodes[edge.to];
-      if (!fromNode || !toNode) return;
-
-      const angle = (edge.from / data.nodes.length) * 2 * Math.PI;
-      const x1 = centerX + radius * Math.cos(angle);
-      const y1 = centerY + radius * Math.sin(angle);
-
-      const angle2 = (edge.to / data.nodes.length) * 2 * Math.PI;
-      const x2 = centerX + radius * Math.cos(angle2);
-      const y2 = centerY + radius * Math.sin(angle2);
-
-      const edgeEl = document.createElement('div');
-      edgeEl.className = `vdiv-edge ${edge.severity}`;
-      const length = Math.sqrt((x2 - x1)**2 + (y2 - y1)**2);
-      const angleDeg = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-
-      edgeEl.style.width = `${length}px`;
-      edgeEl.style.left = `${x1}px`;
-      edgeEl.style.top = `${y1}px`;
-      edgeEl.style.transform = `rotate(${angleDeg}deg)`;
-      network.appendChild(edgeEl);
-    });
-  }
-}
-
-// Global function to trigger from AI response
 function renderDrugInteraction(data) {
-  const container = document.createElement('div');
-  container.className = 'vdiv-container';
-  document.querySelector('.msg.ai:last-child')?.appendChild(container);
+  const lastAIMsg = document.querySelector('.msg.ai:last-child');
+  if (!lastAIMsg) return;
 
-  const visualizer = new VentoraDrugVisualizer(container);
-  visualizer.render(data);
+  // Create container
+  const container = document.createElement('div');
+  container.style.margin = '32px 0';
+  container.style.padding = '24px';
+  container.style.background = 'rgba(255, 255, 255, 0.04)';
+  container.style.border = '1px solid rgba(255, 255, 255, 0.12)';
+  container.style.borderRadius = '20px';
+  container.style.backdropFilter = 'blur(15px)';
+
+  // Title
+  const title = document.createElement('h3');
+  title.textContent = 'Drug & Food Interaction Map';
+  title.style.fontSize = '1.5rem';
+  title.style.fontWeight = '800';
+  title.style.color = '#c4b5fd';
+  title.style.textAlign = 'center';
+  title.style.marginBottom = '24px';
+  container.appendChild(title);
+
+  // Cytoscape container
+  const cyDiv = document.createElement('div');
+  cyDiv.id = 'cytoscape-' + Date.now();
+  cyDiv.style.width = '100%';
+  cyDiv.style.height = '520px';
+  cyDiv.style.background = 'rgba(0, 0, 0, 0.4)';
+  cyDiv.style.borderRadius = '16px';
+  cyDiv.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+  container.appendChild(cyDiv);
+
+  // Legend
+  const legend = document.createElement('div');
+  legend.style.display = 'flex';
+  legend.style.justifyContent = 'center';
+  legend.style.flexWrap = 'wrap';
+  legend.style.gap = '20px';
+  legend.style.marginTop = '24px';
+  legend.style.fontSize = '0.95rem';
+  legend.style.color = '#bbb';
+  legend.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#86efac;border-radius:4px"></div>Minor</div>
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#fdba74;border-radius:4px"></div>Moderate</div>
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#f87171;border-radius:4px"></div>Major (Caution)</div>
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#4b5563;opacity:0.4;border-radius:4px"></div>No known</div>
+  `;
+  container.appendChild(legend);
+
+  lastAIMsg.appendChild(container);
+
+  // Prepare elements
+  const elements = [];
+
+  data.nodes.forEach((node, i) => {
+    elements.push({
+      data: { id: 'n' + i, label: node.name },
+      classes: node.type || 'drug'
+    });
+  });
+
+  data.edges.forEach(edge => {
+    elements.push({
+      data: {
+        source: 'n' + edge.from,
+        target: 'n' + edge.to,
+        severity: edge.severity || 'none'
+      }
+    });
+  });
+
+  // Launch Cytoscape
+  cytoscape({
+    container: document.getElementById(cyDiv.id),
+    elements: elements,
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'background-color': '#8b5cf6',
+          'label': 'data(label)',
+          'color': '#fff',
+          'text-outline-color': '#000',
+          'text-outline-width': 4,
+          'font-size': 16,
+          'font-weight': 'bold',
+          'width': 120,
+          'height': 120,
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'border-width': 4,
+          'border-color': '#a78bfa',
+          'box-shadow': '0 0 40px #a78bfa'
+        }
+      },
+      {
+        selector: 'node.food',
+        style: {
+          'background-color': '#10b981',
+          'border-color': '#34d399',
+          'box-shadow': '0 0 40px #34d399'
+        }
+      },
+      {
+        selector: 'edge',
+        style: {
+          'width': 6,
+          'line-color': '#666',
+          'target-arrow-color': '#666',
+          'target-arrow-shape': 'triangle',
+          'curve-style': 'bezier'
+        }
+      },
+      {
+        selector: 'edge[severity = "minor"]',
+        style: { 'line-color': '#86efac', 'target-arrow-color': '#86efac' }
+      },
+      {
+        selector: 'edge[severity = "moderate"]',
+        style: { 'line-color': '#fdba74', 'target-arrow-color': '#fdba74' }
+      },
+      {
+        selector: 'edge[severity = "major"]',
+        style: { 'line-color': '#f87171', 'target-arrow-color': '#f87171', 'width': 10 }
+      },
+      {
+        selector: 'edge[severity = "none"]',
+        style: { 'line-color': '#4b5563', 'opacity': 0.3 }
+      }
+    ],
+    layout: { name: 'circle', fit: true, padding: 60 },
+    zoomingEnabled: true,
+    userZoomingEnabled: true,
+    panningEnabled: true,
+    userPanningEnabled: true,
+    wheelSensitivity: 0.1
+  });
 
   scrollToBottom();
 }
