@@ -25,7 +25,7 @@ const OPENROUTER_MODELS = {
     key: process.env.OPENROUTER_KEY_REASON
   },
   research: {
-    model: "allenai/olmo-3.1-32b-think:free",
+    model: "allenai/olmo-3-32b-think:free",               //allenai/olmo-3.1-32b-think:free
     key: process.env.OPENROUTER_KEY_RESEARCH
   }
 };
