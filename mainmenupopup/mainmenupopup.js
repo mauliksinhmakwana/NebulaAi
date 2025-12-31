@@ -454,6 +454,7 @@ function renderPrivacySection(container) {
                 <i class="fas fa-heartbeat"></i>
                 <span><strong>Medical Disclaimer:</strong> Ventora AI provides educational information only. It is not a substitute for professional medical advice.</span>
             </div>
+            <a href="https://mauliksinhmakwana.github.io/IntroducingVentoraAI/privacy-policy.html" style="color: #bbb; text-decoration: underline; transition: color 0.3s;"onmouseover="this.style.color='#c4b5fd'"onmouseout="this.style.color='#bbb'">Privacy & Security Policy</a>
         </div>
         
         <div class="form-info" style="margin-top: 20px; text-align: center;">
