@@ -613,22 +613,67 @@ function resetMenuPersonalization() {
     }
 }
 
-// Save settings
+
+// Save settings - COMPLETE NEW VERSION
 function saveMenuSettings() {
-    window.ventoraSettings = {
-        model: document.getElementById('menu-settings-model')?.value || 'groq:general',
-        temperature: parseFloat(document.getElementById('menu-settings-temp')?.value || 0.7),
-        maxTokens: parseInt(document.getElementById('menu-settings-tokens')?.value || 1024)
+    // Get values
+    const newModel = document.getElementById('menu-settings-model').value;
+    const newTemp = parseFloat(document.getElementById('menu-settings-temp').value);
+    const newTokens = parseInt(document.getElementById('menu-settings-tokens').value);
+    
+    console.log('Saving new settings:', { model: newModel, temp: newTemp, tokens: newTokens });
+    
+    // 1. Save to localStorage
+    const newSettings = { 
+        model: newModel, 
+        temperature: newTemp, 
+        maxTokens: newTokens 
     };
+    localStorage.setItem('ventora_settings', JSON.stringify(newSettings));
     
-    localStorage.setItem('ventora_settings', JSON.stringify(window.ventoraSettings));
+    // 2. Update the popup's own settings object
+    window.ventoraSettings = newSettings;
     
-    // Also update main app settings if exists
- if (window.settings) {
-        window.settings.model = model;
-        window.settings.temperature = temp;
-        window.settings.maxTokens = tokens;
+    // 3. ⭐⭐⭐ CRITICAL: Update main app's settings ⭐⭐⭐
+    // Method 1: Try to update window.settings directly
+    if (window.settings) {
+        window.settings.model = newModel;
+        window.settings.temperature = newTemp;
+        window.settings.maxTokens = newTokens;
+        console.log('Updated main app settings directly:', window.settings);
     }
+    
+    // Method 2: Force reload by triggering a custom event
+    const event = new CustomEvent('settingsUpdated', { 
+        detail: { model: newModel, temperature: newTemp, maxTokens: newTokens }
+    });
+    window.dispatchEvent(event);
+    
+    // 4. Show success message
+    showMenuToast(`Settings saved! Next message will use: ${getModelName(newModel)}`, 'success');
+    
+    // 5. For debugging: Log to console
+    console.log('SETTINGS SAVED LIVE:', {
+        localStorage: JSON.parse(localStorage.getItem('ventora_settings')),
+        windowSettings: window.settings,
+        popupSettings: window.ventoraSettings
+    });
+}
+
+// Helper function
+function getModelName(modelKey) {
+    const names = {
+        'mia:general': 'General Mode',
+        'mia:reasoning': 'Clinical Reasoning',
+        'mia:research': 'Research Mode'
+    };
+    return names[modelKey] || modelKey;
+}
+
+
+
+// Save settings
+
     /*
     if (window.settings) {
         window.settings.model = newModel;
@@ -642,9 +687,7 @@ function saveMenuSettings() {
         window.settings.maxTokens = window.ventoraSettings.maxTokens;
     }
     */
-    showMenuToast('Settings saved!', 'success');
-}
-
+   
 
 
 
