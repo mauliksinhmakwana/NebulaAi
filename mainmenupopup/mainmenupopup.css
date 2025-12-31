@@ -965,7 +965,7 @@
 }
 
 .menu-toast.success {
-    border-color: rgba(229, 231, 235, 0.6);
+    border-color: rgba(229, 231, 235, 0.6) !important;
     background: rgba(30, 40, 30, 0.98);
 }
 
