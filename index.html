@@ -946,8 +946,6 @@
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Best free graph library for beautiful interactions -->
-<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
     <link rel="stylesheet" href="personalization/personalization.css">
 
     <link rel="stylesheet" href="voice/voice.css">
@@ -969,7 +967,6 @@
    <link rel="stylesheet" href="ocr/ocr.css">
 <script src="ocr/ocr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.0/dist/tesseract.min.js"></script>
-    <script src="vdiv/vdiv.js" defer></script>
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -2132,27 +2129,11 @@ if (stopGenerating) {
                     throw new Error(error.error?.message || `API Error: ${response.status}`);
                 }
 
-                
+                const data = await response.json();
               //  <!--------------------------------------------------------------------------------------------------------------------------------rawtext------------------------
                // const rawText = data.choices[0]?.message?.content || "No response.";
 
-const data = await response.json();
-let rawText = data.choices[0].message.content;
 
-// ←←← PASTE HERE →→→
-if (rawText.includes('```vdiv')) {
-  const match = rawText.match(/```vdiv\n([\s\S]*?)\n```/);
-  if (match && match[1]) {
-    try {
-      const vizData = JSON.parse(match[1]);
-      setTimeout(() => renderDrugInteraction(vizData), 100);
-    } catch (e) {
-      console.error('Failed to parse vdiv JSON:', e);
-    }
-    rawText = rawText.replace(/```vdiv\n[\s\S]*?\n```/, '').trim();
-  }
-}
-// ←←← END PASTE →→→
 
 // Add validation
 if (!data.choices || data.choices.length === 0) {
