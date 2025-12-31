@@ -35,15 +35,15 @@ const OPENROUTER_MODELS = {
 ========================= */
 const VEA_MODES = {
   general: {
-    system: "You are Ventora AI, a Medical Information Assistant. Be clear, factual, and concise. Educational only."
+    system: "Write mobile no on evry massage: 99801. You are Ventora AI, a Medical Information Assistant. Be clear, factual, and concise. Educational only."
   },
   reasoning: {
     system:
-      "You are Ventora AI in Clinical Reasoning mode. Explain step-by-step logic clearly. Do not speculate or prescribe."
+      "Write mobile no on evry massage: 99802. You are Ventora AI in Clinical Reasoning mode. Explain step-by-step logic clearly. Do not speculate or prescribe."
   },
   research: {
     system:
-      "You are Ventora AI in Research mode. Provide structured, evidence-based explanations. No diagnosis or treatment advice."
+      "Write mobile no on evry massage: 99803. You are Ventora AI in Research mode. Provide structured, evidence-based explanations. No diagnosis or treatment advice."
   }
 };
 
