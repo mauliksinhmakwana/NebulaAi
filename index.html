@@ -2466,52 +2466,18 @@ function copyUserMessage(btn) {
         }
 
                 // ==================== EVENT LISTENERS ====================
-        // ==================== EVENT LISTENERS ====================
-
-// ==================== EVENT LISTENERS ====================
-userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        // 1. Detect device type
-        const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
-
-        if (isMobile) {
-            // On mobile, Enter key always creates a new line/paragraph
-            // We do not call preventDefault, allowing the natural new line
-            return; 
-        } else {
-            // 2. PC Logic: Only send if NOT shifting AND not already sending
-            if (!e.shiftKey) {
-                e.preventDefault(); // Stop the new line from being added
-                
-                // Only trigger handleSend if we aren't currently generating
-                if (!isSending) {
-                    handleSend();
-                }
-            }
-        }
-    }
-});
-
-// Update the Send Button Click listener to prevent double-triggering
-sendBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (isSending) {
-        // If already sending, the button acts as a STOP button
-        stopGeneration();
-    } else {
-        // If idle, the button acts as a SEND button
-        handleSend();
-    }
-});
-        
-      /*  userInput.addEventListener('keydown', (e) => {
+        userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
             }
-        }); */
+        });
         
-       
+        sendBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (sendBtn.classList.contains('sending')) return;
+            handleSend();
+        });
         
         // Update temperature value when slider changes
         tempRange.addEventListener('input', () => {
