@@ -1590,38 +1590,16 @@ const AI_IDENTITY = {
         }
 
         function loadSettings() {
-               // ALWAYS load from ventora_settings (popup's settings)
-    const saved = localStorage.getItem('ventora_settings');
-    
-    if (saved) {
-        try {
-            settings = JSON.parse(saved);
-            console.log('Loaded settings from ventora_settings:', settings);
-        } catch (e) {
-            console.error('Error loading settings:', e);
-            // Default to MIA general
-            settings = {
-                model: 'mia:general',
-                temperature: 0.7,
-                maxTokens: 1024
-            };
-            localStorage.setItem('ventora_settings', JSON.stringify(settings));
+            const saved = localStorage.getItem('nebula_settings');
+            if (saved) {
+                try {
+                    settings = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error loading settings:', e);
+                }
+            }
         }
-    } else {
-        // First time - create default MIA settings
-        settings = {
-            model: 'mia:general',
-            temperature: 0.7,
-            maxTokens: 1024
-        };
-        localStorage.setItem('ventora_settings', JSON.stringify(settings));
-        console.log('Created default settings:', settings);
-    }
-}
 
-
-
-        
         // ==================== CHAT FUNCTIONS ====================
         function loadConversations() {
             const saved = localStorage.getItem('nebula_conversations');
@@ -2472,45 +2450,13 @@ function copyUserMessage(btn) {
                 handleSend();
             }
         });
-        // 🔥 REPLACE THIS SECTION in your code:
-
-sendBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (sendBtn.classList.contains('sending')) return;
-    handleSend();
-});
-
-// Add click event to send button for stop functionality
-sendBtn.addEventListener('click', function(e) {
-    if (isSending) {
-        e.preventDefault();
-        stopGeneration();
-    }
-});
-
-// 🔥 WITH THIS SINGLE UNIFIED HANDLER:
-
-sendBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    if (sendBtn.classList.contains('sending')) {
-        // If already sending, stop it
-        stopGeneration();
-    } else {
-        // If not sending, start sending
-        if (isSending || (Date.now() - lastSendTime < 1000)) {
-            showToast('Please wait...', 'info');
-            return;
-        }
-        handleSend();
-    }
-});
-      /*  sendBtn.addEventListener('click', (e) => {
+        
+        sendBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (sendBtn.classList.contains('sending')) return;
             handleSend();
         });
-        */
+        
         // Update temperature value when slider changes
         tempRange.addEventListener('input', () => {
             tempValue.textContent = tempRange.value;
@@ -2529,59 +2475,12 @@ sendBtn.addEventListener('click', function(e) {
         });
 
 
-// Listen for settings updates from popup
-window.addEventListener('settingsUpdated', function(event) {
-    console.log('Settings update event received!', event.detail);
-    
-    // Update settings immediately
-    settings.model = event.detail.model;
-    settings.temperature = event.detail.temperature;
-    settings.maxTokens = event.detail.maxTokens;
-    
-    console.log('Settings updated live to:', settings);
-    
-    // Show notification
-    showToast(`Switched to ${getModelDisplayName(settings.model)}`, 'info');
-});
 
-// Helper function
-function getModelDisplayName(modelKey) {
-    const names = {
-        'mia:general': 'General Mode',
-        'mia:reasoning': 'Clinical Reasoning', 
-        'mia:research': 'Research Mode'
-    };
-    return names[modelKey] || modelKey;
-}
-
-
-        
 
 // 🔥 ADD: Stop generating function
 let stopGenerating = false;
 
-
-        function stopGeneration() {
-    if (isSending) {
-        stopGenerating = true;
-        isSending = false;
-        sendBtn.classList.remove('sending');
-        // Clear the flag after a short delay
-        setTimeout(() => {
-            stopGenerating = false;
-        }, 100);
-        showToast('Stopped generating', 'info');
-        
-        // Also hide any typing indicators
-        const typingIndicators = document.querySelectorAll('.typing-dots');
-        typingIndicators.forEach(indicator => {
-            if (indicator.closest('.msg')) {
-                indicator.closest('.msg').innerHTML = 'Generation stopped.';
-            }
-        });
-    }
-}
-        /*function stopGeneration() {
+function stopGeneration() {
     if (isSending) {
         stopGenerating = true;
         isSending = false;
@@ -2596,7 +2495,7 @@ sendBtn.addEventListener('click', function(e) {
         e.preventDefault();
         stopGeneration();
     }
-});*/
+});
 
 
 
