@@ -624,14 +624,25 @@ function saveMenuSettings() {
     localStorage.setItem('ventora_settings', JSON.stringify(window.ventoraSettings));
     
     // Also update main app settings if exists
+
     if (window.settings) {
+        window.settings.model = newModel;
+        window.settings.temperature = newTemp;
+        window.settings.maxTokens = newTokens;
+    }
+    
+   /* if (window.settings) {
         window.settings.model = window.ventoraSettings.model;
         window.settings.temperature = window.ventoraSettings.temperature;
         window.settings.maxTokens = window.ventoraSettings.maxTokens;
     }
-    
+    */
     showMenuToast('Settings saved!', 'success');
 }
+
+
+
+
 
 // Reset settings
 function resetMenuSettings() {
