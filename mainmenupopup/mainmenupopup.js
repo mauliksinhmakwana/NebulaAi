@@ -390,9 +390,8 @@ function renderAboutSection(container) {
         </div>
         
         <div class="form-group">
-            <label class="form-label">Developer</label>
-            <div class="form-input" style="font-weight: 500;">
-                Created by <strong>Maulik Makwana</strong>
+            <label class="form-label">Crafted with care by</label>
+            <div class="form-input" style="font-weight: 500;"><strong>Ventora Labs</strong> • © 2025
             </div>
         </div>
         
@@ -411,6 +410,7 @@ function renderAboutSection(container) {
         <div class="form-info" style="margin-top: 20px; text-align: center;">
             <i class="fas fa-heart"></i> Made with care for better health education
         </div>
+        
     `;
 }
 
@@ -460,7 +460,7 @@ function renderPrivacySection(container) {
         </div>
         
         <div class="form-info" style="margin-top: 20px; text-align: center;">
-            <i class="fas fa-info-circle"></i> Created by Maulik Makwana • Version V5.4 MIA
+           © 2025 VENTORA LABS
         </div>
     `;
 }
