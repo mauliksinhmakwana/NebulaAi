@@ -1341,7 +1341,7 @@ function hideHeroWelcome() {
         let conversations = [];
         let currentConversationId = null;
         let settings = {
-            model: 'mia:general',
+            model: 'groq:llama-3.1-8b-instant',
             temperature: 0.7,
             maxTokens: 1024
         };
@@ -1590,91 +1590,16 @@ const AI_IDENTITY = {
         }
 
         function loadSettings() {
-               const ventoraSettings = localStorage.getItem('ventora_settings');
-    
-    if (ventoraSettings) {
-        try {
-            // Use the popup settings
-            settings = JSON.parse(ventoraSettings);
-            console.log('Loaded settings from popup:', settings);
-        } catch (e) {
-            console.error('Error loading ventora settings:', e);
-            settings = getDefaultSettings();
-        }
-    } 
-    // 2. If no popup settings, try nebula_settings (old settings)
-    else if (!settings || !settings.model) {
-        const nebulaSettings = localStorage.getItem('nebula_settings');
-        if (nebulaSettings) {
-            try {
-                settings = JSON.parse(nebulaSettings);
-            } catch (e) {
-                console.error('Error loading nebula settings:', e);
-                settings = getDefaultSettings();
+            const saved = localStorage.getItem('nebula_settings');
+            if (saved) {
+                try {
+                    settings = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error loading settings:', e);
+                }
             }
-        } else {
-            // 3. No settings at all, use defaults
-            settings = getDefaultSettings();
         }
-    }
-}
 
-function getDefaultSettings() {
-    return {
-        model: 'mia:general',
-        temperature: 0.7,
-        maxTokens: 1024
-    };
-}
-
-
-// Sync function that updates main app settings
-function updateMainAppSettings() {
-    // Get latest settings from localStorage (popup just saved them)
-    const savedSettings = localStorage.getItem('ventora_settings');
-    if (savedSettings) {
-        try {
-            const newSettings = JSON.parse(savedSettings);
-            
-            // Update the main app's settings object
-            settings.model = newSettings.model;
-            settings.temperature = newSettings.temperature;
-            settings.maxTokens = newSettings.maxTokens;
-            
-            console.log('Settings updated live! Now using:', settings.model);
-            
-            // Optional: Show a quick toast
-            showToast(`Switched to ${getModelName(settings.model)}`, 'info');
-        } catch (e) {
-            console.error('Error updating settings:', e);
-        }
-    }
-}
-
-        function updateModelIndicator() {
-    const modelIndicator = document.getElementById('model-indicator');
-    if (!modelIndicator) return;
-    
-    const modelNames = {
-        'mia:general': 'General',
-        'mia:reasoning': 'Clinical',
-        'mia:research': 'Research'
-    };
-    
-    modelIndicator.textContent = modelNames[settings.model] || 'General';
-}
-
-// Helper to get model display name
-function getModelName(modelKey) {
-    const modelNames = {
-        'mia:general': 'MIA General',
-        'mia:reasoning': 'MIA Clinical Reasoning',
-        'mia:research': 'MIA Research'
-    };
-    return modelNames[modelKey] || modelKey;
-}
-        
-        
         // ==================== CHAT FUNCTIONS ====================
         function loadConversations() {
             const saved = localStorage.getItem('nebula_conversations');
