@@ -2145,24 +2145,47 @@ if (!data.choices[0].message || !data.choices[0].message.content) {
     throw new Error('Invalid response from AI server.');
 }
 
-const rawText = data.choices[0].message.content;
-
-
-
-
-
-
-
-
-
 
                 
-                               // Add assistant message
+        const rawText = data.choices[0].message.content;
+
+// === NEW: Only save and type if user hasn't stopped ===
+if (stopGenerating) {
+    // User stopped — don't save full response, don't type anything
+    loadingMsg.innerHTML = '<em>Generation stopped by user.</em>';
+    return; // Exit early
+}
+
+// Save the full message (for history and regenerate)
+conversation.messages.push({
+    role: 'assistant',
+    content: rawText,
+    timestamp: new Date().toISOString()
+});
+
+await pause(1200);
+const formatted = formatAIResponse(rawText);
+
+// Clear the loading dots
+loadingMsg.innerHTML = `
+  <div class="ai-text" style="margin-bottom: 4px;"></div>
+  <div class="timestamp" style="margin-bottom: 4px;">${getTime()}</div>
+  <div style="display: flex; gap: 16px; align-items: center;">
+      <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+      <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+      <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+  </div>`;
+
+// Type the response — but now sleep() will check stopGenerating every step
+const aiTextEl = loadingMsg.querySelector(".ai-text");
+await typeText(aiTextEl, formatted, 25);        
+                /*const rawText = data.choices[0].message.content;        
+                    // Add assistant message
                 conversation.messages.push({
                     role: 'assistant',
                     content: rawText,
                     timestamp: new Date().toISOString()
-                });
+                });*/
 
              
 
@@ -2175,13 +2198,13 @@ const rawText = data.choices[0].message.content;
                // Inside handleSend, when the AI finishes:
        
 
-// Inside handleSend, when the AI finishes:
+/*// Inside handleSend, when the AI finishes:
 await pause(1200);
 
-const formatted = formatAIResponse(rawText);
+const formatted = formatAIResponse(rawText);*/
 
 // Render UI with minimal gaps
-loadingMsg.innerHTML = `
+/*loadingMsg.innerHTML = `
   <div class="ai-text" style="margin-bottom: 4px;"></div>
   <div class="timestamp" style="margin-bottom: 4px;">${getTime()}</div>
   <div style="display: flex; gap: 16px; align-items: center;">
@@ -2193,6 +2216,9 @@ loadingMsg.innerHTML = `
 // Type ONLY the text into the container
 const aiTextEl = loadingMsg.querySelector(".ai-text");
 await typeText(aiTextEl, formatted, 25);
+*/
+
+                
                 
                 // Save updated conversation
                 conversation.updatedAt = new Date().toISOString();
