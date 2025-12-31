@@ -626,7 +626,7 @@
 }
 
 /* Add status colors */
-.toast.success { border-color: rgba(229, 231, 235, 0.6) !important }
+.toast.success { border-color: #2ed573; }
 .toast.error { border-color: #ff4757; }
 .toast.info { border-color: var(--accent-blue); }
         
@@ -2466,19 +2466,12 @@ function copyUserMessage(btn) {
         }
 
                 // ==================== EVENT LISTENERS ====================
-       userInput.addEventListener('keydown', (e) => {
-    // Check if device has touch capability
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    
-    if (e.key === 'Enter' && !e.shiftKey) {
-        if (!isTouchDevice) {
-            // Desktop/laptop: Enter sends
-            e.preventDefault();
-            handleSend();
-        }
-        // Touch device: Enter creates new line (default behavior)
-    }
-});
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
         
         sendBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -2541,24 +2534,15 @@ function stopGeneration() {
         isSending = false;
         sendBtn.classList.remove('sending');
         showToast('Stopped generating', 'info');
-        
-        if (window.currentController) {
-            window.currentController.abort();
     }
 }
 
 // Add click event to send button for stop functionality
 sendBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    // If currently sending, stop generation
     if (isSending) {
+        e.preventDefault();
         stopGeneration();
-        return;
     }
-    
-    // Otherwise send message
-    handleSend();
 });
 
 
