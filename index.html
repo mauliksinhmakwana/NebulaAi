@@ -967,6 +967,11 @@
    <link rel="stylesheet" href="ocr/ocr.css">
 <script src="ocr/ocr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.0/dist/tesseract.min.js"></script>
+    <!-- Chart.js for charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Visualizer CSS -->
+<link rel="stylesheet" href="visualizer/visualizer.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -1995,6 +2000,8 @@ CORE IDENTITY:
 - Purpose: Helps in gym, nutrition and vitamins, diet plan making and more.Help people understand medicines, diseases, and health concepts clearly and safely.
 
 --------------------------------------------------
+${window.VENTORA_VIZ_INSTRUCTIONS ? window.VENTORA_VIZ_INSTRUCTIONS : ''}
+--------------------------------------------------
 
 CORE PHILOSOPHY:
 Ventora combines the **usefulness of a health companion** with the **depth of pharmaceutical science**.
@@ -2975,6 +2982,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Make function available globally
 window.openAboutModal = openAboutModal;
 window.closeAboutModal = closeAboutModal;
+
+
+    
 </script>
 
 <style>
@@ -3689,7 +3699,10 @@ window.closeAboutModal = closeAboutModal;
 <link rel="stylesheet" href="diet/diet.css">
 <!-- Add JS script before closing body -->
 <script src="diet/diet.js" defer></script>
-
+<!-- Visualizer System -->
+<script src="visualizer/prompts.js"></script>
+<script src="visualizer/export.js"></script>
+<script src="visualizer/visualizer.js"></script>
     
 </body>
 </html>
