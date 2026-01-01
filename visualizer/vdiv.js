@@ -1,8 +1,8 @@
-// Ventora Visualizer - With Fixed Local Storage Persistence
+// Ventora Visualizer - With Local Storage Persistence
 class VentoraVisualizer {
     constructor() {
         this.isInitialized = false;
-        this.storageKey = 'ventora_visualizations_v3'; // Changed key to avoid conflicts
+        this.storageKey = 'ventora_visualizations';
     }
 
     init() {
@@ -19,17 +19,9 @@ class VentoraVisualizer {
         this.isInitialized = true;
     }
 
-    // Generate unique ID based on content hash (NOT conversation position)
-    generateVizId(content) {
-        // Create a consistent hash from the content
-        let hash = 0;
-        const str = content.substring(0, 1000); // Use first 1000 chars for hash
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        return 'viz-' + Math.abs(hash).toString(36).slice(0, 8);
+    // Generate unique ID for each conversation message
+    generateVizId(conversationId, messageIndex) {
+        return `viz-${conversationId}-${messageIndex}`;
     }
 
     // Save visualization to localStorage
@@ -37,7 +29,7 @@ class VentoraVisualizer {
         try {
             const visualizations = this.getStoredVisualizations();
             visualizations[vizId] = {
-                content: content.substring(0, 500), // Store limited content
+                content: content,
                 html: html,
                 timestamp: Date.now()
             };
@@ -58,9 +50,8 @@ class VentoraVisualizer {
         }
     }
 
-    // Get visualization for content
-    getVisualization(content) {
-        const vizId = this.generateVizId(content);
+    // Get visualization for a specific message
+    getVisualization(vizId) {
         const visualizations = this.getStoredVisualizations();
         return visualizations[vizId];
     }
@@ -88,58 +79,14 @@ class VentoraVisualizer {
         }
     }
 
-    // NEW: Auto-restore visualizations when page loads
-    autoRestoreVisualizations() {
-        // This will be called from your HTML after messages are loaded
-        if (typeof currentConversationId === 'undefined') return;
-        
-        const conversation = getCurrentConversation();
-        if (!conversation || !conversation.messages) return;
-        
-        conversation.messages.forEach((msg, index) => {
-            if (msg.role === 'assistant') {
-                const savedViz = this.getVisualization(msg.content);
-                if (savedViz && savedViz.html) {
-                    // Add small delay to ensure DOM is ready
-                    setTimeout(() => {
-                        this.injectVisualization(savedViz.html, index);
-                    }, 100 * (index + 1));
-                }
-            }
-        });
-    }
-
-    // NEW: Inject visualization at correct position
-    injectVisualization(html, messageIndex) {
-        const chatContainer = document.getElementById('chat-container');
-        if (!chatContainer) return;
-        
-        // Find all AI message wrappers
-        const aiWrappers = chatContainer.querySelectorAll('.msg-wrapper.ai-wrapper');
-        if (aiWrappers.length > messageIndex) {
-            const targetWrapper = aiWrappers[messageIndex];
-            
-            // Check if visualization already exists
-            const nextElement = targetWrapper.nextElementSibling;
-            if (nextElement && nextElement.classList.contains('visualizer-container')) {
-                return; // Already exists
-            }
-            
-            // Create and insert visualization
-            const vizDiv = document.createElement('div');
-            vizDiv.innerHTML = html;
-            chatContainer.insertBefore(vizDiv, targetWrapper.nextSibling);
-        }
-    }
-
-    // Main function - called from index.html (NO CHANGES NEEDED IN YOUR HTML)
-    async visualizeContent(content) {
+    // Main function - called from index.html
+    async visualizeContent(content, conversationId, messageIndex) {
         this.init();
         
-        const vizId = this.generateVizId(content);
+        const vizId = this.generateVizId(conversationId, messageIndex);
         
-        // Check if we already have a visualization for this content
-        const existing = this.getVisualization(content);
+        // Check if we already have a visualization for this message
+        const existing = this.getVisualization(vizId);
         if (existing && existing.html) {
             return existing.html;
         }
@@ -693,6 +640,11 @@ class VentoraVisualizer {
             }, 300);
         }, 3000);
     }
+
+    // Clear all visualizations (optional)
+    clearAllVisualizations() {
+        localStorage.removeItem(this.storageKey);
+    }
 }
 
 // Initialize global instance
@@ -700,25 +652,3 @@ window.ventoraVisualizer = new VentoraVisualizer();
 
 // Auto-cleanup old visualizations
 setInterval(() => window.ventoraVisualizer.cleanupOldVisualizations(), 5 * 60 * 1000);
-
-// Auto-restore when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.ventoraVisualizer && typeof currentConversationId !== 'undefined') {
-            window.ventoraVisualizer.autoRestoreVisualizations();
-        }
-    }, 1000);
-});
-
-// Also restore when conversation changes
-const originalSwitchConversation = window.switchConversation;
-if (originalSwitchConversation) {
-    window.switchConversation = function(id) {
-        originalSwitchConversation(id);
-        setTimeout(() => {
-            if (window.ventoraVisualizer) {
-                window.ventoraVisualizer.autoRestoreVisualizations();
-            }
-        }, 500);
-    };
-}
