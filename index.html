@@ -1807,7 +1807,6 @@ if (hero) {
           //      appendMessage('Hello! I am Ventora AI. How can I assist you today?', 'ai');
             //    return;
            // }
-            //   ----------------------------------------------------------------------------------------------READ 1------------------------------------------------------
             
             messages.forEach(msg => {
                 if (msg.role === 'user') {
@@ -1819,12 +1818,15 @@ if (hero) {
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
-                        
+                        //   ----------------------------------------------------------------------------------------------READ 1------------------------------------------------------
 `<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-    <div class="regenerate-btn" onclick="copyFullResponse(this)"><i class="far fa-copy" style="font-size: 1rem;"></i></div>
-    <div class="voice-btn" onclick="toggleSpeech(this)"><i class="fas fa-volume-up" style="font-size: 1rem;"></i></div>
-    <div class="regenerate-btn" onclick="regenerate(this)"><i class="fas fa-redo-alt" style="font-size: 1rem;"></i></div>
-</div>`;                    
+    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+</div>`
+                        ;
+
+                    
                     wrapper.appendChild(msgDiv);
                     chatContainer.appendChild(wrapper);
                 }
@@ -2171,9 +2173,9 @@ loadingMsg.innerHTML = `
   <div class="ai-text" style="margin-bottom: 4px;"></div>
   <div class="timestamp" style="margin-bottom: 4px;">${getTime()}</div>
   <div style="display: flex; gap: 16px; align-items: center;">
-      <div class="regenerate-btn" onclick="copyFullResponse(this)"><i class="far fa-copy" style="font-size: 1rem;"></i></div>
-      <div class="voice-btn" onclick="toggleSpeech(this)"><i class="fas fa-volume-up" style="font-size: 1rem;"></i></div>
-      <div class="regenerate-btn" onclick="regenerate(this)"><i class="fas fa-redo-alt" style="font-size: 1rem;"></i></div>
+      <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+      <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+      <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
   </div>`;
 
 const aiTextEl = loadingMsg.querySelector(".ai-text");
@@ -2289,7 +2291,6 @@ await typeText(aiTextEl, formatted, 25);
     formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
     
     // Convert `code` to <code>code</code>
-
     formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
     
     // Then handle code blocks
@@ -2345,10 +2346,10 @@ await typeText(aiTextEl, formatted, 25);
         .trim();//.replace(/Copy.*Regenerate.*|\d{1,2}:\d{2}\s*(AM|PM)?/g, '').trim();
 
             navigator.clipboard.writeText(cleanText).then(() => {
-                btn.textContent = '<i class="far fa-copy" style="font-size: 1rem;"></i>';
+                btn.textContent = 'Copied ✓';
                 btn.style.opacity = '1';
                 setTimeout(() => {
-                    btn.textContent = '<i class="far fa-copy" style="font-size: 1rem;"></i>';
+                    btn.textContent = 'Copy';
                     btn.style.opacity = '0.7';
                 }, 2000);
             });
@@ -2366,10 +2367,10 @@ function copyUserMessage(btn) {
     
     if (cleanText) {
         navigator.clipboard.writeText(cleanText).then(() => {
-            btn.textContent = '<i class="far fa-copy" style="font-size: 1rem;"></i>';
+            btn.textContent = 'Copied ✓';
             btn.style.opacity = '1';
             setTimeout(() => {
-                btn.textContent = '<i class="far fa-copy" style="font-size: 1rem;"></i>';
+                btn.textContent = 'Copy';
                 btn.style.opacity = '0.7';
             }, 2000);
         });
@@ -2400,8 +2401,8 @@ function copyUserMessage(btn) {
                     const formatted = formatAIResponse(text);
                     msg.innerHTML = formatted +
                         `<div style="display: flex; gap: 16px; margin-top: 8px;">
-                            <div class="regenerate-btn" onclick="copyFullResponse(this)"><i class="far fa-copy" style="font-size: 1rem;"></i></div>
-                            <div class="regenerate-btn" onclick="regenerate(this)"><i class="fas fa-redo-alt" style="font-size: 1rem;"></i></div>
+                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
                         </div>`;
                 }
            /* FIND THIS BLOCK IN appendMessage AND UPDATE IT */
@@ -2415,7 +2416,7 @@ function copyUserMessage(btn) {
         opacity: 0.7;
         transition: opacity 0.2s;
         margin-top: 2px;
-    "><i class="far fa-copy" style="font-size: 1rem;"></i></div>`;
+    ">Copy</div>`;
 }
 
             wrapper.appendChild(msg);
