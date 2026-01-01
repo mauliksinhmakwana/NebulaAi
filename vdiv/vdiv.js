@@ -1,143 +1,124 @@
-// vdiv/vdiv.js - Best Drug Interaction Visualizer using Cytoscape.js
+// vdiv.js - Ventora Interaction Visualizer
+async function visualizeContent(container, rawText) {
+    // Parse for visuals (e.g., detect ```table
+    const patterns = [
+        { type: 'table', regex: /```table\s*([\s\S]*?)```/g, handler: renderTable },
+        { type: 'chart', regex: /```chart\s*([\s\S]*?)```/g, handler: renderChart },
+        { type: 'diet', regex: /```diet\s*([\s\S]*?)```/g, handler: renderDiet },
+        { type: 'chemical', regex: /```chemical\s*SMILES\s*"([^"]+)"\s*```/g, handler: renderChemical }
+    ];
 
-function renderDrugInteraction(data) {
-  const lastAIMsg = document.querySelector('.msg.ai:last-child');
-  if (!lastAIMsg) return;
-
-  // Create container
-  const container = document.createElement('div');
-  container.style.margin = '32px 0';
-  container.style.padding = '24px';
-  container.style.background = 'rgba(255, 255, 255, 0.04)';
-  container.style.border = '1px solid rgba(255, 255, 255, 0.12)';
-  container.style.borderRadius = '20px';
-  container.style.backdropFilter = 'blur(15px)';
-
-  // Title
-  const title = document.createElement('h3');
-  title.textContent = 'Drug & Food Interaction Map';
-  title.style.fontSize = '1.5rem';
-  title.style.fontWeight = '800';
-  title.style.color = '#c4b5fd';
-  title.style.textAlign = 'center';
-  title.style.marginBottom = '24px';
-  container.appendChild(title);
-
-  // Cytoscape container
-  const cyDiv = document.createElement('div');
-  cyDiv.id = 'cytoscape-' + Date.now();
-  cyDiv.style.width = '100%';
-  cyDiv.style.height = '520px';
-  cyDiv.style.background = 'rgba(0, 0, 0, 0.4)';
-  cyDiv.style.borderRadius = '16px';
-  cyDiv.style.border = '1px solid rgba(255, 255, 255, 0.08)';
-  container.appendChild(cyDiv);
-
-  // Legend
-  const legend = document.createElement('div');
-  legend.style.display = 'flex';
-  legend.style.justifyContent = 'center';
-  legend.style.flexWrap = 'wrap';
-  legend.style.gap = '20px';
-  legend.style.marginTop = '24px';
-  legend.style.fontSize = '0.95rem';
-  legend.style.color = '#bbb';
-  legend.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#86efac;border-radius:4px"></div>Minor</div>
-    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#fdba74;border-radius:4px"></div>Moderate</div>
-    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#f87171;border-radius:4px"></div>Major (Caution)</div>
-    <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:6px;background:#4b5563;opacity:0.4;border-radius:4px"></div>No known</div>
-  `;
-  container.appendChild(legend);
-
-  lastAIMsg.appendChild(container);
-
-  // Prepare elements
-  const elements = [];
-
-  data.nodes.forEach((node, i) => {
-    elements.push({
-      data: { id: 'n' + i, label: node.name },
-      classes: node.type || 'drug'
+    let processedText = rawText;
+    patterns.forEach(({ regex, handler }) => {
+        processedText = processedText.replace(regex, (match, data) => {
+            const visId = `vis-${Math.random().toString(36).substr(2, 9)}`;
+            setTimeout(() => handler(visId, data.trim()), 0); // Async render
+            return `<div id="${visId}" class="vdiv-container"></div>`;
+        });
     });
-  });
 
-  data.edges.forEach(edge => {
-    elements.push({
-      data: {
-        source: 'n' + edge.from,
-        target: 'n' + edge.to,
-        severity: edge.severity || 'none'
-      }
+    container.innerHTML = processedText; // Update with placeholders filled later
+}
+
+function createVisWrapper(id, title) {
+    const div = document.getElementById(id);
+    div.innerHTML = `
+        <div class="vdiv-header">
+            <span class="vdiv-title">${title}</span>
+            <div class="vdiv-actions">
+                <button class="vdiv-btn copy" onclick="copyVis(this)">Copy</button>
+                <button class="vdiv-btn export" onclick="exportToPDF(this)">Export PDF</button>
+            </div>
+        </div>
+        <div class="vdiv-body"></div>
+    `;
+    return div.querySelector('.vdiv-body');
+}
+
+function renderTable(id, data) {
+    const body = createVisWrapper(id, 'Table Visualization');
+    try {
+        const json = JSON.parse(data); // Assume JSON array of objects
+        let html = '<table class="vdiv-table"><thead><tr>';
+        Object.keys(json[0]).forEach(key => html += `<th>${key}</th>`);
+        html += '</tr></thead><tbody>';
+        json.forEach(row => {
+            html += '<tr>';
+            Object.values(row).forEach(val => html += `<td>${val}</td>`);
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        body.innerHTML = html;
+        $(body.querySelector('table')).DataTable({ paging: false, searching: false }); // DataTables for sorting
+    } catch (e) { body.innerHTML = '<p>Error rendering table.</p>'; }
+}
+
+function renderChart(id, data) {
+    const body = createVisWrapper(id, 'Chart Visualization');
+    const canvas = document.createElement('canvas');
+    body.appendChild(canvas);
+    try {
+        const config = JSON.parse(data); // e.g., { type: 'pie', data: {...} }
+        new Chart(canvas, config);
+    } catch (e) { body.innerHTML = '<p>Error rendering chart.</p>'; }
+}
+
+function renderDiet(id, data) {
+    const body = createVisWrapper(id, 'Diet Plan Visualization');
+    try {
+        const diet = JSON.parse(data); // e.g., { calories: 2000, protein: 150, ... }
+        // Render as pie chart
+        const canvas = document.createElement('canvas');
+        body.appendChild(canvas);
+        new Chart(canvas, {
+            type: 'pie',
+            data: { labels: Object.keys(diet), datasets: [{ data: Object.values(diet), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'] }] },
+            options: { responsive: true }
+        });
+        // Add list view
+        let list = '<ul class="vdiv-diet">';
+        Object.entries(diet).forEach(([key, val]) => list += `<li><strong>${key}:</strong> ${val}</li>`);
+        list += '</ul>';
+        body.innerHTML += list;
+    } catch (e) { body.innerHTML = '<p>Error rendering diet plan.</p>'; }
+}
+
+function renderChemical(id, smiles) {
+    const body = createVisWrapper(id, 'Chemical Structure');
+    const canvas = document.createElement('canvas');
+    canvas.width = 300; canvas.height = 200;
+    body.appendChild(canvas);
+    try {
+        const drawer = new SmilesDrawer.Drawer({ width: 300, height: 200 });
+        SmilesDrawer.parse(smiles, tree => drawer.draw(tree, canvas));
+    } catch (e) { body.innerHTML = '<p>Error rendering structure.</p>'; }
+}
+
+async function copyVis(btn) {
+    const vis = btn.closest('.vdiv-container');
+    const text = vis.querySelector('.vdiv-body').innerText; // Or JSON.stringify for data
+    await navigator.clipboard.writeText(text);
+    btn.classList.add('success'); btn.textContent = 'Copied!';
+    setTimeout(() => { btn.classList.remove('success'); btn.textContent = 'Copy'; }, 2000);
+}
+
+async function exportToPDF(btn) {
+    const vis = btn.closest('.vdiv-container');
+    const pdf = new jsPDF();
+    const canvas = await html2canvas(vis);
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 10, 10, 180, 0);
+    pdf.save('ventora-visual.pdf');
+    btn.classList.add('success'); btn.textContent = 'Exported!';
+    setTimeout(() => { btn.classList.remove('success'); btn.textContent = 'Export PDF'; }, 2000);
+}
+
+// Global export for chat
+function exportChatToPDF() {
+    const pdf = new jsPDF();
+    // Logic to capture entire chatContainer and add to PDF (similar to above, using html2canvas)
+    html2canvas(document.getElementById('chat-container')).then(canvas => {
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 180, 0);
+        pdf.save('ventora-chat.pdf');
     });
-  });
-
-  // Launch Cytoscape
-  cytoscape({
-    container: document.getElementById(cyDiv.id),
-    elements: elements,
-    style: [
-      {
-        selector: 'node',
-        style: {
-          'background-color': '#8b5cf6',
-          'label': 'data(label)',
-          'color': '#fff',
-          'text-outline-color': '#000',
-          'text-outline-width': 4,
-          'font-size': 16,
-          'font-weight': 'bold',
-          'width': 120,
-          'height': 120,
-          'text-valign': 'center',
-          'text-halign': 'center',
-          'border-width': 4,
-          'border-color': '#a78bfa',
-          'box-shadow': '0 0 40px #a78bfa'
-        }
-      },
-      {
-        selector: 'node.food',
-        style: {
-          'background-color': '#10b981',
-          'border-color': '#34d399',
-          'box-shadow': '0 0 40px #34d399'
-        }
-      },
-      {
-        selector: 'edge',
-        style: {
-          'width': 6,
-          'line-color': '#666',
-          'target-arrow-color': '#666',
-          'target-arrow-shape': 'triangle',
-          'curve-style': 'bezier'
-        }
-      },
-      {
-        selector: 'edge[severity = "minor"]',
-        style: { 'line-color': '#86efac', 'target-arrow-color': '#86efac' }
-      },
-      {
-        selector: 'edge[severity = "moderate"]',
-        style: { 'line-color': '#fdba74', 'target-arrow-color': '#fdba74' }
-      },
-      {
-        selector: 'edge[severity = "major"]',
-        style: { 'line-color': '#f87171', 'target-arrow-color': '#f87171', 'width': 10 }
-      },
-      {
-        selector: 'edge[severity = "none"]',
-        style: { 'line-color': '#4b5563', 'opacity': 0.3 }
-      }
-    ],
-    layout: { name: 'circle', fit: true, padding: 60 },
-    zoomingEnabled: true,
-    userZoomingEnabled: true,
-    panningEnabled: true,
-    userPanningEnabled: true,
-    wheelSensitivity: 0.1
-  });
-
-  scrollToBottom();
 }
