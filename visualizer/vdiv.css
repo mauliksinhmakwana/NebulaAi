@@ -323,3 +323,29 @@
         min-width: 100%;
     }
 }
+
+
+
+/* Visualization Error State */
+.visualization-error {
+    padding: 15px;
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: 10px;
+    margin: 10px 0;
+    color: #ff4757;
+    font-size: 0.9rem;
+}
+
+/* Ensure visualizations don't break layout */
+.saved-visualization,
+.visualization-container {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.saved-visualization img,
+.visualization-container img {
+    max-width: 100%;
+    height: auto;
+}
