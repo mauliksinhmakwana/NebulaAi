@@ -2298,19 +2298,47 @@ await typeText(aiTextEl, formatted, 25);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-       
+
+async function formatAIResponse(text) {
+    // Existing markdown
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>');
+
+    // Code blocks (existing)
+    const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
+    formattedText = formattedText.replace(codeRegex, (match, lang, code) => {
+        const id = 'code-' + Math.random().toString(36).substr(2, 9);
+        return `
+        <div class="code-container">
+            <div class="code-header">
+                <span>${lang.toUpperCase() || 'CODE'}</span>
+                <span class="copy-btn" onclick="copyCode('${id}')">COPY</span>
+            </div>
+            <pre id="${id}">${code.trim()}</pre>
+        </div>`;
+    });
+
+    // New: Visualize
+    const tempDiv = document.createElement('div');
+    await visualizeContent(tempDiv, formattedText);
+    return tempDiv.innerHTML;
+}
+
+
+        /*
         function formatAIResponse(text) {
     // Convert **bold** to <strong>bold</strong>
     let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
     // Convert *italic* to <em>italic</em>
-    formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+   /* formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
     
     // Convert `code` to <code>code</code>
-    formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+ //   formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
     
     // Then handle code blocks
-    const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
+ /*   const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
     formattedText = formattedText.replace(codeRegex, (match, lang, code) => {
         const id = 'code-' + Math.random().toString(36).substr(2, 9);
         return `
@@ -2324,7 +2352,7 @@ await typeText(aiTextEl, formatted, 25);
     });
     
     return formattedText;
-}
+}*/
        // function formatAIResponse(text) {
        //     const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
          //   return text.replace(codeRegex, (match, lang, code) => {
