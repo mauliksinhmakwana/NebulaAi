@@ -1819,10 +1819,18 @@ if (hero) {
                     msgDiv.className = 'msg ai';
                     msgDiv.innerHTML = formatted +
                         //   ----------------------------------------------------------------------------------------------READ 1------------------------------------------------------
-`<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
-    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+/* REPLACE THE BUTTON SECTION IN index.html -> renderMessages WITH THIS: */
+
+`<div style="display: flex; gap: 16px; align-items: center; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+    <div class="regenerate-btn" onclick="copyFullResponse(this)" title="Copy Response">
+        <i class="far fa-copy"></i> <span style="font-size: 0.75rem; margin-left: 4px;">Copy</span>
+    </div>
+    <div class="voice-btn" onclick="toggleSpeech(this)" title="Read Aloud" style="cursor: pointer; font-size: 0.8rem; color: var(--accent-blue); opacity: 0.7; transition: opacity 0.2s;">
+        <i class="fas fa-volume-up"></i> <span style="font-size: 0.75rem; margin-left: 4px;">Read</span>
+    </div>
+    <div class="regenerate-btn" onclick="regenerate(this)" title="Regenerate Response">
+        <i class="fas fa-sync-alt"></i> <span style="font-size: 0.75rem; margin-left: 4px;">Regenerate</span>
+    </div>
 </div>`
                         ;
 
