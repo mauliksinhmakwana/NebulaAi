@@ -1569,7 +1569,11 @@ const AI_IDENTITY = {
     if (conversation.messages.length > 0 && conversation.title === "New Chat") {
         updateConversationTitle(id, conversation.messages[0].content);
     }
-    
+
+setTimeout(() => {
+        loadSavedVisualizations();
+    }, 150);
+           
     // Update UI
     renderConversationsList();
     
@@ -1579,7 +1583,7 @@ const AI_IDENTITY = {
     }
 }
 
-        
+       
 
         function getCurrentConversation() {
             return getConversationById(currentConversationId);
@@ -1688,6 +1692,7 @@ const AI_IDENTITY = {
         }
 
         function saveConversations() {
+            console.log('Visualizations saved:', conversations.find(c => c.id === currentConversationId)?.visualizations);
             localStorage.setItem('nebula_conversations', JSON.stringify(conversations));
         }
 
@@ -2262,9 +2267,9 @@ await typeText(aiTextEl, formatted, 25);
                 scrollToBottom();
 
 // === NEW: Add visualization detection (AFTER message is displayed) ===
-// Create visualization if applicable
-const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
+// Create visualization if applicableconst visualization = await window.ventoraVisualizer.visualizeContent(rawText);
 
+await visualizationHandler(rawText);
 if (visualization) {
     // Insert visualization after the AI message
     const vizDiv = document.createElement('div');
@@ -2690,7 +2695,122 @@ function stopGeneration() {
 
 
 
+// ==================== VISUALIZATION PERSISTENCE ====================
 
+// Store visualization data in conversation
+function saveVisualization(conversationId, messageIndex, visualizationHtml) {
+    const conversation = getConversationById(conversationId);
+    if (!conversation) return;
+    
+    // Create or update visualizations array
+    if (!conversation.visualizations) {
+        conversation.visualizations = [];
+    }
+    
+    // Save visualization with message index reference
+    conversation.visualizations.push({
+        messageIndex: messageIndex,
+        html: visualizationHtml,
+        timestamp: new Date().toISOString()
+    });
+    
+    saveConversations();
+}
+
+// Load and render saved visualizations
+function loadSavedVisualizations() {
+    const conversation = getCurrentConversation();
+    if (!conversation || !conversation.visualizations || conversation.visualizations.length === 0) return;
+    
+    // Get all AI message wrappers
+    const aiWrappers = document.querySelectorAll('.ai-wrapper');
+    
+    conversation.visualizations.forEach(viz => {
+        const messageIndex = viz.messageIndex;
+        if (aiWrappers[messageIndex]) {
+            // Insert visualization after the AI message
+            const vizDiv = document.createElement('div');
+            vizDiv.className = 'saved-visualization';
+            vizDiv.innerHTML = viz.html;
+            aiWrappers[messageIndex].parentNode.insertBefore(vizDiv, aiWrappers[messageIndex].nextSibling);
+        }
+    });
+}
+
+// Modified renderMessages to load visualizations
+const originalRenderMessages = renderMessages;
+renderMessages = function(messages) {
+    originalRenderMessages.call(this, messages);
+    
+    // Load saved visualizations after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        loadSavedVisualizations();
+    }, 100);
+};
+
+// Modified handleSend to save visualizations
+const originalHandleSend = handleSend;
+handleSend = async function(lastUserMessage = null) {
+    await originalHandleSend.call(this, lastUserMessage);
+    
+    // Save visualization if one was created
+    const conversation = getCurrentConversation();
+    if (conversation && conversation.messages) {
+        // Find the last assistant message index
+        const lastAssistantIndex = conversation.messages.map(m => m.role).lastIndexOf('assistant');
+        
+        // Check if visualization was added (we'll detect this by looking for visualization elements)
+        const lastAiWrapper = document.querySelector('.ai-wrapper:last-child');
+        if (lastAiWrapper) {
+            const nextElement = lastAiWrapper.nextElementSibling;
+            if (nextElement && (nextElement.classList.contains('visualization-container') || 
+                               nextElement.querySelector('.chart-container') || 
+                               nextElement.querySelector('.mermaid'))) {
+                
+                // Save the visualization HTML
+                const visualizationHtml = nextElement.outerHTML;
+                saveVisualization(conversation.id, lastAssistantIndex, visualizationHtml);
+            }
+        }
+    }
+};
+
+// Also save visualizations when they're created in the original code
+// Find the visualization creation code and modify it:
+const visualizationHandler = async function(rawText) {
+    const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
+
+    if (visualization) {
+        // Insert visualization after the AI message
+        const vizDiv = document.createElement('div');
+        vizDiv.innerHTML = visualization;
+        
+        // Find the last message wrapper
+        const lastMsgWrapper = chatContainer.lastElementChild;
+        if (lastMsgWrapper && lastMsgWrapper.classList.contains('ai-wrapper')) {
+            chatContainer.insertBefore(vizDiv, lastMsgWrapper.nextSibling);
+            
+            // Save the visualization
+            const conversation = getCurrentConversation();
+            if (conversation && conversation.messages) {
+                const lastAssistantIndex = conversation.messages.map(m => m.role).lastIndexOf('assistant');
+                saveVisualization(conversation.id, lastAssistantIndex, vizDiv.outerHTML);
+            }
+            
+            scrollToBottom();
+        } else {
+            chatContainer.appendChild(vizDiv);
+        }
+        return true;
+    }
+    return false;
+};
+
+// Replace the visualization creation in handleSend
+// Find this line in your handleSend function:
+// const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
+// And the code after it, replace with:
+// await visualizationHandler(rawText);
 
 
 
@@ -3015,6 +3135,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // Make function available globally
 window.openAboutModal = openAboutModal;
 window.closeAboutModal = closeAboutModal;
+
+
+
+
+    
 </script>
 
 <style>
