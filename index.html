@@ -1814,68 +1814,50 @@ const AI_IDENTITY = {
             showToast('Conversation deleted');
         }
 
+        function renderMessages(messages) {
+            chatContainer.innerHTML = '';
 
-
-
-      function renderMessages(messages) {
-    chatContainer.innerHTML = '';
-
-    const hero = document.getElementById('hero-welcome');
-    if (hero) {
-        hero.style.display = messages.length ? 'none' : 'flex';
-    }
-    
-    // Store references to message wrappers for visualization insertion
-    const messageWrappers = [];
-    
-    messages.forEach((msg, index) => {
-        if (msg.role === 'user') {
-            const wrapper = appendMessage(msg.content, 'user');
-            messageWrappers.push(wrapper);
-        } else if (msg.role === 'assistant') {
-            const formatted = formatAIResponse(msg.content);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'msg-wrapper ai-wrapper';
-            wrapper.dataset.messageIndex = index; // Store index for reference
-            
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg ai';
-            msgDiv.innerHTML = formatted +
-                `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
-                `<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-                    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-                    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
-                    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-                </div>`;
-            
-            wrapper.appendChild(msgDiv);
-            chatContainer.appendChild(wrapper);
-            messageWrappers.push(wrapper);
-            
-            // Check for saved visualization for this specific message
-            if (window.ventoraVisualizer && currentConversationId) {
-                const vizId = window.ventoraVisualizer.generateVizId(currentConversationId, index);
-                const savedViz = window.ventoraVisualizer.getVisualization(vizId);
-                
-                if (savedViz && savedViz.html) {
-                    // Add a small delay to ensure DOM is ready
-                    setTimeout(() => {
-                        const vizDiv = document.createElement('div');
-                        vizDiv.innerHTML = savedViz.html;
-                        chatContainer.insertBefore(vizDiv, wrapper.nextSibling);
-                        scrollToBottom();
-                    }, 100);
-                }
-            }
-        }
-    });
-    
-    scrollToBottom();
+const hero = document.getElementById('hero-welcome');
+if (hero) {
+    hero.style.display = messages.length ? 'none' : 'flex';
 }
 
+            
+          //  if (messages.length === 0) {
+          //      appendMessage('Hello! I am Ventora AI. How can I assist you today?', 'ai');
+            //    return;
+           // }
+            
+            messages.forEach(msg => {
+                if (msg.role === 'user') {
+                    appendMessage(msg.content, 'user');
+                } else if (msg.role === 'assistant') {
+                    const formatted = formatAIResponse(msg.content);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'msg-wrapper ai-wrapper';
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'msg ai';
+                    msgDiv.innerHTML = formatted +
+                        `<div class="timestamp">${formatTime(msg.timestamp)}</div>` +
 
+                        
+                        //   ----------------------------------------------------------------------------------------------READ 1------------------------------------------------------
+`<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+</div>`
+                        ;
 
-        
+                    
+                    wrapper.appendChild(msgDiv);
+                    chatContainer.appendChild(wrapper);
+                }
+            });
+            
+            scrollToBottom();
+        }
+
         // ==================== MESSAGE HANDLING ====================
         async function handleSend(lastUserMessage = null) {
             // Prevent rapid successive sends (especially on mobile)
@@ -2281,21 +2263,12 @@ await typeText(aiTextEl, formatted, 25);
 
 // === NEW: Add visualization detection (AFTER message is displayed) ===
 // Create visualization if applicable
-const messageIndex = conversation.messages.length; // Current message index
-const visualization = await window.ventoraVisualizer.visualizeContent(
-    rawText, 
-    currentConversationId, // Conversation ID
-    messageIndex          // Message index in conversation
-);
+const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
 
 if (visualization) {
-    // Insert visualization before the AI message
+    // Insert visualization after the AI message
     const vizDiv = document.createElement('div');
     vizDiv.innerHTML = visualization;
-    chatContainer.insertBefore(vizDiv, loadingMsg);
-}
-
-    
     
     // Find the last message wrapper
     const lastMsgWrapper = chatContainer.lastElementChild;
