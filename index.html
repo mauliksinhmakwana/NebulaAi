@@ -1691,11 +1691,35 @@ setTimeout(() => {
             }
         }
 
+
+
+
         function saveConversations() {
+    try {
+        // Clean up any invalid data before saving
+        conversations.forEach(conv => {
+            if (conv.visualizations) {
+                // Remove any visualizations with invalid HTML
+                conv.visualizations = conv.visualizations.filter(viz => 
+                    viz && viz.html && viz.html.trim().length > 0
+                );
+            }
+        });
+        
+        localStorage.setItem('nebula_conversations', JSON.stringify(conversations));
+        
+        // Debug (optional - you can remove this later)
+        console.log('Conversations saved successfully');
+    } catch (error) {
+        console.error('Error saving conversations:', error);
+        showToast('Error saving data', 'error');
+    }
+}
+      /*  function saveConversations() {
             console.log('Visualizations saved:', conversations.find(c => c.id === currentConversationId)?.visualizations);
             localStorage.setItem('nebula_conversations', JSON.stringify(conversations));
         }
-
+*/
         // FIX 2: Updated renderConversationsList with rename and delete options
         function renderConversationsList() {
             // Clear existing conversation items
