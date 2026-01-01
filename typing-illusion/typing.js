@@ -1,4 +1,4 @@
-async function typeText(element, html, speed = 25) {
+async function typeText(element, html, speed = 10) {
     element.innerHTML = ""; // Clear existing
     
     // Create a temporary div to parse the HTML string into nodes
@@ -21,7 +21,7 @@ async function typeText(element, html, speed = 25) {
             await sleep(speed); 
         }
         // Keep the view scrolled to the bottom while typing
-        scrollToBottom();
+       // scrollToBottom();
     }
 }
 /*
