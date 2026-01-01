@@ -79,57 +79,60 @@ class VentoraVisualizer {
         }
     }
 
-    // Main function - called from index.html
-    async visualizeContent(content, conversationId, messageIndex) {
+
+
+
+
+   /* REPLACE THE visualizeContent FUNCTION IN vdiv.js WITH THIS: */
+
+async visualizeContent(content, conversationId, messageIndex) {
+    try {
         this.init();
-        
+        // Generate a stable ID based on the specific message in the chat history
         const vizId = this.generateVizId(conversationId, messageIndex);
         
-        // Check if we already have a visualization for this message
+        // 1. Check Cache first: This ensures persistence when switching chats
         const existing = this.getVisualization(vizId);
         if (existing && existing.html) {
-            return existing.html;
+            // Prepend original content so the text description isn't lost
+            return content + existing.html; 
         }
 
-        // Check for table patterns
+        let vizHTML = '';
+
+        // 2. Detection Logic: Scans for data patterns
         if (this.detectTable(content)) {
-            const tableHTML = this.createTableVisualization(content, vizId);
-            if (tableHTML) {
-                this.saveVisualization(vizId, content, tableHTML);
-                return tableHTML;
-            }
+            vizHTML = this.createTableVisualization(content, vizId);
+        } else if (this.detectDietPlan(content)) {
+            vizHTML = this.createDietVisualization(content, vizId);
+        } else if (this.detectChartData(content)) {
+            vizHTML = this.createChartVisualization(content, vizId);
+        } else if (this.detectProcessFlow(content)) {
+            vizHTML = this.createFlowChart(content, vizId);
         }
-        
-        // Check for diet/nutrition patterns
-        if (this.detectDietPlan(content)) {
-            const dietHTML = this.createDietVisualization(content, vizId);
-            if (dietHTML) {
-                this.saveVisualization(vizId, content, dietHTML);
-                return dietHTML;
-            }
-        }
-        
-        // Check for data patterns (charts)
-        if (this.detectChartData(content)) {
-            const chartHTML = this.createChartVisualization(content, vizId);
-            if (chartHTML) {
-                this.saveVisualization(vizId, content, chartHTML);
-                return chartHTML;
-            }
-        }
-        
-        // Check for process flows
-        if (this.detectProcessFlow(content)) {
-            const flowHTML = this.createFlowChart(content, vizId);
-            if (flowHTML) {
-                this.saveVisualization(vizId, content, flowHTML);
-                return flowHTML;
-            }
-        }
-        
-        return null;
-    }
 
+        // 3. Final Step: If a visual was created, save it and return it WITH the text
+        if (vizHTML) {
+            this.saveVisualization(vizId, content, vizHTML);
+            return content + vizHTML; 
+        }
+
+        // 4. Fallback: If no visual is detected, return the original content as-is
+        // This prevents normal messages from being deleted or returning "null"
+        return content; 
+
+    } catch (e) {
+        console.error('Ventora Visualizer Error:', e);
+        return content; // Always return text on error for a seamless experience
+    }
+}
+
+
+
+
+
+
+    
     // ========== TABLE FUNCTIONS ==========
     
     detectTable(content) {
