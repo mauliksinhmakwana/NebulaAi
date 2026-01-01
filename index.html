@@ -944,42 +944,70 @@
             }
         }
 
-        
-       /* --- MIC BUTTON ANIMATIONS --- */
+      /* --- Masterpiece Mic Animation --- */
 
-/* The 'active' class will be added/removed by JavaScript */
-#mic-btn.active {
-    animation: micPulse 1.5s infinite ease-in-out;
-    background: rgba(255, 71, 87, 0.1) !important; /* Subtle red background */
+#mic-btn {
+    position: relative;
+    z-index: 1;
 }
 
+/* The Animated Sonic Rings */
+#mic-btn.active::before,
+#mic-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: var(--accent-blue); /* Professional Blue instead of Red */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    opacity: 0;
+}
+
+#mic-btn.active::before {
+    animation: sonicWave 2s infinite cubic-bezier(0.36, 0.11, 0.89, 0.32);
+}
+
+#mic-btn.active::after {
+    animation: sonicWave 2s infinite cubic-bezier(0.36, 0.11, 0.89, 0.32);
+    animation-delay: 1s;
+}
+
+/* The Icon Shift */
 #mic-btn.active i {
-    color: #ff4757 !important; /* Red icon color */
-    filter: drop-shadow(0 0 5px rgba(255, 71, 87, 0.5));
+    color: #ffffff !important;
+    transform: scale(1.2);
+    transition: all 0.3s ease;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
 }
 
-/* Pulse effect: moves the button slightly and changes opacity */
-@keyframes micPulse {
+@keyframes sonicWave {
     0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
-    }
-    50% {
-        transform: scale(1.15);
-        box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+        width: 36px;
+        height: 36px;
+        opacity: 0.6;
     }
     100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+        width: 80px;
+        height: 80px;
+        opacity: 0;
     }
 }
 
-/* Hover state for when not recording */
-#mic-btn:not(.active):hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: var(--accent-blue);
+/* Subtle background breath for the button itself */
+@keyframes micBreath {
+    0%, 100% { background: rgba(0, 122, 255, 0.1); }
+    50% { background: rgba(0, 122, 255, 0.3); }
 }
+
+#mic-btn.active {
+    animation: micBreath 2s infinite ease-in-out;
+    border-radius: 50%;
+}
+
 
         
     </style>
@@ -3004,8 +3032,8 @@ if (SpeechRecognition) {
 
     recognition.onstart = () => {
         isListening = true;
-        micIcon.style.color = '#ff4757'; 
-        micBtn.classList.add('active'); // Triggers the pulse animation
+       micBtn.classList.add('active'); // This triggers the sonic wave animation
+        micIcon.style.color = '#ffffff'; // Triggers the pulse animation
         showToast("Listening...", "info");
     };
 
@@ -3017,14 +3045,14 @@ if (SpeechRecognition) {
 
     recognition.onend = () => {
         isListening = false;
+        micBtn.classList.remove('active'); // This stops the sonic waves
         micIcon.style.color = 'var(--text-secondary)';
-        micBtn.classList.remove('active');
     };
 
     recognition.onerror = (event) => {
         console.error("Speech Recognition Error: ", event.error);
-        showToast("Speech error: " + event.error, "error");
         micBtn.classList.remove('active');
+        showToast("Speech error: " + event.error, "error");
     };
 } else {
     micBtn.style.display = 'none';
