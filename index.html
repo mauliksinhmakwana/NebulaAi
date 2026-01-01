@@ -944,6 +944,25 @@
             }
         }
     </style>
+
+
+
+    <!-- Add these after Font Awesome -->
+<!-- Chart.js for data visualization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Mermaid.js for diagrams and flowcharts -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<!-- Handsontable for spreadsheet-like tables -->
+<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
+
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- html2canvas for screenshot functionality -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="personalization/personalization.css">
@@ -959,7 +978,7 @@
 <script src="fileupload/fileupload.js" defer></script>
     <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
     <!-- For PDF export (optional) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
     <link rel="stylesheet" href="dose/dose.css">
     <!-- Add this in the head section -->
     
@@ -967,11 +986,7 @@
    <link rel="stylesheet" href="ocr/ocr.css">
 <script src="ocr/ocr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.0/dist/tesseract.min.js"></script>
-    <!-- Chart.js for charts -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Visualizer CSS -->
-<link rel="stylesheet" href="visualizer/visualizer.css">
+    <link rel="stylesheet" href="visualizer/vdiv.css">
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -2000,8 +2015,6 @@ CORE IDENTITY:
 - Purpose: Helps in gym, nutrition and vitamins, diet plan making and more.Help people understand medicines, diseases, and health concepts clearly and safely.
 
 --------------------------------------------------
-${window.VENTORA_VIZ_INSTRUCTIONS ? window.VENTORA_VIZ_INSTRUCTIONS : ''}
---------------------------------------------------
 
 CORE PHILOSOPHY:
 Ventora combines the **usefulness of a health companion** with the **depth of pharmaceutical science**.
@@ -2247,6 +2260,26 @@ await typeText(aiTextEl, formatted, 25);
                 saveConversations();
                 renderConversationsList();
                 scrollToBottom();
+
+// === NEW: Add visualization detection (AFTER message is displayed) ===
+// Create visualization if applicable
+const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
+
+if (visualization) {
+    // Insert visualization after the AI message
+    const vizDiv = document.createElement('div');
+    vizDiv.innerHTML = visualization;
+    
+    // Find the last message wrapper
+    const lastMsgWrapper = chatContainer.lastElementChild;
+    if (lastMsgWrapper && lastMsgWrapper.classList.contains('ai-wrapper')) {
+        chatContainer.insertBefore(vizDiv, lastMsgWrapper.nextSibling);
+    } else {
+        chatContainer.appendChild(vizDiv);
+    }
+    scrollToBottom();
+}
+                
                 
             } catch (err) {
                 console.error('API Error:', err);
@@ -2982,9 +3015,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Make function available globally
 window.openAboutModal = openAboutModal;
 window.closeAboutModal = closeAboutModal;
-
-
-    
 </script>
 
 <style>
@@ -3699,10 +3729,7 @@ window.closeAboutModal = closeAboutModal;
 <link rel="stylesheet" href="diet/diet.css">
 <!-- Add JS script before closing body -->
 <script src="diet/diet.js" defer></script>
-<!-- Visualizer System -->
-<script src="visualizer/prompts.js"></script>
-<script src="visualizer/export.js"></script>
-<script src="visualizer/visualizer.js"></script>
+<script src="visualizer/vdiv.js" defer></script>
     
 </body>
 </html>
