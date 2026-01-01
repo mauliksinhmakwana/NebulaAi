@@ -944,25 +944,16 @@
             }
         }
     </style>
+    <!-- Export Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-
-
-    <!-- Add these after Font Awesome -->
-<!-- Chart.js for data visualization -->
+<!-- Chart.js for charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Mermaid.js for diagrams and flowcharts -->
+<!-- Mermaid.js for flowcharts -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-
-<!-- Handsontable for spreadsheet-like tables -->
-<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
-
-<!-- jsPDF for PDF export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- html2canvas for screenshot functionality -->
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="personalization/personalization.css">
@@ -978,7 +969,7 @@
 <script src="fileupload/fileupload.js" defer></script>
     <link rel="stylesheet" href="mainmenupopup/mainmenupopup.css">
     <!-- For PDF export (optional) -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+
     <link rel="stylesheet" href="dose/dose.css">
     <!-- Add this in the head section -->
     
@@ -987,6 +978,8 @@
 <script src="ocr/ocr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v4.0.0/dist/tesseract.min.js"></script>
     <link rel="stylesheet" href="visualizer/vdiv.css">
+    <script src="visualizer/vdiv.js"></script>
+    
 </head>
 <body onload="initApp()">
     <!-- Menu Overlay (click to close) -->
@@ -2260,26 +2253,6 @@ await typeText(aiTextEl, formatted, 25);
                 saveConversations();
                 renderConversationsList();
                 scrollToBottom();
-
-// === NEW: Add visualization detection (AFTER message is displayed) ===
-// Create visualization if applicable
-const visualization = await window.ventoraVisualizer.visualizeContent(rawText);
-
-if (visualization) {
-    // Insert visualization after the AI message
-    const vizDiv = document.createElement('div');
-    vizDiv.innerHTML = visualization;
-    
-    // Find the last message wrapper
-    const lastMsgWrapper = chatContainer.lastElementChild;
-    if (lastMsgWrapper && lastMsgWrapper.classList.contains('ai-wrapper')) {
-        chatContainer.insertBefore(vizDiv, lastMsgWrapper.nextSibling);
-    } else {
-        chatContainer.appendChild(vizDiv);
-    }
-    scrollToBottom();
-}
-                
                 
             } catch (err) {
                 console.error('API Error:', err);
@@ -2728,7 +2701,35 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
         closeAbout();
     }
 });
- 
+ // Hook visualizer into chat system
+function integrateVisualizer() {
+    // Override the formatAIResponse function
+    const originalFormatAIResponse = window.formatAIResponse;
+    
+    window.formatAIResponse = function(text) {
+        // First, let the visualizer process it
+        if (window.ventoraVisualizer) {
+            const vizContent = window.ventoraVisualizer.visualizeContent(text);
+            if (vizContent) {
+                // Return visualization instead of text
+                return vizContent;
+            }
+        }
+        
+        // Otherwise use original formatting
+        if (originalFormatAIResponse) {
+            return originalFormatAIResponse(text);
+        }
+        
+        // Fallback
+        return text;
+    };
+    
+    console.log('Visualizer integrated into chat system');
+}
+
+// Call this after page loads
+setTimeout(integrateVisualizer, 1000);
     </script>
 
 
@@ -3729,7 +3730,21 @@ window.closeAboutModal = closeAboutModal;
 <link rel="stylesheet" href="diet/diet.css">
 <!-- Add JS script before closing body -->
 <script src="diet/diet.js" defer></script>
-<script src="visualizer/vdiv.js" defer></script>
+<!-- Export Loading Overlay -->
+<div class="export-loading" id="exportLoading">
+    <div class="export-loading-spinner"></div>
+    <div>Preparing export...</div>
+</div>
+
+<script>
+// Show/hide loading
+window.showExportLoading = function(show) {
+    const loader = document.getElementById('exportLoading');
+    if (loader) {
+        loader.classList.toggle('show', show);
+    }
+};
+</script>
     
 </body>
 </html>
