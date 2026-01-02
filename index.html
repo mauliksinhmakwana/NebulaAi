@@ -965,48 +965,56 @@
 }
 
 
-.model-dropdown-container {
+        .custom-dropdown {
     position: relative;
-    display: flex;
-    align-items: center;
+    width: 160px;
+    z-index: 2000;
+}
+
+.dropdown-selected {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    padding: 2px 10px;
-    transition: all 0.2s ease;
-}
-
-.model-dropdown-container:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--accent-blue);
-}
-
-.sidebar-model-select {
-    appearance: none;
-    background: transparent;
-    border: none;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 8px 25px 8px 5px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     cursor: pointer;
-    outline: none;
-    font-family: inherit;
-    z-index: 1;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
-.sidebar-model-select option {
-    background: #1a1a1a; /* Dark background for dropdown options */
-    color: white;
-}
-
-.dropdown-arrow {
+.dropdown-options {
     position: absolute;
-    right: 12px;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    pointer-events: none;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
+
+.dropdown-options.active {
+    display: flex;
+}
+
+.option {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.option:hover {
+    background: rgba(0, 122, 255, 0.2);
+    color: var(--accent-blue);
+}
+
 
         
         
@@ -1048,15 +1056,18 @@
     <div class="menu-container" id="menuContainer">
         <div class="menu-header">
             
-<div class="model-dropdown-container">
-        <select id="sidebarModelSelect" class="sidebar-model-select" onchange="syncModelFromSidebar(this.value)">
-            <option value="mia:general">MIA – General</option>
-            <option value="mia:reasoning">MIA – Reasoning</option>
-            <option value="mia:research">MIA – Research</option>
-        </select>
-        <i class="fas fa-chevron-down dropdown-arrow"></i>
-    </div>
 
+<div class="custom-dropdown" id="customModelDropdown">
+        <div class="dropdown-selected" onclick="toggleCustomDropdown()">
+            <span id="selectedModelText">MIA – General</span>
+            <i class="fas fa-chevron-down dropdown-arrow"></i>
+        </div>
+        <div class="dropdown-options" id="customDropdownOptions">
+            <div class="option" onclick="selectModel('mia:general', 'MIA – General')">MIA – General</div>
+            <div class="option" onclick="selectModel('mia:reasoning', 'MIA – Reasoning')">MIA – Reasoning</div>
+            <div class="option" onclick="selectModel('mia:research', 'MIA – Research')">MIA – Research</div>
+        </div>
+    </div>
 
 
 
