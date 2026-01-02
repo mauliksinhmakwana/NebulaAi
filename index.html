@@ -2406,6 +2406,15 @@ await typeText(aiTextEl, formatted, 25);
     const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
     formattedText = formattedText.replace(codeRegex, (match, lang, code) => {
         const id = 'code-' + Math.random().toString(36).substr(2, 9);
+
+         // Escape HTML entities in the code
+    const escapedCode = code
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+        
         return `
         <div class="code-container">
             <div class="code-header">
@@ -2445,15 +2454,24 @@ await typeText(aiTextEl, formatted, 25);
 
 
 
-        
-
         function copyCode(id) {
+    const codeElement = document.getElementById(id);
+    // Get the text content (unescaped)
+    const code = codeElement.textContent;
+    navigator.clipboard.writeText(code);
+    const btn = event.target;
+    btn.textContent = 'COPIED';
+    setTimeout(() => { btn.textContent = 'COPY'; }, 2000);
+}
+
+     /*   function copyCode(id) {
             const code = document.getElementById(id).innerText;
+            const code = codeElement.textContent;
             navigator.clipboard.writeText(code);
             const btn = event.target;
             btn.textContent = 'COPIED';
             setTimeout(() => { btn.textContent = 'COPY'; }, 2000);
-        }
+        }*/
 
         function copyFullResponse(btn) {
             const msgElement = btn.closest('.msg');
