@@ -2404,12 +2404,6 @@ await typeText(aiTextEl, formatted, 25);
     // Convert **bold** to <strong>bold</strong>
     let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
-    // Convert *italic* to <em>italic</em>
-    formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // Convert `code` to <code>code</code>
-    formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
-    
     // Then handle code blocks
     const codeRegex = /```(\w*)\n([\s\S]*?)```/g;
     formattedText = formattedText.replace(codeRegex, (match, lang, code) => {
@@ -2424,6 +2418,16 @@ await typeText(aiTextEl, formatted, 25);
         </div>`;
     });
     
+   formattedText = formattedText.replace(/^### (.*$)/gim, '<div class="msg-header">$1</div>');
+
+    // 3. Fix list items to prevent the "floating colon" look
+    // This finds "- Item: Description" and wraps the label
+    formattedText = formattedText.replace(/^- (.*?): (.*$)/gim, '• <strong>$1</strong>: $2');
+    
+    // 4. Handle standard bold and italic
+    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
     return formattedText;
 }
        // function formatAIResponse(text) {
