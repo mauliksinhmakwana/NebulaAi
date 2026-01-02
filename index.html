@@ -1910,47 +1910,51 @@ filterConversations();
             renderConversationsList();
             showToast('Conversation deleted');
         }
+        //Render massage----------------------------------------------------------------------------------------------------------------------------------------------------------///
 
         function renderMessages(messages) {
-            chatContainer.innerHTML = '';
+    chatContainer.innerHTML = '';
 
-const hero = document.getElementById('hero-welcome');
-if (hero) {
-    hero.style.display = messages.length ? 'none' : 'flex';
-}
+    const hero = document.getElementById('hero-welcome');
+    if (hero) {
+        hero.style.display = messages.length ? 'none' : 'flex';
+    }
 
+    messages.forEach(msg => {
+        if (msg.role === 'user') {
+            appendMessage(msg.content, 'user');
+        } else if (msg.role === 'assistant') {
+            // Format the AI response properly
+            const formatted = formatAIResponse(msg.content);
             
-          //  if (messages.length === 0) {
-          //      appendMessage('Hello! I am Ventora AI. How can I assist you today?', 'ai');
-            //    return;
-           // }
+            // Create message wrapper with ALL UI elements
+            const wrapper = document.createElement('div');
+            wrapper.className = 'msg-wrapper ai-wrapper';
             
-            messages.forEach(msg => {
-                if (msg.role === 'user') {
-                    appendMessage(msg.content, 'user');
-                } else if (msg.role === 'assistant') {
-                    const formatted = formatAIResponse(msg.content);
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'msg-wrapper ai-wrapper';
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = 'msg ai';
-                    msgDiv.innerHTML = formatted +
-                        //   ----------------------------------------------------------------------------------------------READ 1------------------------------------------------------
-`<div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-    <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-    <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
-    <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-</div>`
-                        ;
-
-                    
-                    wrapper.appendChild(msgDiv);
-                    chatContainer.appendChild(wrapper);
-                }
-            });
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg ai';
             
-            scrollToBottom();
+            // Add timestamp
+            const time = msg.timestamp ? 
+                new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
+                getTime();
+            
+            msgDiv.innerHTML = 
+                `<div class="ai-text">${formatted}</div>
+                 <div class="timestamp">${time}</div>
+                 <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+                     <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                     <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+                     <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                 </div>`;
+            
+            wrapper.appendChild(msgDiv);
+            chatContainer.appendChild(wrapper);
         }
+    });
+    
+    scrollToBottom();
+}
 
         // ==================== MESSAGE HANDLING ====================
         async function handleSend(lastUserMessage = null) {
@@ -2509,42 +2513,45 @@ function copyUserMessage(btn) {
             scrollBtn.style.display = diff > 100 ? 'flex' : 'none';
         };
 
-        function appendMessage(text, type) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `msg-wrapper ${type}-wrapper`;
-            const msg = document.createElement('div');
-            msg.className = `msg ${type}`;
+       function appendMessage(text, type) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `msg-wrapper ${type}-wrapper`;
+    const msg = document.createElement('div');
+    msg.className = `msg ${type}`;
 
-            if (type === 'ai') {
-                if (text.includes('typing-dots')) {
-                    msg.innerHTML = text;
-                } else {
-                    const formatted = formatAIResponse(text);
-                    msg.innerHTML = formatted +
-                        `<div style="display: flex; gap: 16px; margin-top: 8px;">
-                            <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
-                            <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
-                        </div>`;
-                }
-           /* FIND THIS BLOCK IN appendMessage AND UPDATE IT */
-} else {
-    msg.innerHTML = `
-    <div class="user-text" style="margin-bottom: 4px;">${text}</div>
-    <div class="user-copy-btn" onclick="copyUserMessage(this)" style="
-        font-size: 0.7rem;
-        color: var(--accent-blue);
-        cursor: pointer;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-        margin-top: 2px;
-    ">Copy</div>`;
-}
-
-            wrapper.appendChild(msg);
-            chatContainer.appendChild(wrapper);
-            scrollToBottom();
-            return msg;
+    if (type === 'ai') {
+        if (text.includes('typing-dots')) {
+            msg.innerHTML = text;
+        } else {
+            const formatted = formatAIResponse(text);
+            msg.innerHTML = 
+                `<div class="ai-text">${formatted}</div>
+                 <div class="timestamp">${getTime()}</div>
+                 <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
+                     <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
+                     <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
+                     <div class="regenerate-btn" onclick="regenerate(this)">↻ Regenerate</div>
+                 </div>`;
         }
+    } else {
+        msg.innerHTML = `
+            <div class="user-text" style="margin-bottom: 4px;">${text}</div>
+            <div class="user-copy-btn" onclick="copyUserMessage(this)" style="
+                font-size: 0.7rem;
+                color: var(--accent-blue);
+                cursor: pointer;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+                margin-top: 2px;
+            ">Copy</div>`;
+    }
+    
+    wrapper.appendChild(msg);
+    chatContainer.appendChild(wrapper);
+    scrollToBottom();
+    return msg;
+}
+        
 
         function regenerate(btn) {
             const conversation = getCurrentConversation();
