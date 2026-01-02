@@ -1,657 +1,569 @@
-// Ventora Visualizer - With Local Storage Persistence
-class VentoraVisualizer {
-    constructor() {
-        this.isInitialized = false;
-        this.storageKey = 'ventora_visualizations';
-    }
+/* ===== VENTORA VISUALIZER ENGINE ===== */
 
+// Configuration
+const VISUALIZER_CONFIG = {
+    autoDetect: true,
+    storageKey: 'ventora_visualizations',
+    triggers: {
+        table: ['table', 'data', 'comparison', 'list of', 'breakdown'],
+        diet: ['diet plan', 'meal plan', 'nutrition', 'breakfast', 'lunch', 'dinner'],
+        flowchart: ['flowchart', 'process', 'steps', 'workflow', 'diagram']
+    }
+};
+
+// Initialize visualizer
+window.VentoraVisualizer = {
+    storage: {},
+    
+    // Initialize on page load
     init() {
-        if (this.isInitialized) return;
-        
-        if (typeof mermaid !== 'undefined') {
-            mermaid.initialize({
-                startOnLoad: false,
-                theme: 'dark',
-                securityLevel: 'loose'
-            });
-        }
-        
-        this.isInitialized = true;
-    }
-
-    // Generate unique ID for each conversation message
-    generateVizId(conversationId, messageIndex) {
-        return `viz-${conversationId}-${messageIndex}`;
-    }
-
-    // Save visualization to localStorage
-    saveVisualization(vizId, content, html) {
-        try {
-            const visualizations = this.getStoredVisualizations();
-            visualizations[vizId] = {
-                content: content,
-                html: html,
-                timestamp: Date.now()
-            };
-            localStorage.setItem(this.storageKey, JSON.stringify(visualizations));
-        } catch (e) {
-            console.error('Failed to save visualization:', e);
-        }
-    }
-
-    // Get stored visualizations
-    getStoredVisualizations() {
-        try {
-            const stored = localStorage.getItem(this.storageKey);
-            return stored ? JSON.parse(stored) : {};
-        } catch (e) {
-            console.error('Failed to load visualizations:', e);
-            return {};
-        }
-    }
-
-    // Get visualization for a specific message
-    getVisualization(vizId) {
-        const visualizations = this.getStoredVisualizations();
-        return visualizations[vizId];
-    }
-
-    // Remove old visualizations (keep only last 50)
-    cleanupOldVisualizations() {
-        try {
-            const visualizations = this.getStoredVisualizations();
-            const entries = Object.entries(visualizations);
-            
-            if (entries.length > 50) {
-                // Sort by timestamp and keep only 50 most recent
-                const sorted = entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
-                const toKeep = sorted.slice(0, 50);
-                
-                const newVisualizations = {};
-                toKeep.forEach(([key, value]) => {
-                    newVisualizations[key] = value;
-                });
-                
-                localStorage.setItem(this.storageKey, JSON.stringify(newVisualizations));
-            }
-        } catch (e) {
-            console.error('Failed to cleanup visualizations:', e);
-        }
-    }
-
-
-
-
-
-   /* REPLACE THE visualizeContent FUNCTION IN vdiv.js WITH THIS: */
-
-async visualizeContent(content, conversationId, messageIndex) {
-    try {
-        this.init();
-        // Generate a stable ID based on the specific message in the chat history
-        const vizId = this.generateVizId(conversationId, messageIndex);
-        
-        // 1. Check Cache first: This ensures persistence when switching chats
-        const existing = this.getVisualization(vizId);
-        if (existing && existing.html) {
-            // Prepend original content so the text description isn't lost
-            return content + existing.html; 
-        }
-
-        let vizHTML = '';
-
-        // 2. Detection Logic: Scans for data patterns
-        if (this.detectTable(content)) {
-            vizHTML = this.createTableVisualization(content, vizId);
-        } else if (this.detectDietPlan(content)) {
-            vizHTML = this.createDietVisualization(content, vizId);
-        } else if (this.detectChartData(content)) {
-            vizHTML = this.createChartVisualization(content, vizId);
-        } else if (this.detectProcessFlow(content)) {
-            vizHTML = this.createFlowChart(content, vizId);
-        }
-
-        // 3. Final Step: If a visual was created, save it and return it WITH the text
-        if (vizHTML) {
-            this.saveVisualization(vizId, content, vizHTML);
-            return content + vizHTML; 
-        }
-
-        // 4. Fallback: If no visual is detected, return the original content as-is
-        // This prevents normal messages from being deleted or returning "null"
-        return content; 
-
-    } catch (e) {
-        console.error('Ventora Visualizer Error:', e);
-        return content; // Always return text on error for a seamless experience
-    }
-}
-
-
-
-
-
-
+        this.loadFromStorage();
+        console.log('Ventora Visualizer initialized');
+    },
     
-    // ========== TABLE FUNCTIONS ==========
+    // Load saved visualizations
+    loadFromStorage() {
+        const saved = localStorage.getItem(VISUALIZER_CONFIG.storageKey);
+        if (saved) {
+            try {
+                this.storage = JSON.parse(saved);
+            } catch (e) {
+                console.error('Error loading visualizations:', e);
+                this.storage = {};
+            }
+        }
+    },
     
-    detectTable(content) {
-        const lines = content.split('\n');
-        let pipeCount = 0;
-        let dashLineCount = 0;
+    // Save visualization to storage
+    saveToStorage(conversationId, vizData) {
+        if (!this.storage[conversationId]) {
+            this.storage[conversationId] = [];
+        }
+        this.storage[conversationId].push({
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString(),
+            data: vizData
+        });
+        localStorage.setItem(VISUALIZER_CONFIG.storageKey, JSON.stringify(this.storage));
+    },
+    
+    // Detect if content needs visualization
+    detectVisualization(text) {
+        const lowerText = text.toLowerCase();
         
-        for (let line of lines) {
-            const trimmed = line.trim();
-            if (trimmed.includes('|') && trimmed.length > 2) {
-                pipeCount++;
-            }
-            if (/^[\|\-\s:]+$/.test(trimmed) && trimmed.includes('-') && trimmed.length > 2) {
-                dashLineCount++;
-            }
+        // Check for table patterns
+        if (this.shouldCreateTable(lowerText, text)) {
+            return { type: 'table', confidence: 'high' };
         }
         
-        return pipeCount >= 2 && dashLineCount >= 1;
-    }
-
-    createTableVisualization(content, vizId) {
-        const tableData = this.extractTableData(content);
-        if (!tableData.headers || tableData.headers.length === 0) return '';
-        
-        const cleanedHeaders = tableData.headers.filter(h => h.trim() && !/^[-:]+$/.test(h));
-        const cleanedRows = tableData.rows.map(row => 
-            row.filter(cell => cell.trim())
-               .slice(0, cleanedHeaders.length)
-        ).filter(row => row.length > 0);
-        
-        if (cleanedHeaders.length === 0 || cleanedRows.length === 0) return '';
-        
-        return `
-        <div class="visualizer-container" data-viz-id="${vizId}">
-            <div class="visualizer-header">
-                <div class="visualizer-title">
-                    <i class="fas fa-table"></i>
-                    Data Table
-                </div>
-                <div class="visualizer-actions">
-                    <button class="viz-btn" onclick="window.ventoraVisualizer.copyTable('${vizId}')">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                    <button class="viz-btn primary" onclick="window.ventoraVisualizer.exportToPDF('${vizId}')">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </button>
-                </div>
-            </div>
-            <div class="data-table-container">
-                <table class="data-table" id="table-${vizId}">
-                    <thead>
-                        <tr>
-                            ${cleanedHeaders.map(header => `<th>${this.escapeHTML(header)}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${cleanedRows.map(row => `
-                            <tr>
-                                ${row.map(cell => `<td>${this.escapeHTML(cell)}</td>`).join('')}
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>`;
-    }
-
-    extractTableData(content) {
-        const lines = content.split('\n').filter(l => l.trim());
-        const headers = [];
-        const rows = [];
-        
-        let tableStart = -1;
-        let tableEnd = -1;
-        
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].includes('|') && !/^[\|\-\s:]+$/.test(lines[i])) {
-                if (tableStart === -1) tableStart = i;
-                tableEnd = i;
-            }
+        // Check for diet plan
+        if (this.shouldCreateDiet(lowerText)) {
+            return { type: 'diet', confidence: 'high' };
         }
         
-        if (tableStart !== -1) {
-            const tableLines = lines.slice(tableStart, tableEnd + 1);
-            
-            const headerLine = tableLines[0];
-            const headerParts = headerLine.split('|').map(p => p.trim()).filter(p => p);
-            headers.push(...headerParts);
-            
-            for (let i = 1; i < tableLines.length; i++) {
-                if (!/^[\|\-\s:]+$/.test(tableLines[i])) {
-                    const rowParts = tableLines[i].split('|').map(p => p.trim()).filter(p => p);
-                    if (rowParts.length > 0) {
-                        rows.push(rowParts);
-                    }
-                }
-            }
+        // Check for flowchart
+        if (this.shouldCreateFlowchart(lowerText)) {
+            return { type: 'flowchart', confidence: 'medium' };
         }
+        
+        return null;
+    },
+    
+    // Check if content should be a table
+    shouldCreateTable(lowerText, fullText) {
+        // Check for trigger words
+        const hasTrigger = VISUALIZER_CONFIG.triggers.table.some(t => lowerText.includes(t));
+        
+        // Check for table-like structure (|, multiple lines with colons, etc.)
+        const hasTableChars = fullText.includes('|') || 
+                             (fullText.split('\n').length > 3 && fullText.includes(':'));
+        
+        // Check for numbered/bulleted lists with multiple items
+        const listPattern = /(?:^\d+\.|^-|^•).+$/gm;
+        const listMatches = fullText.match(listPattern);
+        const hasMultipleItems = listMatches && listMatches.length >= 3;
+        
+        return hasTrigger || hasTableChars || hasMultipleItems;
+    },
+    
+    // Check if content is a diet plan
+    shouldCreateDiet(lowerText) {
+        return VISUALIZER_CONFIG.triggers.diet.some(t => lowerText.includes(t));
+    },
+    
+    // Check if content is a flowchart
+    shouldCreateFlowchart(lowerText) {
+        return VISUALIZER_CONFIG.triggers.flowchart.some(t => lowerText.includes(t));
+    },
+    
+    // Parse and create table
+    parseTable(text) {
+        const lines = text.split('\n').filter(l => l.trim());
+        
+        // Try to parse markdown table
+        if (text.includes('|')) {
+            return this.parseMarkdownTable(text);
+        }
+        
+        // Try to parse list format
+        return this.parseListToTable(lines);
+    },
+    
+    // Parse markdown table
+    parseMarkdownTable(text) {
+        const lines = text.split('\n').filter(l => l.includes('|'));
+        if (lines.length < 2) return null;
+        
+        const headers = lines[0].split('|')
+            .map(h => h.trim())
+            .filter(h => h);
+        
+        const rows = lines.slice(2).map(line => 
+            line.split('|')
+                .map(c => c.trim())
+                .filter(c => c)
+        );
         
         return { headers, rows };
-    }
-
-    // ========== DIET PLAN FUNCTIONS ==========
+    },
     
-    detectDietPlan(content) {
-        const dietKeywords = ['breakfast', 'lunch', 'dinner', 'snack', 'meal', 'calories', 'protein', 'carbs', 'fat'];
-        const lower = content.toLowerCase();
+    // Parse list to table
+    parseListToTable(lines) {
+        const data = [];
+        let headers = ['Item', 'Description'];
         
-        const matches = dietKeywords.filter(keyword => lower.includes(keyword));
-        return matches.length >= 3;
-    }
-
-    createDietVisualization(content, vizId) {
-        const meals = this.parseDietData(content);
-        if (meals.length === 0) return '';
-        
-        const totals = this.calculateTotals(meals);
-        
-        return `
-        <div class="visualizer-container" data-viz-id="${vizId}">
-            <div class="visualizer-header">
-                <div class="visualizer-title">
-                    <i class="fas fa-apple-alt"></i>
-                    Diet Plan
-                </div>
-                <div class="visualizer-actions">
-                    <button class="viz-btn" onclick="window.ventoraVisualizer.copyText('${vizId}')">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                    <button class="viz-btn primary" onclick="window.ventoraVisualizer.exportToPDF('${vizId}')">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </button>
-                </div>
-            </div>
+        lines.forEach(line => {
+            // Remove list markers
+            const cleaned = line.replace(/^[\d+\-•\*]\s*/, '').trim();
             
-            <div id="content-${vizId}">
-                <div class="nutrition-summary">
-                    <div class="nutrition-item">
-                        <div class="nutrition-value">${totals.calories}</div>
-                        <div class="nutrition-label">Calories</div>
-                    </div>
-                    <div class="nutrition-item">
-                        <div class="nutrition-value">${totals.protein}g</div>
-                        <div class="nutrition-label">Protein</div>
-                    </div>
-                    <div class="nutrition-item">
-                        <div class="nutrition-value">${totals.carbs}g</div>
-                        <div class="nutrition-label">Carbs</div>
-                    </div>
-                    <div class="nutrition-item">
-                        <div class="nutrition-value">${totals.fat}g</div>
-                        <div class="nutrition-label">Fat</div>
-                    </div>
-                </div>
-                
-                <div class="diet-visualization">
-                    ${meals.map(meal => `
-                        <div class="diet-card">
-                            <div class="diet-card-header">
-                                <div class="meal-time">${meal.time}</div>
-                                <div class="meal-calories">${meal.calories} cal</div>
-                            </div>
-                            <div class="diet-items">
-                                ${meal.items.map(item => `
-                                    <div class="diet-item">
-                                        <div class="item-name">${item.name}</div>
-                                        <div class="item-macros">P${item.protein} C${item.carbs} F${item.fat}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div class="chart-container">
-                <canvas id="chart-${vizId}"></canvas>
-            </div>
-        </div>`;
-    }
-
-    parseDietData(content) {
+            if (cleaned.includes(':')) {
+                const [item, desc] = cleaned.split(':').map(s => s.trim());
+                data.push([item, desc]);
+            } else if (cleaned.includes('-')) {
+                const parts = cleaned.split('-').map(s => s.trim());
+                if (parts.length >= 2) {
+                    data.push(parts);
+                }
+            } else if (cleaned) {
+                data.push([cleaned, '']);
+            }
+        });
+        
+        return data.length > 0 ? { headers, rows: data } : null;
+    },
+    
+    // Parse diet plan
+    parseDiet(text) {
         const meals = [];
-        const lines = content.split('\n');
+        const lines = text.split('\n');
         let currentMeal = null;
         
-        for (let line of lines) {
-            const trimmed = line.trim().toLowerCase();
-            if (!trimmed) continue;
-            
-            if (trimmed.includes('breakfast') || trimmed.includes('lunch') || 
-                trimmed.includes('dinner') || trimmed.includes('snack')) {
-                
-                if (currentMeal && currentMeal.items.length > 0) {
-                    meals.push(currentMeal);
-                }
-                
-                currentMeal = {
-                    time: this.capitalize(trimmed.split(':')[0] || trimmed),
-                    items: [],
-                    calories: 0
-                };
-            }
-            
-            if (currentMeal && (trimmed.includes('-') || trimmed.includes(':'))) {
-                const item = this.parseFoodItem(trimmed);
-                if (item.name && item.calories > 0) {
-                    currentMeal.items.push(item);
-                    currentMeal.calories += item.calories;
-                }
-            }
-        }
-        
-        if (currentMeal && currentMeal.items.length > 0) {
-            meals.push(currentMeal);
-        }
-        
-        return meals;
-    }
-
-    parseFoodItem(text) {
-        const item = {
-            name: '',
-            calories: 0,
-            protein: 0,
-            carbs: 0,
-            fat: 0
+        const mealKeywords = {
+            'breakfast': '🌅',
+            'lunch': '☀️',
+            'dinner': '🌙',
+            'snack': '🍎'
         };
         
-        const nameMatch = text.match(/^([^:-]+)/);
-        if (nameMatch) item.name = nameMatch[1].trim();
+        lines.forEach(line => {
+            const lowerLine = line.toLowerCase().trim();
+            
+            // Check if line is a meal header
+            for (const [meal, icon] of Object.entries(mealKeywords)) {
+                if (lowerLine.includes(meal)) {
+                    if (currentMeal) meals.push(currentMeal);
+                    currentMeal = {
+                        name: meal.charAt(0).toUpperCase() + meal.slice(1),
+                        icon,
+                        time: this.extractTime(line),
+                        items: []
+                    };
+                    break;
+                }
+            }
+            
+            // Add items to current meal
+            if (currentMeal && line.trim() && !Object.keys(mealKeywords).some(k => lowerLine.includes(k))) {
+                const cleaned = line.replace(/^[\d+\-•\*]\s*/, '').trim();
+                if (cleaned) {
+                    currentMeal.items.push(this.parseDietItem(cleaned));
+                }
+            }
+        });
         
-        const calMatch = text.match(/(\d+)\s*cal/);
-        if (calMatch) item.calories = parseInt(calMatch[1]);
+        if (currentMeal) meals.push(currentMeal);
         
-        const protMatch = text.match(/(\d+)\s*g?\s*prot/);
-        if (protMatch) item.protein = parseInt(protMatch[1]);
+        return meals.length > 0 ? meals : null;
+    },
+    
+    // Extract time from text
+    extractTime(text) {
+        const timeMatch = text.match(/(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)/);
+        return timeMatch ? timeMatch[1] : '';
+    },
+    
+    // Parse diet item
+    parseDietItem(text) {
+        const item = { name: text, calories: null, protein: null, carbs: null };
         
-        const carbMatch = text.match(/(\d+)\s*g?\s*carb/);
-        if (carbMatch) item.carbs = parseInt(carbMatch[1]);
+        // Try to extract nutrition info
+        const caloriesMatch = text.match(/(\d+)\s*cal/i);
+        const proteinMatch = text.match(/(\d+)g?\s*protein/i);
+        const carbsMatch = text.match(/(\d+)g?\s*carb/i);
         
-        const fatMatch = text.match(/(\d+)\s*g?\s*fat/);
-        if (fatMatch) item.fat = parseInt(fatMatch[1]);
+        if (caloriesMatch) item.calories = caloriesMatch[1];
+        if (proteinMatch) item.protein = proteinMatch[1] + 'g';
+        if (carbsMatch) item.carbs = carbsMatch[1] + 'g';
+        
+        // Clean name
+        item.name = text
+            .replace(/\d+\s*cal/gi, '')
+            .replace(/\d+g?\s*protein/gi, '')
+            .replace(/\d+g?\s*carb/gi, '')
+            .replace(/[(),]/g, '')
+            .trim();
         
         return item;
-    }
-
-    calculateTotals(meals) {
-        const totals = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+    },
+    
+    // Create visualization HTML
+    createVisualization(type, data, conversationId) {
+        const vizId = `viz-${Date.now()}`;
+        let bodyContent = '';
         
-        for (let meal of meals) {
-            for (let item of meal.items) {
-                totals.calories += item.calories;
-                totals.protein += item.protein;
-                totals.carbs += item.carbs;
-                totals.fat += item.fat;
-            }
+        switch (type) {
+            case 'table':
+                bodyContent = this.renderTable(data);
+                break;
+            case 'diet':
+                bodyContent = this.renderDiet(data);
+                break;
+            case 'flowchart':
+                bodyContent = this.renderFlowchart(data);
+                break;
         }
         
-        return totals;
-    }
-
-    // ========== CHART FUNCTIONS ==========
-    
-    detectChartData(content) {
-        return content.includes('chart') || 
-               content.match(/\d+%\s/g) ||
-               content.includes('graph') ||
-               content.match(/data\s*:/i);
-    }
-
-    createChartVisualization(content, vizId) {
-        const data = this.extractChartData(content);
-        
-        return `
-        <div class="visualizer-container" data-viz-id="${vizId}">
-            <div class="visualizer-header">
-                <div class="visualizer-title">
-                    <i class="fas fa-chart-bar"></i>
-                    Data Visualization
-                </div>
-                <div class="visualizer-actions">
-                    <button class="viz-btn" onclick="window.ventoraVisualizer.copyText('${vizId}')">
-                        <i class="fas fa-copy"></i> Copy Data
-                    </button>
-                    <button class="viz-btn primary" onclick="window.ventoraVisualizer.exportToPDF('${vizId}')">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </button>
-                </div>
-            </div>
-            <div id="content-${vizId}">
-                <div class="chart-container">
-                    <canvas id="chart-${vizId}"></canvas>
-                </div>
-            </div>
-        </div>`;
-    }
-
-    extractChartData(content) {
-        const numbers = content.match(/\d+(\.\d+)?/g) || ['25', '50', '75', '100', '125'];
-        const limitedNumbers = numbers.slice(0, 5).map(n => parseFloat(n));
-        
-        return {
-            labels: ['A', 'B', 'C', 'D', 'E'].slice(0, limitedNumbers.length),
-            values: limitedNumbers
-        };
-    }
-
-    // ========== FLOW CHART FUNCTIONS ==========
-    
-    detectProcessFlow(content) {
-        return (content.includes('step') && content.includes('process')) ||
-               content.includes('flowchart') ||
-               content.match(/step\s+\d+/i);
-    }
-
-    createFlowChart(content, vizId) {
-        return `
-        <div class="visualizer-container" data-viz-id="${vizId}">
-            <div class="visualizer-header">
-                <div class="visualizer-title">
-                    <i class="fas fa-project-diagram"></i>
-                    Process Flow
-                </div>
-                <div class="visualizer-actions">
-                    <button class="viz-btn" onclick="window.ventoraVisualizer.copyText('${vizId}')">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                    <button class="viz-btn primary" onclick="window.ventoraVisualizer.exportToPDF('${vizId}')">
-                        <i class="fas fa-file-pdf"></i> Export PDF
-                    </button>
-                </div>
-            </div>
-            <div id="content-${vizId}">
-                <div class="flow-chart">
-                    <div class="mermaid">
-                        graph TD
-                        A[Start] --> B[Step 1]
-                        B --> C[Decision Point]
-                        C -->|Yes| D[Step 2]
-                        C -->|No| E[Alternative Path]
-                        D --> F[Complete]
-                        E --> F
+        const wrapper = `
+            <div class="visualizer-wrapper" id="${vizId}" data-type="${type}">
+                <div class="visualizer-header">
+                    <div class="visualizer-title">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>${this.getTypeLabel(type)}</span>
+                    </div>
+                    <div class="visualizer-actions">
+                        <button class="visualizer-btn" onclick="VentoraVisualizer.copyVisualization('${vizId}')">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                        <button class="visualizer-btn" onclick="VentoraVisualizer.exportAs('${vizId}', 'pdf')">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="visualizer-btn" onclick="VentoraVisualizer.exportAs('${vizId}', 'excel')">
+                            <i class="fas fa-file-excel"></i>
+                            Excel
+                        </button>
+                        <button class="visualizer-btn" onclick="VentoraVisualizer.exportAs('${vizId}', 'image')">
+                            <i class="fas fa-image"></i>
+                            Image
+                        </button>
                     </div>
                 </div>
+                <div class="visualizer-body">
+                    ${bodyContent}
+                </div>
             </div>
-        </div>`;
-    }
-
-    // ========== ACTION FUNCTIONS ==========
+        `;
+        
+        // Save to storage
+        this.saveToStorage(conversationId, { type, data, html: wrapper });
+        
+        return wrapper;
+    },
     
-    async copyTable(vizId) {
-        try {
-            const table = document.getElementById(`table-${vizId}`);
-            if (!table) {
-                this.showToast('Table not found');
-                return;
-            }
-            
-            let text = '';
-            const rows = table.querySelectorAll('tr');
-            
-            for (let row of rows) {
-                const cells = row.querySelectorAll('th, td');
-                const rowText = Array.from(cells).map(cell => cell.textContent.trim()).join('\t');
-                text += rowText + '\n';
-            }
-            
-            await navigator.clipboard.writeText(text);
-            this.showToast('Table copied to clipboard');
-        } catch (err) {
-            console.error('Copy failed:', err);
-            this.showToast('Failed to copy');
+    // Get type label
+    getTypeLabel(type) {
+        const labels = {
+            table: 'Data Table',
+            diet: 'Diet Plan',
+            flowchart: 'Flowchart'
+        };
+        return labels[type] || 'Visualization';
+    },
+    
+    // Render table
+    renderTable(tableData) {
+        if (!tableData || !tableData.headers || !tableData.rows) {
+            return '<p>Unable to parse table data</p>';
         }
-    }
-
-    async copyText(vizId) {
-        try {
-            const container = document.querySelector(`[data-viz-id="${vizId}"]`);
-            if (!container) {
-                this.showToast('Visualization not found');
-                return;
-            }
-            
-            let text = '';
-            
-            if (container.querySelector('table')) {
-                const table = container.querySelector('table');
-                const rows = table.querySelectorAll('tr');
-                for (let row of rows) {
-                    const cells = row.querySelectorAll('th, td');
-                    text += Array.from(cells).map(cell => cell.textContent.trim()).join('\t') + '\n';
-                }
-            } else if (container.querySelector('.diet-card')) {
-                const cards = container.querySelectorAll('.diet-card');
-                for (let card of cards) {
-                    const time = card.querySelector('.meal-time').textContent;
-                    const calories = card.querySelector('.meal-calories').textContent;
-                    text += `${time} (${calories}):\n`;
-                    
-                    const items = card.querySelectorAll('.diet-item');
-                    for (let item of items) {
-                        const name = item.querySelector('.item-name').textContent;
-                        const macros = item.querySelector('.item-macros').textContent;
-                        text += `  • ${name} ${macros}\n`;
-                    }
-                    text += '\n';
-                }
-            } else {
-                text = container.textContent || container.innerText;
-            }
-            
-            await navigator.clipboard.writeText(text.trim());
-            this.showToast('Copied to clipboard');
-        } catch (err) {
-            console.error('Copy failed:', err);
-            this.showToast('Failed to copy');
+        
+        let html = '<div class="viz-table-container"><table class="viz-table"><thead><tr>';
+        
+        tableData.headers.forEach(header => {
+            html += `<th>${header}</th>`;
+        });
+        
+        html += '</tr></thead><tbody>';
+        
+        tableData.rows.forEach(row => {
+            html += '<tr>';
+            row.forEach(cell => {
+                html += `<td>${cell || ''}</td>`;
+            });
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table></div>';
+        
+        return html;
+    },
+    
+    // Render diet plan
+    renderDiet(meals) {
+        if (!meals || meals.length === 0) {
+            return '<p>Unable to parse diet plan</p>';
         }
-    }
-
-    async exportToPDF(vizId) {
-        try {
-            const { jsPDF } = window.jspdf;
+        
+        let html = '<div class="diet-planner">';
+        
+        meals.forEach(meal => {
+            html += `
+                <div class="diet-meal">
+                    <div class="diet-meal-header">
+                        <div class="diet-meal-title">
+                            <span>${meal.icon}</span>
+                            <span>${meal.name}</span>
+                        </div>
+                        ${meal.time ? `<div class="diet-meal-time">${meal.time}</div>` : ''}
+                    </div>
+                    <div class="diet-meal-items">
+            `;
             
-            if (!jsPDF || typeof html2canvas === 'undefined') {
-                this.showToast('PDF export not available');
-                return;
-            }
+            let totalCals = 0;
+            let totalProtein = 0;
+            let totalCarbs = 0;
             
-            const container = document.querySelector(`[data-viz-id="${vizId}"]`);
-            if (!container) {
-                this.showToast('Visualization not found');
-                return;
-            }
-            
-            const buttons = container.querySelectorAll('.viz-btn');
-            buttons.forEach(btn => btn.style.visibility = 'hidden');
-            
-            const canvas = await html2canvas(container, {
-                scale: 2,
-                backgroundColor: '#000000',
-                useCORS: true,
-                logging: false
+            meal.items.forEach(item => {
+                html += `
+                    <div class="diet-item">
+                        <div class="diet-item-name">${item.name}</div>
+                        <div class="diet-item-details">
+                            ${item.calories ? `<span>${item.calories} cal</span>` : ''}
+                            ${item.protein ? `<span>${item.protein}</span>` : ''}
+                            ${item.carbs ? `<span>${item.carbs}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                if (item.calories) totalCals += parseInt(item.calories);
+                if (item.protein) totalProtein += parseInt(item.protein);
+                if (item.carbs) totalCarbs += parseInt(item.carbs);
             });
             
-            buttons.forEach(btn => btn.style.visibility = 'visible');
+            if (totalCals > 0 || totalProtein > 0 || totalCarbs > 0) {
+                html += `
+                    <div class="diet-nutrition">
+                        ${totalCals > 0 ? `
+                            <div class="diet-nutrition-item">
+                                <div class="nutrition-value">${totalCals}</div>
+                                <div class="nutrition-label">Calories</div>
+                            </div>
+                        ` : ''}
+                        ${totalProtein > 0 ? `
+                            <div class="diet-nutrition-item">
+                                <div class="nutrition-value">${totalProtein}g</div>
+                                <div class="nutrition-label">Protein</div>
+                            </div>
+                        ` : ''}
+                        ${totalCarbs > 0 ? `
+                            <div class="diet-nutrition-item">
+                                <div class="nutrition-value">${totalCarbs}g</div>
+                                <div class="nutrition-label">Carbs</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
             
-            const pdf = new jsPDF({
-                orientation: 'portrait',
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        
+        return html;
+    },
+    
+    // Render flowchart (simple text-based)
+    renderFlowchart(text) {
+        const steps = text.split('\n')
+            .filter(l => l.trim())
+            .filter(l => !l.toLowerCase().includes('flowchart'));
+        
+        let html = '<div class="flowchart-container">';
+        
+        steps.forEach((step, index) => {
+            const cleaned = step.replace(/^[\d+\-•\*]\s*/, '').trim();
+            let nodeClass = 'flowchart-node';
+            
+            if (index === 0) nodeClass += ' start';
+            if (index === steps.length - 1) nodeClass += ' end';
+            if (cleaned.includes('?') || cleaned.toLowerCase().includes('if')) {
+                nodeClass += ' decision';
+            }
+            
+            html += `<div class="${nodeClass}"><span>${cleaned}</span></div>`;
+            
+            if (index < steps.length - 1) {
+                html += '<div class="flowchart-arrow">↓</div>';
+            }
+        });
+        
+        html += '</div>';
+        
+        return html;
+    },
+    
+    // Copy visualization
+    copyVisualization(vizId) {
+        const viz = document.getElementById(vizId);
+        if (!viz) return;
+        
+        const body = viz.querySelector('.visualizer-body');
+        const text = body.innerText;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Copy failed:', err);
+            showToast('Copy failed', 'error');
+        });
+    },
+    
+    // Export visualization
+    async exportAs(vizId, format) {
+        const viz = document.getElementById(vizId);
+        if (!viz) return;
+        
+        const body = viz.querySelector('.visualizer-body');
+        const type = viz.dataset.type;
+        
+        switch (format) {
+            case 'pdf':
+                await this.exportToPDF(vizId, body, type);
+                break;
+            case 'excel':
+                await this.exportToExcel(vizId, body, type);
+                break;
+            case 'image':
+                await this.exportToImage(vizId, body);
+                break;
+        }
+    },
+    
+    // Export to PDF
+    async exportToPDF(vizId, element, type) {
+        try {
+            // Use html2canvas for better rendering
+            const canvas = await html2canvas(element, {
+                backgroundColor: '#000000',
+                scale: 2
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF({
+                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
                 unit: 'mm',
                 format: 'a4'
             });
             
-            const imgWidth = 180;
+            const imgWidth = pdf.internal.pageSize.getWidth() - 20;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
-            const imgData = canvas.toDataURL('image/png');
-            pdf.addImage(imgData, 'PNG', 15, 20, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            pdf.save(`ventora-${type}-${Date.now()}.pdf`);
             
-            const title = container.querySelector('.visualizer-title').textContent;
-            pdf.setFontSize(14);
-            pdf.setTextColor(255, 255, 255);
-            pdf.text(title, 105, 15, { align: 'center' });
-            
-            pdf.setFontSize(10);
-            pdf.setTextColor(150, 150, 150);
-            pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 285, { align: 'center' });
-            
-            pdf.save(`ventora-visualization-${Date.now()}.pdf`);
-            this.showToast('PDF exported successfully');
-            
+            showToast('PDF exported successfully!', 'success');
         } catch (err) {
             console.error('PDF export failed:', err);
-            this.showToast('Failed to export PDF');
+            showToast('PDF export failed', 'error');
+        }
+    },
+    
+    // Export to Excel (CSV format)
+    async exportToExcel(vizId, element, type) {
+        try {
+            let csvContent = '';
+            
+            if (type === 'table') {
+                const table = element.querySelector('.viz-table');
+                if (table) {
+                    // Headers
+                    const headers = Array.from(table.querySelectorAll('th'))
+                        .map(th => `"${th.textContent}"`);
+                    csvContent += headers.join(',') + '\n';
+                    
+                    // Rows
+                    const rows = table.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const cells = Array.from(row.querySelectorAll('td'))
+                            .map(td => `"${td.textContent}"`);
+                        csvContent += cells.join(',') + '\n';
+                    });
+                }
+            } else {
+                // Convert other types to text
+                csvContent = element.innerText;
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `ventora-${type}-${Date.now()}.csv`;
+            link.click();
+            
+            showToast('Excel file exported!', 'success');
+        } catch (err) {
+            console.error('Excel export failed:', err);
+            showToast('Excel export failed', 'error');
+        }
+    },
+    
+    // Export to Image
+    async exportToImage(vizId, element) {
+        try {
+            const canvas = await html2canvas(element, {
+                backgroundColor: '#000000',
+                scale: 2
+            });
+            
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `ventora-visualization-${Date.now()}.png`;
+                link.click();
+                URL.revokeObjectURL(url);
+                
+                showToast('Image exported successfully!', 'success');
+            });
+        } catch (err) {
+            console.error('Image export failed:', err);
+            showToast('Image export failed', 'error');
         }
     }
+};
 
-    // ========== UTILITY FUNCTIONS ==========
-    
-    escapeHTML(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    showToast(message) {
-        const existing = document.querySelector('.viz-toast');
-        if (existing) existing.remove();
-        
-        const toast = document.createElement('div');
-        toast.className = 'viz-toast';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => toast.classList.add('show'), 10);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }, 3000);
-    }
-
-    // Clear all visualizations (optional)
-    clearAllVisualizations() {
-        localStorage.removeItem(this.storageKey);
-    }
+// Initialize on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        VentoraVisualizer.init();
+    });
+} else {
+    VentoraVisualizer.init();
 }
 
-// Initialize global instance
-window.ventoraVisualizer = new VentoraVisualizer();
-
-// Auto-cleanup old visualizations
-setInterval(() => window.ventoraVisualizer.cleanupOldVisualizations(), 5 * 60 * 1000);
+// Export for global use
+window.VentoraVisualizer = VentoraVisualizer;
