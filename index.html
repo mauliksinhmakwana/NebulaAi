@@ -417,16 +417,16 @@ main, .bottom-section {
 /* When the menu is active, shift everything to the right */
 body.menu-open main, 
 body.menu-open .bottom-section {
-    transform: translateX(150px);/* Matches your menu width */
-    width: calc(100% - 150px);
+transform: translateX(180px);/* Matches your menu width */
+    
 }
 
 /* Fix for mobile: reduce shift or disable if it feels too cramped */
 @media (max-width: 768px) {
     body.menu-open main,  
     body.menu-open .bottom-section {
-        transform: translateX(130px); /* Slightly less for mobile */
-        width: calc(100% - 130px);
+        transform: translateX(150px); /* Slightly less for mobile */
+        
     }
 } 
 
