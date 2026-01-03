@@ -1990,7 +1990,6 @@ filterConversations();
             
             msgDiv.innerHTML = 
                 `<div class="ai-text">${formatted}</div>
-                 <div class="timestamp">${time}</div>
                  <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
                      <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
                      <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
@@ -2297,7 +2296,6 @@ if (stopGenerating) {
 // Prepare the message UI
 loadingMsg.innerHTML = `
   <div class="ai-text" style="margin-bottom: 4px;"></div>
-  <div class="timestamp" style="margin-bottom: 4px;">${getTime()}</div>
   <div style="display: flex; gap: 16px; align-items: center;">
       <div class="regenerate-btn" onclick="copyFullResponse(this)">Copy</div>
       <div class="voice-btn" onclick="toggleSpeech(this)">Read</div>
