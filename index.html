@@ -1085,6 +1085,30 @@ pointer-events: auto !important;
 .regenerate-btn i, .voice-btn i {
     font-size: 0.90rem;
 }
+        /* User-side Copy Icon Styling */
+.user-copy-btn {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-secondary) !important;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: fit-content;
+    align-self: flex-end;
+}
+
+.user-copy-btn:hover {
+    opacity: 1;
+    color: var(--text-primary) !important;
+    transform: scale(1.1);
+}
+
+.user-copy-btn i {
+    font-size: 0.90rem; /* Adjust this to 1.2rem if you want it larger */
+}
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -2524,20 +2548,26 @@ await typeText(aiTextEl, formatted, 25);
 
 
 //  ADD: Copy function for user messages (SIMPLE & FIXED)
+
 function copyUserMessage(btn) {
     const msgElement = btn.closest('.msg');
-    
-    // Find the specific div containing the user's text
     const textElement = msgElement.querySelector('.user-text');
     const cleanText = textElement ? textElement.innerText.trim() : "";
     
     if (cleanText) {
         navigator.clipboard.writeText(cleanText).then(() => {
-            btn.textContent = 'Copied ✓';
+            const icon = btn.querySelector('i');
+            
+            // Visual feedback: Change to checkmark
+            icon.className = 'fas fa-check';
+            btn.style.color = '#2ed573'; 
             btn.style.opacity = '1';
+            
             setTimeout(() => {
-                btn.textContent = 'Copy';
-                btn.style.opacity = '0.7';
+                // Revert back to copy icon
+                icon.className = 'fas fa-copy';
+                btn.style.color = '';
+                btn.style.opacity = '0.6';
             }, 2000);
         });
     }
@@ -2576,17 +2606,12 @@ function copyUserMessage(btn) {
                  </div>`;
         }
     } else {
-        msg.innerHTML = `
-            <div class="user-text" style="margin-bottom: 4px;">${text}</div>
-            <div class="user-copy-btn" onclick="copyUserMessage(this)" style="
-                font-size: 0.7rem;
-                color: var(--accent-blue);
-                cursor: pointer;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-                margin-top: 2px;
-            ">Copy</div>`;
-    }
+    msg.innerHTML = `
+        <div class="user-text" style="margin-bottom: 4px;">${text}</div>
+        <div class="user-copy-btn" onclick="copyUserMessage(this)" title="Copy">
+            <i class="fas fa-copy"></i>
+        </div>`;
+}
     
     wrapper.appendChild(msg);
     chatContainer.appendChild(wrapper);
