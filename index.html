@@ -2099,8 +2099,7 @@ filterConversations();
                 content: `
 You are ${AI_IDENTITY.name}. Always use the name "${AI_IDENTITY.name}".
 User Name: ${localStorage.getItem('profile_name') || window.personalization?.userName || ''}
-Focus: ${window.personalization.major || ''}
-Tone: ${window.personalization.responseStyle}
+Style: ${window.personalization.responseStyle}
 
 ${window.fileContext?.text ? `### ATTACHED FILE CONTEXT ###\n${window.fileContext.text}` : ''}
 
