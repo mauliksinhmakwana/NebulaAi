@@ -176,22 +176,40 @@ function renderSection(sectionId) {
     if (contentBody) section.render(contentBody);
 }
 
+
+
+
+
+
 // Load all data
+// Load all data with persistent medical profile support
 function loadAllData() {
-    // Personalization
-    if (!window.personalization) {
-        window.personalization = JSON.parse(localStorage.getItem('ventora_personalization')) || {
-            userName: '',
-            datadepth:'',
-            medicalConditions:'',
-            allergies: '',
-            bloodType:'',
-            responseStyle: 'balanced',
-            customInstructions: ''
-        };
+    // 1. Load Personalization including medical fields
+    const savedPers = localStorage.getItem('ventora_personalization');
+    if (savedPers) {
+        try {
+            const parsed = JSON.parse(savedPers);
+            // MERGE: This ensures new medical keys exist even if the saved data is old
+            window.personalization = {
+                userName: parsed.userName || '',
+                studyLevel: parsed.studyLevel || 'patient',
+                major: parsed.major || '',
+                responseStyle: parsed.responseStyle || 'balanced',
+                customInstructions: parsed.customInstructions || '',
+                // CRITICAL: New medical fields must be included here to persist
+                medicalConditions: parsed.medicalConditions || '',
+                allergies: parsed.allergies || '',
+                bloodType: parsed.bloodType || ''
+            };
+        } catch (e) {
+            console.error("Error parsing personalization:", e);
+            setDefaultPersonalization();
+        }
+    } else {
+        setDefaultPersonalization();
     }
     
-    // App Settings
+    // 2. App Settings
     if (!window.ventoraSettings) {
         window.ventoraSettings = JSON.parse(localStorage.getItem('ventora_settings')) || {
             model: 'mia:general',
@@ -200,16 +218,39 @@ function loadAllData() {
         };
     }
     
-    // Goals/Tasks
+    // 3. Goals/Tasks & Study Notes
     if (!window.ventoraTasks) {
         window.ventoraTasks = JSON.parse(localStorage.getItem('ventora_tasks')) || [];
     }
-    
-    // Study Notes
     if (!window.ventoraNotes) {
         window.ventoraNotes = localStorage.getItem('ventora_study_notes') || '';
     }
 }
+
+// Helper to set clean defaults
+function setDefaultPersonalization() {
+    window.personalization = {
+        userName: '',
+        studyLevel: 'patient',
+        major: '',
+        responseStyle: 'balanced',
+        customInstructions: '',
+        medicalConditions: '',
+        allergies: '',
+        bloodType: ''
+    };
+}
+
+
+
+
+
+
+
+
+
+
+
 
 // ===== SECTION RENDER FUNCTIONS =====
 
