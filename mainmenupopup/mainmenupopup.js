@@ -182,7 +182,9 @@ function loadAllData() {
     if (!window.personalization) {
         window.personalization = JSON.parse(localStorage.getItem('ventora_personalization')) || {
             userName: '',
-            major: '',
+            allergies: '',
+            major:'',
+            bloodType:'',
             responseStyle: 'balanced',
             customInstructions: ''
         };
@@ -221,30 +223,69 @@ function renderPersonalizationSection(container) {
         </div>
         
         <div class="form-group">
-            <label class="form-label">Proficiency Level</label>
-            <select class="form-select" id="menu-pers-level">
-                <option value="school" ${window.personalization.studyLevel === 'school' ? 'selected' : ''}>Foundation</option>
-                <option value="highschool" ${window.personalization.studyLevel === 'highschool' ? 'selected' : ''}>Intermediate</option>
-                <option value="college" ${window.personalization.studyLevel === 'college' ? 'selected' : ''}>Advanced Academic</option>
-                <option value="researcher" ${window.personalization.studyLevel === 'researcher' ? 'selected' : ''}>Expert / Scholar</option>
-            </select>
+           <label class="form-label">Data Depth</label>
+    <select class="form-select" id="menu-pers-level">
+        <option value="patient" ${window.personalization.studyLevel === 'patient' ? 'selected' : ''}>Public</option>
+        <option value="student" ${window.personalization.studyLevel === 'student' ? 'selected' : ''}>Academic</option>
+        <option value="professional" ${window.personalization.studyLevel === 'professional' ? 'selected' : ''}>Clinical</option>
+        <option value="researcher" ${window.personalization.studyLevel === 'researcher' ? 'selected' : ''}>Research</option>
+    </select>
         </div>
+
+
+        <div class="form-group">
+            <label class="form-label">Chronic Conditions / Medical History</label>
+            <textarea class="form-textarea" id="menu-pers-conditions" 
+                      placeholder="e.g. Type 2 Diabetes, Hypertension, Asthma">${window.personalization.medicalConditions || ''}</textarea>
+            <div class="form-info">Helps Ventora identify relevant health warnings.</div>
+        </div>
+
         
         <div class="form-group">
-            <label class="form-label">Interest / Major</label>
-            <input type="text" class="form-input" id="menu-pers-major" 
-                   placeholder="e.g. Medicine, Computer Science"
-                   value="${window.personalization.major || ''}">
+            <label class="form-label">Known Allergies</label>
+            <input type="text" class="form-input" id="menu-pers-allergies" 
+                   placeholder="e.g. Penicillin, Peanuts, Latex"
+                   value="${window.personalization.allergies || ''}">
         </div>
+
+
+
+
+<div class="form-group">
+    <label class="form-label">Blood Type</label>
+    <select class="form-select" id="menu-pers-blood">
+        <option value="" ${!window.personalization.bloodType ? 'selected' : ''}>Select Blood Type</option>
+        
+        <option value="A+" ${window.personalization.bloodType === 'A+' ? 'selected' : ''}>A RhD positive (A+)</option>
+        <option value="A-" ${window.personalization.bloodType === 'A-' ? 'selected' : ''}>A RhD negative (A-)</option>
+        
+        <option value="B+" ${window.personalization.bloodType === 'B+' ? 'selected' : ''}>B RhD positive (B+)</option>
+        <option value="B-" ${window.personalization.bloodType === 'B-' ? 'selected' : ''}>B RhD negative (B-)</option>
+        
+        <option value="AB+" ${window.personalization.bloodType === 'AB+' ? 'selected' : ''}>AB RhD positive (AB+)</option>
+        <option value="AB-" ${window.personalization.bloodType === 'AB-' ? 'selected' : ''}>AB RhD negative (AB-)</option>
+        
+        <option value="O+" ${window.personalization.bloodType === 'O+' ? 'selected' : ''}>O RhD positive (O+)</option>
+        <option value="O-" ${window.personalization.bloodType === 'O-' ? 'selected' : ''}>O RhD negative (O-)</option>
+        
+        <option value="rare" ${window.personalization.bloodType === 'rare' ? 'selected' : ''}>Other / Rare Type</option>
+        <option value="unknown" ${window.personalization.bloodType === 'unknown' ? 'selected' : ''}>I don't know</option>
+    </select>
+    <div class="form-info">Essential for emergency context and nutritional tailoring.</div>
+</div>
+
+
+        
         
         <div class="form-group">
             <label class="form-label">Response Style</label>
-            <select class="form-select" id="menu-pers-style">
-                <option value="balanced" ${window.personalization.responseStyle === 'balanced' ? 'selected' : ''}>Standard (Optimal)</option>
-                <option value="technical" ${window.personalization.responseStyle === 'technical' ? 'selected' : ''}>Technical & Analytical</option>
-                <option value="encouraging" ${window.personalization.responseStyle === 'encouraging' ? 'selected' : ''}>Socratic Tutor</option>
-                <option value="concise" ${window.personalization.responseStyle === 'concise' ? 'selected' : ''}>Direct & Precise</option>
-            </select>
+           <select class="form-select" id="menu-pers-style">
+        <option value="balanced" ${window.personalization.responseStyle === 'balanced' ? 'selected' : ''}>Standard</option>
+        <option value="clinical" ${window.personalization.responseStyle === 'clinical' ? 'selected' : ''}>Clinical & Technical</option>
+        <option value="empathetic" ${window.personalization.responseStyle === 'empathetic' ? 'selected' : ''}>Empathetic & Supportive</option>
+        <option value="simplified" ${window.personalization.responseStyle === 'simplified' ? 'selected' : ''}>Simplified</option>
+        <option value="concise" ${window.personalization.responseStyle === 'concise' ? 'selected' : ''}>Concise</option>
+    </select>
         </div>
         
         <div class="form-group">
