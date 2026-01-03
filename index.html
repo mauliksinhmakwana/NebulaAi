@@ -47,6 +47,7 @@
             z-index: 1001;
             display: none;
             opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s ease;
         }
         
@@ -418,6 +419,7 @@ main, .bottom-section {
 body.menu-open main, 
 body.menu-open .bottom-section {
 transform: translateX(170px);/* Matches your menu width */
+pointer-events: auto !important;
     
 }
 
