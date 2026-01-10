@@ -10,6 +10,8 @@ window.ocrContext = {
 // Initialize OCR
 function initOCR() {
     console.log("OCR Initializing...");
+    console.log("⚠️ Note: This code uses browser-based OCR only");
+    console.log("⚠️ If you get 'API Error: 403', check your Vercel environment variables");
     
     // Create hidden input if not exists
     let ocrInput = document.getElementById('ocr-image-input');
